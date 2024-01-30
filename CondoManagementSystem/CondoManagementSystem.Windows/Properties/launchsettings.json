@@ -1,0 +1,10 @@
+{
+	"profiles": {
+		"CondoManagementSystem.Windows (Unpackaged)": {
+			"commandName": "Project"
+		},
+		"CondoManagementSystem.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}
