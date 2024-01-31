@@ -10,6 +10,8 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
 
+    <WindowsPackageType>None</WindowsPackageType>
+    
     <!-- Bundles the WinAppSDK binaries -->
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
@@ -89,4 +91,9 @@
         Text="OverrideTargetFramework set to '$(OverrideTargetFramework)' is missing Windows target. Set OverrideTargetFramework to $([MSBuild]::Escape('$'))(DotNetVersion)-windows10.0.19041.0 or skip building this project (eg unload the project in Visual Studio)"
         Condition="!$(OverrideTargetFramework.Contains('windows10'))" />
   </Target>
+
+  <PropertyGroup>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+  
 </Project>
