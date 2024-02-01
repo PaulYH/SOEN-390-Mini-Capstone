@@ -1,0 +1,10 @@
+{
+	"profiles": {
+		"CMS.Windows (Unpackaged)": {
+			"commandName": "Project"
+		},
+		"CMS.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}
