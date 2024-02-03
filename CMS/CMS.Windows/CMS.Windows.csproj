@@ -5,7 +5,6 @@
     <RootNamespace>CMS.Windows</RootNamespace>
     <Platforms>x86;x64;arm64</Platforms>
 
-
     <!-- Bundles the WinAppSDK binaries -->
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 

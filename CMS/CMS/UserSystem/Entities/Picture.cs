@@ -8,6 +8,8 @@ using CMS.UserSystem.Enums;
 namespace CMS.UserSystem.Entities;
 public class Picture
 {
+    [Key]
+    public Guid Id { get; set; }
     public ImageType ImageType { get; set; }
-    public byte[]? ImageData { get; set; }
+    public byte[]? ImageData { get; set; } = null!;
 }

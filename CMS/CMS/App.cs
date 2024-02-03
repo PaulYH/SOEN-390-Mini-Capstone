@@ -1,10 +1,12 @@
+using CMS.Data;
+using Microsoft.Extensions.Configuration;
+
 namespace CMS;
 
 public class App : Application
 {
     protected Window? MainWindow { get; private set; }
     protected IHost? Host { get; private set; }
-
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
@@ -17,6 +19,7 @@ public class App : Application
                 {
                     // TODO: Register your services
                     //services.AddSingleton<IMyService, MyService>();
+                    services.AddDbContext<CMSDbContext>();
                 })
             );
         MainWindow = builder.Window;
