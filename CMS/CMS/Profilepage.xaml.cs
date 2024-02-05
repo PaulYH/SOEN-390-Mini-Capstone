@@ -1,9 +1,19 @@
+using System;
 using System.ComponentModel;
+using Microsoft.Win32;
+using System.IO;
+using System.Windows;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Networking.NetworkOperators;
+using Windows.Storage.Pickers;
+using System.Runtime.InteropServices;
 
 namespace CMS
 {
     public sealed partial class Profilepage : Page, INotifyPropertyChanged
     {
+        private string selectedImagePath;
+
         public Profilepage()
         {
             this.InitializeComponent();
@@ -24,14 +34,17 @@ namespace CMS
         {
             Frame.Navigate(typeof(MainPage));
         }
+
         private void Rental_Clicked(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(MainPage));
         }
+
         private void Owner_Clicked(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(MainPage));
         }
+
         public string Name { get; set; } = "First Last";
         public string Email { get; set; } = "email@email.com";
 
@@ -62,27 +75,57 @@ namespace CMS
                 PhoneNumber = "(optional)";
             }
         }
-        private void SignOut_Clicked(object sender, RoutedEventArgs e)
+        public class PlatformChecker
         {
-            // goes back to previous page
-            if (Frame.CanGoBack)
+            public static bool IsWindows()
             {
-                Frame.GoBack();
+                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            }
+        }
+
+        private async void SelectProfilePicture_Click(object sender, RoutedEventArgs e)
+        {
+            if (!PlatformChecker.IsWindows()) { 
+
+                FileOpenPicker fileOpenPicker = new FileOpenPicker
+                {
+                    ViewMode = PickerViewMode.Thumbnail,
+                    SuggestedStartLocation = PickerLocationId.PicturesLibrary
+                };
+
+            fileOpenPicker.FileTypeFilter.Add(".png");
+            fileOpenPicker.FileTypeFilter.Add(".jpg");
+            fileOpenPicker.FileTypeFilter.Add(".jpeg");
+
+            StorageFile file = await fileOpenPicker.PickSingleFileAsync();
+
+            if (file != null)
+            {
+                using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                {
+                    // Create a BitmapImage from the stream
+                    BitmapImage bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream);
+
+                    // Display the selected image
+                    profileImage.Source = bitmap;
+                }
+            }
             }
             else
             {
-                // If there is no page to go back to, you can choose to exit the application
-                Windows.ApplicationModel.Core.CoreApplication.Exit();
+                return;
             }
         }
+
         private void Save_Clicked(object sender, RoutedEventArgs e)
         {
-            // Saves the new details .... no logic implemented yet
+            // Add logic to save the new details including the selected profile picture
 
             // Display a temporary message below the button
-            ShowTemporaryMessage("Data Saved!", 1000); // 1000 milliseconds (1 seconds)
-
+            ShowTemporaryMessage("Data Saved!", 1000); // 1000 milliseconds (1 second)
         }
+
         private void ShowTemporaryMessage(string message, int durationMilliseconds)
         {
             TextBlock messageTextBlock = new TextBlock();
@@ -104,6 +147,20 @@ namespace CMS
                 timer.Stop();
             };
             timer.Start();
+        }
+
+        private void SignOut_Clicked(object sender, RoutedEventArgs e)
+        {
+            // goes back to the previous page
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                // If there is no page to go back to, you can choose to exit the application
+                Windows.ApplicationModel.Core.CoreApplication.Exit();
+            }
         }
     }
 }
