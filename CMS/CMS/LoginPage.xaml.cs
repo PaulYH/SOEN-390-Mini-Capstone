@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
+using Windows.UI;
+using Windows.Networking.NetworkOperators;
 
 namespace CMS
 {
@@ -30,6 +32,7 @@ namespace CMS
 
             if (user == null)
             {
+                // Replace this with proper UI error message handling
                 System.Diagnostics.Debug.WriteLine("User not found");
                 return;
             }
@@ -39,10 +42,26 @@ namespace CMS
 
             if (result == PasswordVerificationResult.Failed)
             {
-                System.Diagnostics.Debug.WriteLine("Invalid password");
+                // Remove the previous error message if it exists
+                var existingErrorTextBlock = LoginStackPanel.Children.OfType<TextBlock>().FirstOrDefault(tb => tb.Name == "ErrorTextBlock");
+                if (existingErrorTextBlock != null)
+                {
+                    LoginStackPanel.Children.Remove(existingErrorTextBlock);
+                }
+
+                // Display error message
+                var errorTextBlock = new TextBlock
+                {
+                    Name = "ErrorTextBlock",
+                    Text = "Password incorrect",
+                    Foreground = new SolidColorBrush(Colors.Red),
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                LoginStackPanel.Children.Add(errorTextBlock);
                 return;
             }
 
+            //this.Frame.Navigate(typeof(ProfilePage));
         }
 
         private void Signup_Clicked(object sender, RoutedEventArgs e)

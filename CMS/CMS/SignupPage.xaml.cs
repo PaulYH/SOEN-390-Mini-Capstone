@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System;
 using CMS.UserSystem.Enums;
+using Windows.Networking.NetworkOperators;
 
 namespace CMS
 {
@@ -65,6 +66,8 @@ namespace CMS
             // Add the user to the database
             _context.PublicUsers.Add(user);
             await _context.SaveChangesAsync();
+
+            //this.Frame.Navigate(typeof(ProfilePage));
         }
 
         private void PasswordField_PasswordChanged(object sender, RoutedEventArgs e)
