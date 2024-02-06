@@ -11,5 +11,5 @@ public class Picture
     [Key]
     public Guid Id { get; set; }
     public ImageType ImageType { get; set; }
-    public byte[]? ImageData { get; set; } = null!;
+    public byte[]? ImageData { get; set; } = [];
 }
