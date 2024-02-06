@@ -13,7 +13,7 @@ namespace CMS
         {
             string email = EmailField.Text;
             string password = PasswordField.Password;
-
+            Frame.Navigate(typeof(Profilepage));
 
             // call backend service to perform the signup and pass these values to it
         }

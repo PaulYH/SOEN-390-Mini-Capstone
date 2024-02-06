@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CMS",
+    "\\CMS\\CMS.Shared"
   ],
+  "SelectedNode": "\\CMS\\CMS.sln",
   "PreviewInSolutionExplorer": false
 }

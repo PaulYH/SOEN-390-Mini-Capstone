@@ -7,10 +7,12 @@
   <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-    <Image Source="https://i.vgy.me/jvvcFQ.png" HorizontalAlignment="Center" Width="320" Height="200"/>
+    <Image Source="https://i.vgy.me/jvvcFQ.png" Margin="0,100" VerticalAlignment="Top"  HorizontalAlignment="Center" Width="320" Height="200"/>
     <TextBlock AutomationProperties.AutomationId="HelloTextBlock"
-          Text="Welcome to SoftCondo - Experience the Soft Touch of Efficient Condo Management"
-          HorizontalAlignment="Center" />
+           Text="Welcome to SoftCondo - Experience the Soft Touch of Efficient Condo Management"
+           HorizontalAlignment="Center"
+           Margin="0,-65,0,0" />
+
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
       <Button Name="btnSignup" Content="Sign Up" Click="BtnSignup_Click" Margin="0,0,10,0" />
       <Button Name="btnLogin" Content="Login" Click="BtnLogin_Click" />
