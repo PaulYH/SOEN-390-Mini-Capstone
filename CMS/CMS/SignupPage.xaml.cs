@@ -67,7 +67,7 @@ namespace CMS
             _context.PublicUsers.Add(user);
             await _context.SaveChangesAsync();
 
-            //this.Frame.Navigate(typeof(ProfilePage));
+            this.Frame.Navigate(typeof(Profilepage));
         }
 
         private void PasswordField_PasswordChanged(object sender, RoutedEventArgs e)

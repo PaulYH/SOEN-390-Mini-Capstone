@@ -61,7 +61,7 @@ namespace CMS
                 return;
             }
 
-            //this.Frame.Navigate(typeof(ProfilePage));
+            this.Frame.Navigate(typeof(Profilepage));
         }
 
         private void Signup_Clicked(object sender, RoutedEventArgs e)
