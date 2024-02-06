@@ -9,14 +9,7 @@
 
   <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-      <Button Click="Logo_Clicked" HorizontalAlignment="Center">
-        <Button.Template>
-          <ControlTemplate TargetType="Button">
-            <ContentPresenter/>
-          </ControlTemplate>
-        </Button.Template>
-        <Image Source="https://i.vgy.me/jvvcFQ.png" Width="160" Height="100" Margin="0,10"/>
-      </Button>
+      <Image Source="https://i.vgy.me/jvvcFQ.png" Width="160" Height="100" Margin="0,10" PointerPressed="Logo_Clicked"/>
       <TextBlock Text="Take Control of Your Condo with SoftCondo. Get Started Today!" VerticalAlignment="Center" FontSize="20" TextAlignment="Center" Margin="0,10" />
       <TextBlock Text="First Name" />
       <TextBox Name="FirstNameField" Margin="0,10" />
