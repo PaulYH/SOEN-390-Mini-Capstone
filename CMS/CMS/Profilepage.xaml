@@ -17,16 +17,14 @@
       <!-- Changeable Picture is here -->
       <Image x:Name="profileImage" Source="https://i.vgy.me/fFXe7g.png" Stretch="Uniform" Width="100" Height="100"  Margin="10"/>
       <Button Content="Select Profile Picture" HorizontalAlignment="Center"  Margin="0,20,0,5" Click="SelectProfilePicture_Click"/>
-      <TextBlock VerticalAlignment="Center" FontSize="20" TextAlignment="Center" Margin="0,10">
-      <Run Text="{Binding Name}" /><Run Text="'s User Profile"/>
-      </TextBlock>
+      <TextBlock Name="TitleField" VerticalAlignment="Center" FontSize="20" TextAlignment="Center" Margin="0,10"/>
       <StackPanel>
         <TextBlock Text="Account Details" FontSize="16" Margin="0,0,0,-5" TextDecorations="Underline" TextAlignment="Center"/>
       </StackPanel>
       <TextBlock Text="Name" Margin="0,10,0,0"/>
-      <TextBox Name="NameField" Text="{Binding Name}" IsReadOnly="True" IsHitTestVisible="False"/>
+      <TextBox Name="NameField" Text="" IsReadOnly="True" IsHitTestVisible="False"/>
       <TextBlock Text="Email" Margin="0,10,0,0"/>
-      <TextBox Name="EmailField" Text="{Binding Email}" IsReadOnly="True" IsHitTestVisible="False"/>
+      <TextBox Name="EmailField" Text="" IsReadOnly="True" IsHitTestVisible="False"/>
       <TextBlock Text="Phone Number" Margin="0,10,0,0"/>
       <TextBox Name="PhoneNumberField" Text="{Binding PhoneNumber}" GotFocus="PhoneNumberField_GotFocus" LostFocus="PhoneNumberField_LostFocus" Margin="0,10,0,0"/>
       <TextBlock Text="Rented Condo Key" Margin="0,10,0,0"/>
@@ -40,7 +38,7 @@
       <TextBlock>
       <Run Text="No condo owner key yet?" />
       <Hyperlink Click="Owner_Clicked" Foreground="Red">Request Owner Key.</Hyperlink>
-       </TextBlock>
+      </TextBlock>
       <!--Save Button -->
       <Button Name="SaveButton" Content="Save" Margin="0,20,0,5" Click="Save_Clicked" HorizontalAlignment="Center"/>
     </StackPanel>
