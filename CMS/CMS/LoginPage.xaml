@@ -8,8 +8,15 @@
     mc:Ignorable="d">
 
   <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-      <Image Source="https://i.vgy.me/jvvcFQ.png" Width="160" Height="100" Margin="0,10" PointerPressed="Logo_Clicked"/>
+    <StackPanel x:Name="LoginStackPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
+      <Button Click="Logo_Clicked" HorizontalAlignment="Center">
+        <Button.Template>
+          <ControlTemplate TargetType="Button">
+            <ContentPresenter/>
+          </ControlTemplate>
+        </Button.Template>
+        <Image Source="https://i.vgy.me/jvvcFQ.png" Width="160" Height="100" Margin="0,10"/>
+      </Button>
       <TextBlock Text="Login" VerticalAlignment="Center" FontSize="20" TextAlignment="Center" Margin="0,10" />
       <TextBlock Text="Email" Margin="0,10,0,0"/>
       <TextBox Name="EmailField" />

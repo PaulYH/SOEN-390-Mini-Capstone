@@ -16,6 +16,15 @@ using Windows.Data.Xml.Dom;
 namespace CMS.Data;
 public class CMSDbContext : IdentityDbContext<ApplicationUser>
 {
+    bool withOptions = false;
+    public CMSDbContext() : base() 
+    { 
+    
+    }
+    public CMSDbContext(DbContextOptions<CMSDbContext> options) : base(options)
+    {
+        withOptions = true;
+    }
     public DbSet<ApplicationUser> PublicUsers { get; set; }
     public DbSet<OwnerUser> CondoOwners { get; set; }
     public DbSet<RentalUser> CondoRentors { get; set; }
@@ -45,6 +54,9 @@ public class CMSDbContext : IdentityDbContext<ApplicationUser>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CMS;Trusted_Connection=True;MultipleActiveResultSets=true");
+        if (!optionsBuilder.IsConfigured && withOptions == false)
+        { 
+            optionsBuilder.UseSqlServer("Server=DESKTOP-ECI9F3G;Database=CMS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        }
     }
 }

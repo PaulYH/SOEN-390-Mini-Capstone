@@ -1,15 +1,27 @@
 using Microsoft.UI;
+using CMS.Data;
+using CMS.UserSystem.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System;
+using CMS.UserSystem.Enums;
+using Windows.Networking.NetworkOperators;
 
 namespace CMS
 {
     public sealed partial class SignupPage : Page
     {
+        private readonly CMSDbContext _context;
+        private readonly PasswordHasher<ApplicationUser> _passwordHasher;
+
         public SignupPage()
         {
             this.InitializeComponent();
+            _context = new CMSDbContext();
+            _passwordHasher = new PasswordHasher<ApplicationUser>();
         }
 
-        private void Signup_Clicked(object sender, RoutedEventArgs e)
+        private async void Signup_Clicked(object sender, RoutedEventArgs e)
         {
             string firstName = FirstNameField.Text;
             string lastName = LastNameField.Text;
@@ -17,23 +29,45 @@ namespace CMS
             string password = PasswordField.Password;
             string confirmPassword = ConfirmPasswordField.Password;
 
-            // Implement your validation and signup logic here
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) ||
                 string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
             {
-                // Replace this with proper UI error message handling
                 System.Diagnostics.Debug.WriteLine("All fields are required");
                 return;
             }
 
             if (password != confirmPassword)
             {
-                // Replace this with proper UI error message handling
                 System.Diagnostics.Debug.WriteLine("Password and Confirm Password do not match");
                 return;
             }
 
-            // call a backend service to perform the signup and pass these values to it
+            // Create a new ApplicationUser
+            var user = new ApplicationUser
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+            };
+
+            // Hash the password before storing it
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
+
+            // Create a default ProfilePicture for the new user
+            var profilePicture = new Picture
+            {
+                ImageType = ImageType.jpeg,
+                ImageData = null
+            };
+
+            // Set the ProfilePicture for the new user
+            user.ProfilePicture = profilePicture;
+
+            // Add the user to the database
+            _context.PublicUsers.Add(user);
+            await _context.SaveChangesAsync();
+
+            this.Frame.Navigate(typeof(Profilepage),user);
         }
 
         private void PasswordField_PasswordChanged(object sender, RoutedEventArgs e)
