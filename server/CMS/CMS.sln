@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMS.Api", "CMS.Api.csproj", "{CB0E841B-136D-4482-8E6B-BE71BC74C300}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMS.Tests", "..\XMS.Tests\CMS.Tests.csproj", "{D7BEBB58-7E82-4508-9B08-27B51991397E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMS.Tests", "..\CMS.Tests\CMS.Tests.csproj", "{D7BEBB58-7E82-4508-9B08-27B51991397E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
