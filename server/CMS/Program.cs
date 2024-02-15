@@ -1,5 +1,6 @@
 using CMS.Api.Data;
 using CMS.Api.UserSystem.Entities;
+using CMS.Api.UserSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -22,6 +23,8 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<CMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
 builder.Services.AddAuthorization();
 
