@@ -1,11 +1,11 @@
-﻿using CMS.Api.PropertySystem.Entities;
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CMS.Api.UserSystem.Entities
+namespace CMS.Api.PropertySystem.Entities
 {
-    public class PropertyUser : IdentityUser
+    public class Property
     {
+        [Key]
+        public Guid Id { get; set; }
         public string PropertyName { get; set; } = String.Empty;
         public string CompanyName { get; set; } = String.Empty;
         public string Address { get; set; } = String.Empty;

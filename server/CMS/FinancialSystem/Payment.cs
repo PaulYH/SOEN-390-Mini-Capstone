@@ -8,6 +8,6 @@ namespace CMS.Api.FinancialSystem
         [Key]
         public Guid Id { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;
-        public PublicUser User { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser User { get; set; } = null!; // TODO: add role verification
     }
 }

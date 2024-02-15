@@ -17,8 +17,8 @@ namespace CMS.Api.RequestSystem.Entities
         // Add StatusType
         // Add CategoryType
 
-        public PublicUser CreatedBy { get; set; } = null!; // TODO: add role verification
-        public PublicUser AssignedTo { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser CreatedBy { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser AssignedTo { get; set; } = null!; // TODO: add role verification
         public ICollection<TicketPost> TicketPosts { get; set; } = null!;
     }
 }

@@ -13,7 +13,7 @@ namespace CMS.Api.PropertySystem.Entities
         public int Size { get; set; } = -1;
         [Column(TypeName = "decimal(6, 2)")]
         public decimal FeePerSquareFoot { get; set; } = -1;
-        public PublicUser Owner { get; set; } = null!; // TODO: add role verification
-        public PublicUser Occupant { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser Owner { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser Occupant { get; set; } = null!; // TODO: add role verification
     }
 }

@@ -11,6 +11,6 @@ namespace CMS.Api.PropertySystem.Entities
         public int ExternalSpotId { get; set; } = -1;
         [Column(TypeName = "decimal(6, 2)")]
         public decimal SpotFee { get; set; } = -1;
-        public PublicUser Owner { get; set; } = null!; // TODO: add role verification
+        public ApplicationUser Owner { get; set; } = null!; // TODO: add role verification
     }
 }

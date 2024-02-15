@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Api.Data
 {
-    public class CMSDbContext : IdentityDbContext
+    public class CMSDbContext : IdentityDbContext<ApplicationUser>
     {
         public CMSDbContext(DbContextOptions<CMSDbContext> options) : base(options)
         {
             
         }
-        public DbSet<PublicUser> PublicUsers { get; set; }
-        public DbSet<PropertyUser> PropertyUsers { get; set; }
         public DbSet<ProfilePicture> ProfilePictures { get; set; }
+        public DbSet<Property> Properties { get; set; }
         public DbSet<CondoUnit> CondoUnits { get; set; }
         public DbSet<Locker> Lockers { get; set; }
         public DbSet<ParkingSpot> ParkingSpots { get; set; }
