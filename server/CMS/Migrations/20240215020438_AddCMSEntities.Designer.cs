@@ -4,6 +4,7 @@ using CMS.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMS.Api.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240215020438_AddCMSEntities")]
+    partial class AddCMSEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -54,12 +58,11 @@ namespace CMS.Api.Migrations
                         .HasColumnType("decimal(6, 2)");
 
                     b.Property<string>("OccupantId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PropertyUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("RegistrationKey")
@@ -73,8 +76,6 @@ namespace CMS.Api.Migrations
                     b.HasIndex("OccupantId");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("PropertyUserId");
 
                     b.ToTable("CondoUnits");
                 });
@@ -92,16 +93,12 @@ namespace CMS.Api.Migrations
                         .HasColumnType("decimal(6, 2)");
 
                     b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PropertyUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("PropertyUserId");
 
                     b.ToTable("Lockers");
                 });
@@ -116,9 +113,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PropertyUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("SpotFee")
@@ -127,8 +122,6 @@ namespace CMS.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("PropertyUserId");
 
                     b.ToTable("ParkingSpots");
                 });
@@ -146,15 +139,10 @@ namespace CMS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PropertyUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<Guid?>("ReservableRoomId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PropertyUserId");
 
                     b.HasIndex("ReservableRoomId");
 
@@ -171,6 +159,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ReservedById")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("StartTime")
@@ -190,9 +179,11 @@ namespace CMS.Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AssignedToId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedById")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreationDate")
@@ -231,6 +222,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -481,34 +473,12 @@ namespace CMS.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CMS.Api.UserSystem.Entities.PropertyUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PropertyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("PropertyUser");
-                });
-
             modelBuilder.Entity("CMS.Api.UserSystem.Entities.PublicUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.Property<string>("EmployerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
@@ -519,7 +489,7 @@ namespace CMS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProfilePictureId")
+                    b.Property<Guid>("ProfilePictureId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasIndex("EmployerId");
@@ -533,7 +503,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -542,15 +514,15 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "Occupant")
                         .WithMany("RentedCondoUnits")
-                        .HasForeignKey("OccupantId");
+                        .HasForeignKey("OccupantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "Owner")
                         .WithMany("OwnedCondoUnits")
-                        .HasForeignKey("OwnerId");
-
-                    b.HasOne("CMS.Api.UserSystem.Entities.PropertyUser", null)
-                        .WithMany("CondoUnits")
-                        .HasForeignKey("PropertyUserId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Occupant");
 
@@ -561,11 +533,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "Owner")
                         .WithMany("Lockers")
-                        .HasForeignKey("OwnerId");
-
-                    b.HasOne("CMS.Api.UserSystem.Entities.PropertyUser", null)
-                        .WithMany("Lockers")
-                        .HasForeignKey("PropertyUserId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
@@ -574,21 +544,15 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "Owner")
                         .WithMany("ParkingSpots")
-                        .HasForeignKey("OwnerId");
-
-                    b.HasOne("CMS.Api.UserSystem.Entities.PropertyUser", null)
-                        .WithMany("ParkingSpots")
-                        .HasForeignKey("PropertyUserId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.ReservableRoom", b =>
                 {
-                    b.HasOne("CMS.Api.UserSystem.Entities.PropertyUser", null)
-                        .WithMany("ReservableRooms")
-                        .HasForeignKey("PropertyUserId");
-
                     b.HasOne("CMS.Api.PropertySystem.Entities.ReservableRoom", null)
                         .WithMany("Reservations")
                         .HasForeignKey("ReservableRoomId");
@@ -598,7 +562,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "ReservedBy")
                         .WithMany()
-                        .HasForeignKey("ReservedById");
+                        .HasForeignKey("ReservedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ReservedBy");
                 });
@@ -607,11 +573,15 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "AssignedTo")
                         .WithMany()
-                        .HasForeignKey("AssignedToId");
+                        .HasForeignKey("AssignedToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("AssignedTo");
 
@@ -622,7 +592,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.RequestSystem.Entities.TicketPost", "ReplyTo")
                         .WithMany()
@@ -694,11 +666,15 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.PublicUser", "Employer")
                         .WithMany()
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.UserSystem.Entities.ProfilePicture", "ProfilePicture")
                         .WithMany()
-                        .HasForeignKey("ProfilePictureId");
+                        .HasForeignKey("ProfilePictureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Employer");
 
@@ -713,17 +689,6 @@ namespace CMS.Api.Migrations
             modelBuilder.Entity("CMS.Api.RequestSystem.Entities.RequestTicket", b =>
                 {
                     b.Navigation("TicketPosts");
-                });
-
-            modelBuilder.Entity("CMS.Api.UserSystem.Entities.PropertyUser", b =>
-                {
-                    b.Navigation("CondoUnits");
-
-                    b.Navigation("Lockers");
-
-                    b.Navigation("ParkingSpots");
-
-                    b.Navigation("ReservableRooms");
                 });
 
             modelBuilder.Entity("CMS.Api.UserSystem.Entities.PublicUser", b =>

@@ -1,5 +1,6 @@
 using CMS.Api.Data;
 using CMS.Api.UserSystem.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -24,8 +25,9 @@ builder.Services.AddDbContext<CMSDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<CMSDbContext>();
+
 
 var app = builder.Build();
 
@@ -36,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 
