@@ -25,8 +25,28 @@ namespace CMS.Api.UserSystem.Services
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-
             return user;
+        }
+
+        public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
+        {
+            var user = await _context.Users.FindAsync(updatedUser.Id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.PhoneNumber = updatedUser.PhoneNumber;
+            user.ParkingSpots = updatedUser.ParkingSpots;
+            user.Lockers = updatedUser.Lockers;
+            user.OwnedCondoUnits = updatedUser.OwnedCondoUnits;
+            user.RentedCondoUnits = updatedUser.RentedCondoUnits;
+
+            await _context.SaveChangesAsync();
+
+            return updatedUser;
         }
     }
 }

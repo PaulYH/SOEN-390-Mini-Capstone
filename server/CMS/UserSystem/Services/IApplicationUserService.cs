@@ -7,5 +7,6 @@ namespace CMS.Api.UserSystem.Services
     {
         Task<ActionResult<List<ApplicationUser>>> GetAllUsers();
         Task<ActionResult<ApplicationUser>> GetUserByEmail(string email);
+        Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser);
     }
 }
