@@ -12,6 +12,21 @@ const Signup = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        // Check if the user is authenticated and the token is not expired
+        const accessToken = localStorage.getItem('accessToken');
+        const expiresAt = localStorage.getItem('expiresAt');
+
+        if (accessToken && expiresAt) {
+            const isTokenValid = new Date(parseInt(expiresAt)) > new Date();
+
+            if (isTokenValid) {
+                // If authenticated and token is not expired, redirect to /profile
+                navigate('/profile');
+            }
+        }
+    }, [navigate]);
+
+    useEffect(() => {
         if (password && confirmPassword) {
             if (password !== confirmPassword) {
                 setError('Password and Confirm Password do not match');
@@ -62,8 +77,35 @@ const Signup = () => {
                 
                 return;
             }
-    
-            // If the signup was successful, navigate to the profile page
+
+            // If the signup was successful, perform login to obtain access token
+            const loginResponse = await fetch('http://localhost:5127/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            if (!loginResponse.ok) {
+                // Handle login error response
+                setError('Login failed');
+                return;
+            }
+
+            const tokenData = await loginResponse.json();
+
+            // Calculate expiresAt based on current time plus expiresIn duration
+            const expiresAt = new Date(Date.now() + tokenData.expiresIn * 1000); // Convert to milliseconds
+
+            // Store the authentication token and expiresAt in localStorage
+            localStorage.setItem('accessToken', tokenData.accessToken);
+            localStorage.setItem('expiresAt', expiresAt.getTime().toString());
+
+            // If the login was successful, navigate to the profile page
             navigate('/profile');
         } catch (error) {
             // Handle network error or other exceptions

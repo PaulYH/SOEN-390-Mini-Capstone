@@ -1,11 +1,13 @@
 ﻿using CMS.Api.Data;
 using CMS.Api.UserSystem.Entities;
+using CMS.Api.UserSystem.Enum;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace CMS.Api.UserSystem.Services
 {
@@ -79,6 +81,22 @@ namespace CMS.Api.UserSystem.Services
             }
 
             return result;
+        }
+
+        public async Task<ProfilePicture> UploadProfilePicture(byte[] imageData, ImageType imageType)
+        {
+            // Create a new ProfilePicture entity
+            var profilePicture = new ProfilePicture
+            {
+                ImageType = imageType,
+                ImageData = imageData
+            };
+
+            // Add the ProfilePicture entity to the database
+            _context.ProfilePictures.Add(profilePicture);
+            await _context.SaveChangesAsync();
+
+            return profilePicture;
         }
     }
 }

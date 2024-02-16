@@ -1,9 +1,10 @@
 ﻿using CMS.Api.UserSystem.Entities;
 using CMS.Api.UserSystem.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
+using CMS.Api.UserSystem.Enum;
 
 namespace CMS.Api.Controllers
 {
@@ -24,6 +25,67 @@ namespace CMS.Api.Controllers
             var users = await _userService.GetAllUsers();
             if (users.Value is null) return NotFound();
             return Ok(users);
+        }
+
+        [HttpGet("authenticated")]
+        [Authorize]
+        public async Task<ActionResult<ApplicationUser>> GetAuthenticatedUser()
+        {
+            // Get the user's email from the claims
+            var userEmail = User.Identity.Name;
+
+            // Call GET /api/users/{email} to get user data, including id
+            var user = await _userService.GetUserByEmail(userEmail);
+
+            if (user.Value is null)
+            {
+                // Handle the case where the user is not found
+                return NotFound($"User with email '{userEmail}' not found.");
+            }
+
+            return Ok(user);
+        }
+
+        [HttpPut("profile")]
+        [Authorize]
+        public async Task<ActionResult<ApplicationUser>> UpdateUserProfile([FromBody] UserProfileUpdateRequest userProfileUpdate)
+        {
+            var userEmail = User.Identity.Name;
+
+            // Step 1: Upload profile picture and create ProfilePicture entity
+            ProfilePicture profilePicture = null;
+
+            // Convert string to ImageType enum
+            if (userProfileUpdate.ImageData != null && Enum.TryParse<ImageType>(userProfileUpdate.ImageType, true, out ImageType parsedImageType))
+            {
+                // Create and add ProfilePicture entity to the database
+                profilePicture = await _userService.UploadProfilePicture(userProfileUpdate.ImageData, parsedImageType);
+            }
+            else
+            {
+                // If the string does not match any of the ImageType enum values
+                throw new ArgumentException("Invalid ImageType string.");
+            }
+
+            // Step 2: Update user's profile with new data
+            var updatedUser = new ApplicationUser
+            {
+                Email = userEmail,
+                PhoneNumber = userProfileUpdate.PhoneNumber,
+                // Add other properties to update
+            };
+
+            if (profilePicture != null)
+            {
+                // Associate the new profile picture with the user
+                updatedUser.ProfilePicture = profilePicture;
+            }
+
+            var updatedUserResult = await _userService.UpdateUser(updatedUser);
+
+            if (updatedUserResult is null) return BadRequest("Failed to update user profile.");
+
+            return Ok(updatedUserResult);
         }
 
         [HttpGet("{email}")]
@@ -104,5 +166,12 @@ namespace CMS.Api.Controllers
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+
+    public class UserProfileUpdateRequest
+    {
+        public byte[] ImageData { get; set; }
+        public string ImageType { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

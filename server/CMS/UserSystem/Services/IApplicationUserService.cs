@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CMS.Api.UserSystem.Enum;
 
 namespace CMS.Api.UserSystem.Services
 {
@@ -13,5 +14,6 @@ namespace CMS.Api.UserSystem.Services
         Task<ActionResult<ApplicationUser>> GetUserByEmail(string email);
         Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser);
         Task<IdentityResult> RegisterUser(RegisterRequest registerRequest);
+        Task<ProfilePicture> UploadProfilePicture(byte[] imageData, ImageType imageType);
     }
 }
