@@ -55,8 +55,20 @@ namespace CMS.Api.Controllers
                 Email = signUpRequest.Email,
                 Password = signUpRequest.Password
             };
+
             var registrationResult = await _userService.RegisterUser(registerRequest);
-            if (!registrationResult.Succeeded) return BadRequest("Failed to register user.");
+
+            if (!registrationResult.Succeeded)
+            {
+                var errorDetails = registrationResult.Errors.Select(error => new
+                {
+                    Code = error.Code,
+                    Description = error.Description
+                });
+
+                // Return detailed error information
+                return BadRequest(new { Errors = errorDetails });
+            }
 
             // Step 2: Call GET /api/users/{email} to get user data, including id
             var userEmail = signUpRequest.Email;
@@ -69,7 +81,6 @@ namespace CMS.Api.Controllers
                 Id = user.Value.Id,
                 FirstName = signUpRequest.FirstName,
                 LastName = signUpRequest.LastName,
-                // Add any other properties you need to update
             };
             var updatedUserResult = await _userService.UpdateUser(updatedUser);
             if (updatedUserResult is null) return BadRequest("Failed to update user details.");

@@ -61,9 +61,23 @@ namespace CMS.Api.UserSystem.Services
             {
                 UserName = registerRequest.Email,
                 Email = registerRequest.Email,
+                // Set other properties as needed
             };
 
             var result = await _userManager.CreateAsync(user, registerRequest.Password);
+
+            if (!result.Succeeded)
+            {
+                // Convert errors to IdentityError objects
+                var errors = result.Errors.Select(error => new IdentityError
+                {
+                    Code = error.Code,
+                    Description = error.Description
+                });
+
+                return IdentityResult.Failed(errors.ToArray());
+            }
+
             return result;
         }
     }

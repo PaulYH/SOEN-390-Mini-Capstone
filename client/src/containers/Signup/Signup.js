@@ -34,11 +34,43 @@ const Signup = () => {
             return;
         }
     
-        // API call to backend
+        try {
+            // Make API call to backend
+            const response = await fetch('http://localhost:5127/api/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                }),
+            });
     
-        // If the signup was successful, navigate to the profile page
-        navigate('/profile');
+            if (!response.ok) {
+                // Handle error response
+                const data = await response.json();
+                
+                // Display detailed error messages
+                if (data && data.errors) {
+                    setError(data.errors.map(error => error.description).join('\n'));
+                } else {
+                    setError(data.message || 'Signup failed');
+                }
+                
+                return;
+            }
+    
+            // If the signup was successful, navigate to the profile page
+            navigate('/profile');
+        } catch (error) {
+            // Handle network error or other exceptions
+            setError('An error occurred while processing your request');
+        }
     }
+    
 
     return (
         <div className="signup">
