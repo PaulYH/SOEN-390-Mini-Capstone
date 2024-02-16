@@ -1,18 +1,24 @@
 ﻿using CMS.Api.Data;
 using CMS.Api.UserSystem.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CMS.Api.UserSystem.Services
 {
     public class ApplicationUserService : IApplicationUserService
     {
         private readonly CMSDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly PasswordHasher<ApplicationUser> _passwordHasher;
-        public ApplicationUserService(CMSDbContext context)
+
+        public ApplicationUserService(CMSDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
             _passwordHasher = new PasswordHasher<ApplicationUser>();
         }
 
@@ -47,6 +53,18 @@ namespace CMS.Api.UserSystem.Services
             await _context.SaveChangesAsync();
 
             return updatedUser;
+        }
+
+        public async Task<IdentityResult> RegisterUser(RegisterRequest registerRequest)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = registerRequest.Email,
+                Email = registerRequest.Email,
+            };
+
+            var result = await _userManager.CreateAsync(user, registerRequest.Password);
+            return result;
         }
     }
 }
