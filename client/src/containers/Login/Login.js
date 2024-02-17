@@ -36,14 +36,14 @@ const Login = () => {
                     password,
                 }),
             });
-    
+
             if (!loginResponse.ok) {
                 // Handle login error response
                 const errorData = await loginResponse.json();
                 setError(errorData.message || 'Login failed');
                 return;
             }
-    
+
             const tokenData = await loginResponse.json();
     
             // Calculate expiresAt based on current time plus expiresIn duration
@@ -59,16 +59,22 @@ const Login = () => {
             // Handle network error or other exceptions
             setError('An error occurred while processing your request');
         }
-    }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleLogin();
+        }
+    };
 
     return (
         <div className="login">
             <img src={require('../../assets/logo.png')} alt="logo" className="logo" onClick={() => navigate('/')} />
             <h1>Login</h1>
             <label>Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyPress={handleKeyPress} />
             <label>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyPress={handleKeyPress} />
             {error && <p className="error">{error}</p>}
             <button onClick={handleLogin}>Login</button>
             <p>Don't have an account? <span className="link" onClick={() => navigate('/signup')}>Sign Up</span></p>

@@ -77,6 +77,9 @@ const Profile = () => {
                 setImageData(base64String);
                 setImageType(file.type.split('/')[1]);
                 setIsProfilePicUpdated(true);
+    
+                // Set the profileImageUrl state to the reader result to update the image locally
+                setProfileImageUrl(reader.result);
             };
             reader.readAsDataURL(file);
         }
