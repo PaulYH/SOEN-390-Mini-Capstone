@@ -11,6 +11,9 @@ const Profile = () => {
     const [isProfilePicUpdated, setIsProfilePicUpdated] = useState(false);
     const [profileImageUrl, setProfileImageUrl] = useState('');
     const fileInputRef = useRef(null);
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
+
 
     useEffect(() => {
         // Check if the user is authenticated
@@ -104,12 +107,17 @@ const Profile = () => {
                 throw new Error('Failed to update profile');
             }
     
-            alert('Profile updated successfully!');
+            setMessage('Profile updated successfully!');
+            setMessageType('success');
+            setTimeout(() => setMessage(''), 3000); // Hide message after 3 seconds
         } catch (error) {
             console.error(error);
-            alert('Failed to update profile');
+            setMessage('Failed to update profile');
+            setMessageType('error');
+            setTimeout(() => setMessage(''), 3000); // Hide message after 3 seconds
         }
     };
+    
 
     const handleProfilePictureClick = () => {
         fileInputRef.current.click();
@@ -143,6 +151,9 @@ const Profile = () => {
                     <input type="text" value={user.ownedCondoKey} readOnly />
                     <p>No condo owner key yet? <span className="link" onClick={() => navigate('/request-owner-key')}>Request Owner Key.</span></p>
                     <button onClick={handleSave}>Save</button>
+                    {message && (
+                        <div className={`message ${messageType}`}>{message}</div>
+                    )}
                 </>
             )}
         </div>

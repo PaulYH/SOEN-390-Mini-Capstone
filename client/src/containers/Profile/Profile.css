@@ -50,3 +50,25 @@ input {
     color: blue;
     cursor: pointer;
 }
+
+.message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+.success {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.error {
+    background-color: #f44336; /* Red */
+    color: white;
+}
