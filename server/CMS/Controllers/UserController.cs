@@ -34,16 +34,16 @@ namespace CMS.Api.Controllers
             // Get the user's email from the claims
             var userEmail = User.Identity.Name;
 
-            // Call GET /api/users/{email} to get user data, including id
-            var user = await _userService.GetUserByEmail(userEmail);
+            // Modify this call to include the ProfilePicture in the fetched user data
+            var userResult = await _userService.GetUserByEmailIncludingProfilePicture(userEmail);
 
-            if (user.Value is null)
+            if (userResult.Value is null)
             {
                 // Handle the case where the user is not found
                 return NotFound($"User with email '{userEmail}' not found.");
             }
 
-            return Ok(user);
+            return Ok(userResult);
         }
 
         [HttpPut("profile")]
@@ -51,42 +51,56 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<ApplicationUser>> UpdateUserProfile([FromBody] UserProfileUpdateRequest userProfileUpdate)
         {
             var userEmail = User.Identity.Name;
-
-            // Step 1: Upload profile picture and create ProfilePicture entity
             ProfilePicture profilePicture = null;
 
-            // Convert string to ImageType enum
-            if (userProfileUpdate.ImageData != null && Enum.TryParse<ImageType>(userProfileUpdate.ImageType, true, out ImageType parsedImageType))
+            try
             {
-                // Create and add ProfilePicture entity to the database
-                profilePicture = await _userService.UploadProfilePicture(userProfileUpdate.ImageData, parsedImageType);
+                // Step 1: Decode Base64 string to byte[] if image data is provided
+                if (!string.IsNullOrEmpty(userProfileUpdate.ImageData))
+                {
+                    byte[] imageBytes = Convert.FromBase64String(userProfileUpdate.ImageData);
+
+                    if (Enum.TryParse<ImageType>(userProfileUpdate.ImageType, true, out ImageType parsedImageType))
+                    {
+                        // Create and add ProfilePicture entity to the database
+                        profilePicture = await _userService.UploadProfilePicture(imageBytes, parsedImageType);
+                    }
+                    else
+                    {
+                        // If the string does not match any of the ImageType enum values
+                        return BadRequest("Invalid image type.");
+                    }
+                }
+
+                // Step 2: Update user's profile with new data
+
+                var updateResult = await _userService.UpdateUserProfile(userEmail, userProfileUpdate.PhoneNumber, profilePicture);
+
+                if (!updateResult.Succeeded)
+                {
+                    return BadRequest(updateResult.Errors); // Ensure UpdateUserProfile returns a result object with success status and potential error messages
+                }
+
+                return Ok(updateResult.User);
             }
-            else
+            catch (FormatException)
             {
-                // If the string does not match any of the ImageType enum values
-                throw new ArgumentException("Invalid ImageType string.");
+                return BadRequest("Invalid image data format.");
             }
-
-            // Step 2: Update user's profile with new data
-            var updatedUser = new ApplicationUser
+            catch (ArgumentException ex)
             {
-                Email = userEmail,
-                PhoneNumber = userProfileUpdate.PhoneNumber,
-                // Add other properties to update
-            };
-
-            if (profilePicture != null)
-            {
-                // Associate the new profile picture with the user
-                updatedUser.ProfilePicture = profilePicture;
+                return BadRequest(ex.Message);
             }
+            catch (Exception ex)
+            {
+                // Log the exception details for debugging purposes
+                // Consider using a logger to log the exception details
+                Console.WriteLine(ex); // Placeholder for actual logging
 
-            var updatedUserResult = await _userService.UpdateUser(updatedUser);
-
-            if (updatedUserResult is null) return BadRequest("Failed to update user profile.");
-
-            return Ok(updatedUserResult);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
+
 
         [HttpGet("{email}")]
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
@@ -170,8 +184,8 @@ namespace CMS.Api.Controllers
 
     public class UserProfileUpdateRequest
     {
-        public byte[] ImageData { get; set; }
-        public string ImageType { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? ImageData { get; set; }
+        public string? ImageType { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }

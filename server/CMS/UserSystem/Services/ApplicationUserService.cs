@@ -98,5 +98,64 @@ namespace CMS.Api.UserSystem.Services
 
             return profilePicture;
         }
+
+        public async Task<(bool Succeeded, IEnumerable<string> Errors, ApplicationUser User)> UpdateUserProfile(string email, string phoneNumber, ProfilePicture profilePicture)
+        {
+            try
+            {
+                var user = await _context.Users
+                                          .Include(u => u.ProfilePicture)
+                                          .FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user == null)
+                {
+                    return (false, new[] { "User not found." }, null);
+                }
+
+                // Update phone number if provided
+                if (!string.IsNullOrEmpty(phoneNumber))
+                {
+                    user.PhoneNumber = phoneNumber;
+                }
+
+                // Handle profile picture update
+                if (profilePicture != null)
+                {
+                    if (user.ProfilePicture != null)
+                    {
+                        // If user already has a profile picture, update it
+                        user.ProfilePicture.ImageData = profilePicture.ImageData;
+                        user.ProfilePicture.ImageType = profilePicture.ImageType;
+                    }
+                    else
+                    {
+                        // If no existing profile picture, add a new one
+                        user.ProfilePicture = new ProfilePicture
+                        {
+                            ImageData = profilePicture.ImageData,
+                            ImageType = profilePicture.ImageType
+                        };
+                        _context.ProfilePictures.Add(user.ProfilePicture);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return (true, Array.Empty<string>(), user);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception as needed
+                return (false, new[] { $"An error occurred: {ex.Message}" }, null);
+            }
+        }
+
+        public async Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email)
+        {
+            var user = await _context.Users
+                                     .Include(u => u.ProfilePicture)
+                                     .FirstOrDefaultAsync(x => x.Email == email);
+            return user;
+        }
+
     }
 }

@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 const Profile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState('(optional)');
-    const [profilePicture, setProfilePicture] = useState(null);
+    const [phoneNumber, setPhoneNumber] = useState(null);
+    const [imageData, setImageData] = useState(null);
+    const [imageType, setImageType] = useState('');
+    const [isProfilePicUpdated, setIsProfilePicUpdated] = useState(false);
+    const [profileImageUrl, setProfileImageUrl] = useState('');
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         // Check if the user is authenticated
@@ -22,27 +26,6 @@ const Profile = () => {
         }
     }, [navigate]);
 
-    const handleSignOut = () => {
-        // Clear authentication data from localStorage
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('expiresAt');
-
-        // Redirect to /login
-        navigate('/login');
-    }
-
-    const handlePhoneNumberFocus = () => {
-        if (phoneNumber === '(optional)') {
-            setPhoneNumber('');
-        }
-    }
-
-    const handlePhoneNumberBlur = () => {
-        if (phoneNumber.trim() === '') {
-            setPhoneNumber('(optional)');
-        }
-    }
-
     const fetchAuthenticatedUser = async () => {
         try {
             const response = await fetch('http://localhost:5127/api/users/authenticated', {
@@ -52,76 +35,99 @@ const Profile = () => {
             });
     
             if (!response.ok) {
-                // Handle error response
                 throw new Error('Failed to fetch user data');
             }
     
             const responseData = await response.json();
-            const userData = responseData.value; // Access the user data from the 'value' property
+            const userData = responseData.value;
             setUser(userData);
-            setPhoneNumber(userData?.phoneNumber || '(optional)'); // Assuming phoneNumber is part of the user data
+            setPhoneNumber(userData?.phoneNumber || ' ');
+
+            // Construct the profile image URL if imageData is available
+            if (userData?.profilePicture?.imageData) {
+                const imageType = userData.profilePicture.imageType === 1 ? 'png' : 'jpeg';
+                const imageUrl = `data:image/${imageType};base64,${userData.profilePicture.imageData}`;
+                setProfileImageUrl(imageUrl);
+            }
         } catch (error) {
-            // Handle network error or other exceptions
             console.error(error);
-            // You may want to redirect to /login in case of an error
         }
+    };
+
+    const handleSignOut = () => {
+        // Clear authentication data from localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('expiresAt');
+
+        // Redirect to /login
+        navigate('/login');
     }
-    
 
     const handleProfilePictureChange = (event) => {
         const file = event.target.files[0];
-        convertImageToByteArray(file, (byteArray) => setProfilePicture(byteArray));
-    }
-
-    const convertImageToByteArray = (file, callback) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const arrayBuffer = e.target.result;
-            const byteArray = new Uint8Array(arrayBuffer);
-            callback(byteArray);
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    const handleSave = async () => {
-        try {
-            const data = {
-                imageData: profilePicture,
-                imageType: 'jpg', // You may get this dynamically from the user
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result
+                    .replace('data:', '')
+                    .replace(/^.+,/, '');
+                setImageData(base64String);
+                setImageType(file.type.split('/')[1]);
+                setIsProfilePicUpdated(true);
             };
+            reader.readAsDataURL(file);
+        }
+    };
 
-            if (phoneNumber !== '(optional)') {
-                data.phoneNumber = phoneNumber;
-            }
-
+    const handlePhoneNumberChange = (event) => {
+        setPhoneNumber(event.target.value);
+    };
+    
+    const handleSave = async () => {
+        const requestBody = {
+            imageData: isProfilePicUpdated ? imageData : undefined,
+            imageType: isProfilePicUpdated ? imageType : undefined,
+            phoneNumber: phoneNumber !== user.phoneNumber ? phoneNumber : undefined,
+        };
+    
+        try {
             const response = await fetch('http://localhost:5127/api/users/profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(requestBody),
             });
-
+    
             if (!response.ok) {
-                // Handle error response
-                throw new Error('Failed to save profile');
+                throw new Error('Failed to update profile');
             }
-
-            // Handle success, maybe show a success message or redirect
+    
+            alert('Profile updated successfully!');
         } catch (error) {
-            // Handle network error or other exceptions
             console.error(error);
+            alert('Failed to update profile');
         }
-    }
+    };
+
+    const handleProfilePictureClick = () => {
+        fileInputRef.current.click();
+    };
 
     return (
         <div className="profile">
             <button onClick={handleSignOut}>Sign Out</button>
             {user && (
                 <>
-                    <img src={require('../../assets/profile_default.png')} alt="profile" className="profileImage" />
-                    <input type="file" accept="image/*" onChange={handleProfilePictureChange} />
+                    <img src={profileImageUrl || require('../../assets/profile_default.png')} alt="profile" className="profileImage" onClick={handleProfilePictureClick} />
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleProfilePictureChange} 
+                        style={{ display: 'none' }}
+                        ref={fileInputRef}
+                    />
                     <h1>{`${user.firstName} ${user.lastName}'s User Profile`}</h1>
                     <h2>Account Details</h2>
                     <label>Name</label>
@@ -129,7 +135,7 @@ const Profile = () => {
                     <label>Email</label>
                     <input type="email" value={user.email} readOnly />
                     <label>Phone Number</label>
-                    <input type="tel" value={phoneNumber} onFocus={handlePhoneNumberFocus} onBlur={handlePhoneNumberBlur} />
+                    <input type="tel" value={phoneNumber} onChange={handlePhoneNumberChange} />
                     <label>Rented Condo Key</label>
                     <input type="text" value={user.rentedCondoKey} readOnly />
                     <p>No rental key yet? <span className="link" onClick={() => navigate('/request-rental-key')}>Request Rental Key.</span></p>
