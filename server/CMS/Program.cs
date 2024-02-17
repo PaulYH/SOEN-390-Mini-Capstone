@@ -9,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "CORSPolicy",
+        builder =>
+        {
+            builder.WithOrigins("*")
+            .WithMethods("POST", "DELETE", "GET", "PUT")
+            .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -33,6 +44,8 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
 
 
 var app = builder.Build();
+
+app.UseCors("CORSPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
