@@ -1,0 +1,74 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    width: 250px;
+    margin: auto;
+}
+
+button {
+    align-self: flex-end;
+    margin: 10px;
+}
+
+.profileImage {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    text-decoration: underline;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    outline: none;
+}
+
+.link {
+    color: blue;
+    cursor: pointer;
+}
+
+.message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+.success {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.error {
+    background-color: #f44336; /* Red */
+    color: white;
+}

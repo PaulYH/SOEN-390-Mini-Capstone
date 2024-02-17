@@ -1,0 +1,62 @@
+body {
+  background-color: #1C1B1F;
+  color: #E5E1E6;
+}
+
+.container {
+  background-color: #302D37;
+  color: #E6E1E5;
+}
+
+.container-variant {
+  background-color: #47464F;
+  color: #C9C5D0;
+}
+
+.primary {
+  background-color: #C7BFFF;
+  color: #2A009F;
+}
+
+.primary-container {
+  background-color: #4129BA;
+  color: #E4DFFF;
+}
+
+.secondary {
+  background-color: #CDC2DC;
+  color: #332D41;
+}
+
+.secondary-container {
+  background-color: #433C52;
+  color: #EDDFFF;
+}
+
+.tertiary {
+  background-color: #9FCAFF;
+  color: #003258;
+}
+
+.tertiary-container {
+  background-color: #00497D;
+  color: #D1E4FF;
+}
+
+.error {
+  background-color: #FFB4AB;
+  color: #690005;
+}
+
+.error-container {
+  background-color: #93000A;
+  color: #FFDAD6;
+}
+
+.outline {
+  outline-color: #928F99;
+}
+
+.outline-variant {
+  outline-color: #57545D;
+}
