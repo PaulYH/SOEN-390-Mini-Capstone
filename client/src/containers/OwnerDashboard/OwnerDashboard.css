@@ -1,0 +1,40 @@
+.dashboard {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    background-color: #ccc;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .financial-overview {
+    background-color: #e0e0e0;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .payment-status {
+    background-color: #d0d0d0;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #008cba;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #005f73;
+  }
+  
