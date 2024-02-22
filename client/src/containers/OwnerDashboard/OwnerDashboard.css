@@ -1,24 +1,34 @@
 .dashboard {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    text-align: center;
     padding: 20px;
   }
   
+  .logo {
+    width: 160px;
+    height: 100px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+
+
   .dashboard-header {
-    background-color: #ccc;
+   
     padding: 10px;
     border-radius: 5px;
   }
   
+
   .financial-overview {
-    background-color: #e0e0e0;
+    
     margin-top: 20px;
     padding: 10px;
     border-radius: 5px;
   }
   
+
   .payment-status {
-    background-color: #d0d0d0;
+    
     margin-top: 20px;
     padding: 10px;
     border-radius: 5px;

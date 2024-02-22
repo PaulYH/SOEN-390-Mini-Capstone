@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './OwnerDashboard.css'; 
 
 
@@ -25,6 +25,7 @@ const userData = {
   
     return (
       <div className="dashboard">
+         <img src={require('../../assets/logo.png')} alt="logo" className="logo" />
         <header className="dashboard-header">
           <h1>{userData.userName}</h1>
           <div>{userData.companyName}</div>
