@@ -11,7 +11,7 @@ using CMS.Api.PropertySystem.Entities;
 
 namespace CMS.Api.Controllers
 {
-    [Route("api/users")]
+    [Route("api/condounits")]
     [ApiController]
     public class CondoUnitControlller : ControllerBase
     {
