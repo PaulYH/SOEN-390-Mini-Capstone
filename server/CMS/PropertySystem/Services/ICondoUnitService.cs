@@ -13,7 +13,7 @@ namespace CMS.Api.PropertySystem.Services
     {
         Task<ActionResult<List<CondoUnit>>> GetCondoUnitsByEmail(string email);
         Task<ActionResult<CondoUnit>> CreateCondoUnit(CondoUnit condoUnit);
-        Task<bool> DeleteCondoUnit(int id);
+        Task<bool> DeleteCondoUnit(Guid id);
 
     }
 }

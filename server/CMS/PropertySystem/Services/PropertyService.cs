@@ -14,7 +14,7 @@ namespace CMS.Api.PropertySystem.Services
     {
         private readonly CMSDbContext _context;
 
-        public PropertyService( CMSDbContext context)
+        public PropertyService(CMSDbContext context)
         {
             _context = context;
         }
@@ -39,9 +39,31 @@ namespace CMS.Api.PropertySystem.Services
             await _context.SaveChangesAsync();
             return property;
         }
+        public async Task<ActionResult<Property>> UpdateProperty(Property updatedProperty)
+        {
+            var property = await _context.Properties.FindAsync(updatedProperty.Id);
+            if (property == null) { return null; }
+            property.PropertyName = updatedProperty.PropertyName;
+            property.CompanyName = updatedProperty.CompanyName;
+            property.City = updatedProperty.City;
+            property.Address = updatedProperty.Address;
+
+            await _context.SaveChangesAsync();
+            return property;
+        }
 
 
-
+        public async Task<ActionResult<bool>> DeleteProperty(Guid id)
+        {
+            var property = await _context.Properties.FindAsync(id);
+            if (property == null) { return false; }
+            else
+            {
+                _context.Remove(property);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 }
 

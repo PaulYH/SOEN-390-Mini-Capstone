@@ -33,7 +33,7 @@ namespace CMS.Api.PropertySystem.Services
             
         }
 
-        public async Task<bool> DeleteCondoUnit(int id)
+        public async Task<bool> DeleteCondoUnit(Guid id)
         {
             var condoUnit = await _context.CondoUnits.FindAsync(id);
 

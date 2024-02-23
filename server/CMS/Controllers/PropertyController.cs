@@ -21,7 +21,6 @@ namespace CMS.Api.Controllers
             _propertyService = propertyService;
         }
 
-
         [HttpGet]
         public async Task<ActionResult<List<Property>>> GetAllProperties()
         {
@@ -37,10 +36,8 @@ namespace CMS.Api.Controllers
             return Ok(property);
         }
 
-
-
         [HttpPost]
-        public async Task<ActionResult<Property>> CreateProperty(CreatePropertyRequest request)
+        public async Task<ActionResult<Property>> CreateProperty(Property request)
         {
             Property property = new Property();
             property.PropertyName = request.PropertyName;
@@ -48,16 +45,20 @@ namespace CMS.Api.Controllers
             property.Address = request.Address;
             property.City = request.City;
             return await _propertyService.CreateProperty(property);
-
         }
 
-
-        public class CreatePropertyRequest
+        [HttpPut]
+        public async Task<ActionResult<Property>> UpdateProperty(Property updatedProperty)
         {
-            public string PropertyName { get; set; } = String.Empty;
-            public string CompanyName { get; set; } = String.Empty;
-            public string Address { get; set; } = String.Empty;
-            public string City { get; set; } = String.Empty;
+            var property = await _propertyService.UpdateProperty(updatedProperty);
+            if (property is null) return NotFound();
+            return Ok(property);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<bool>> DeleteProperty(Guid id)
+        {
+            return Ok(await _propertyService.DeleteProperty(id));
         }
     }
 }

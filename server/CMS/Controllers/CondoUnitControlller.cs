@@ -50,7 +50,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpDelete]
-        public async Task<bool> DeleteCondoUnit(int id)
+        public async Task<bool> DeleteCondoUnit(Guid id)
         {
             return await _condoUnitService.DeleteCondoUnit(id);
         }
