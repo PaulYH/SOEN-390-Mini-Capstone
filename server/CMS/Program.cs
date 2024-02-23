@@ -1,5 +1,7 @@
 using CMS.Api.Data;
+using CMS.Api.PropertySystem.Services;
 using CMS.Api.UserSystem.Entities;
+using CMS.Api.PropertySystem.Entities;
 using CMS.Api.UserSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +38,7 @@ builder.Services.AddDbContext<CMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddScoped<IPropertyService, PropertyService>();
 
 builder.Services.AddAuthorization();
 
