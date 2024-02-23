@@ -8,6 +8,7 @@ namespace CMS.Api.PropertySystem.Services
     {
         Task<ActionResult<List<Property>>> GetAllProperties();
         Task<ActionResult<Property>> GetPropertyById(Guid id);
+        Task<ActionResult<Property>> CreateProperty(Property property);
 
     }
 }

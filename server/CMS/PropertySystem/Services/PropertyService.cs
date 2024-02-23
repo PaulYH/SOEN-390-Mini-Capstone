@@ -5,6 +5,7 @@ using CMS.Api.UserSystem.Enum;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 
 namespace CMS.Api.PropertySystem.Services
@@ -31,6 +32,16 @@ namespace CMS.Api.PropertySystem.Services
                 .FirstOrDefaultAsync(p => p.Id == id);
             return property;
         }
+
+        public async Task<ActionResult<Property>> CreateProperty(Property property)
+        {
+            _context.Properties.Add(property);
+            await _context.SaveChangesAsync();
+            return property;
+        }
+
+
+
     }
 }
 

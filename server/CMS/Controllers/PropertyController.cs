@@ -37,5 +37,27 @@ namespace CMS.Api.Controllers
             return Ok(property);
         }
 
+
+
+        [HttpPost]
+        public async Task<ActionResult<Property>> CreateProperty(CreatePropertyRequest request)
+        {
+            Property property = new Property();
+            property.PropertyName = request.PropertyName;
+            property.CompanyName = request.CompanyName;
+            property.Address = request.Address;
+            property.City = request.City;
+            return await _propertyService.CreateProperty(property);
+
+        }
+
+
+        public class CreatePropertyRequest
+        {
+            public string PropertyName { get; set; } = String.Empty;
+            public string CompanyName { get; set; } = String.Empty;
+            public string Address { get; set; } = String.Empty;
+            public string City { get; set; } = String.Empty;
+        }
     }
 }
