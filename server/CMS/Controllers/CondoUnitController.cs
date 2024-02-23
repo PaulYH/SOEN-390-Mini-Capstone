@@ -13,13 +13,14 @@ namespace CMS.Api.Controllers
 {
     [Route("api/condounits")]
     [ApiController]
-    public class CondoUnitControlller : ControllerBase
+    public class CondoUnitController : ControllerBase
     {
         private readonly ICondoUnitService _condoUnitService;
         private readonly IApplicationUserService _applicationUserService;
-        public CondoUnitControlller(ICondoUnitService condoUnitService) 
+        public CondoUnitController(ICondoUnitService condoUnitService, IApplicationUserService userService) 
         {
             _condoUnitService = condoUnitService;
+            _applicationUserService = userService;
         }
 
         [HttpGet("{email}")]
@@ -45,8 +46,8 @@ namespace CMS.Api.Controllers
             condoUnit.Occupant = occupant.Value;
 
 
-
-            return await _condoUnitService.CreateCondoUnit(condoUnit);
+            var result = await _condoUnitService.CreateCondoUnit(condoUnit);
+            return Ok(result);
         }
 
         [HttpDelete]
