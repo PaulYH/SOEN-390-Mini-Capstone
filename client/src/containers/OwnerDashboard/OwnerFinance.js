@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './OwnerDashboard.css'; 
+import './OwnerFinance.css';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 
 // Mock data
@@ -13,7 +15,7 @@ const userData = {
     lastPaymentDate: 'January 1st, 2024',
   };
   
-  const Dashboard = () => {
+  const OwnerFinanceDashboard = () => {
     // State for invoice download (mock implementation)
     const [invoiceDownloaded, setInvoiceDownloaded] = useState(false);
   
@@ -44,9 +46,22 @@ const userData = {
             {invoiceDownloaded ? 'Invoice Downloaded' : 'Download invoices'}
           </button>
         </section>
-        {/* Reminder and pagination components would go here */}
-      </div>
-    );
-  };
-  
-  export default Dashboard;
+        <nav aria-label="Page navigation example">
+        <ul className="pagination justify-content-center">
+          <li className="page-item">
+            <Link className="page-link" to="/ownerFinance">1</Link>
+          </li>
+          <li className="page-item">
+            <Link className="page-link" to="/submittedRequests">2</Link>
+          </li>
+          <li className="page-item">
+            <Link className="page-link" to="/amenities">3</Link>
+          </li>
+          {/* Add next and previous logic as needed */}
+        </ul>
+      </nav>
+    </div>
+  );
+};
+
+export default OwnerFinanceDashboard;
