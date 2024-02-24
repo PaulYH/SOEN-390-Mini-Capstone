@@ -167,7 +167,9 @@ namespace CMS.Api.UserSystem.Services
         public async Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email)
         {
             var user = await _context.Users
+                ///////////////REMEMBER TO INCLUDE YOUR STUFF
                                      .Include(u => u.ProfilePicture)
+                                     .Include(u => u.Property)
                                      .FirstOrDefaultAsync(x => x.Email == email);
             return user;
         }
