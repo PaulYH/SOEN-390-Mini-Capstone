@@ -16,6 +16,10 @@ const PropertiesProfile = () => {
     const NavigateParkingLocker = () => {
         navigate('/parkinglocker');
     };
+
+    const NavigateCondoUnitManagement = () => {
+        navigate('/condounitmanagement');
+    };
     
     const addPropertyToUser = async (propertyId) => {
         try {
@@ -119,6 +123,9 @@ const PropertiesProfile = () => {
                 </button>
                 <button className="parking-locker-button" onClick={NavigateParkingLocker}>
                     Parking & locker
+                </button>
+                <button className="parking-locker-button" onClick={NavigateCondoUnitManagement}>
+                    Condo unit information
                 </button>
             </div>
            
