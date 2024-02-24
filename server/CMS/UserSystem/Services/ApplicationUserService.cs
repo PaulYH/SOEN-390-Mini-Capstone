@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CMS.Api.UserSystem.Services
 {
@@ -44,14 +45,17 @@ namespace CMS.Api.UserSystem.Services
                 return null;
             }
 
-            user.FirstName = updatedUser.FirstName;
-            user.LastName = updatedUser.LastName;
-            user.PhoneNumber = updatedUser.PhoneNumber;
-            user.ParkingSpots = updatedUser.ParkingSpots;
-            user.Lockers = updatedUser.Lockers;
-            user.OwnedCondoUnits = updatedUser.OwnedCondoUnits;
-            user.RentedCondoUnits = updatedUser.RentedCondoUnits;
-            user.Property = updatedUser.Property;
+            user.FirstName = updatedUser.FirstName.IsNullOrEmpty() ?
+                user.FirstName : updatedUser.FirstName;
+            user.LastName = updatedUser.LastName.IsNullOrEmpty() ?
+                user.LastName : updatedUser.LastName;
+            user.PhoneNumber = updatedUser.PhoneNumber.IsNullOrEmpty() ?
+                user.PhoneNumber : updatedUser.PhoneNumber;
+            user.ParkingSpots = updatedUser.ParkingSpots ?? user.ParkingSpots;
+            user.Lockers = updatedUser.Lockers ?? user.Lockers;
+            user.OwnedCondoUnits = updatedUser.OwnedCondoUnits ?? user.OwnedCondoUnits;
+            user.RentedCondoUnits = updatedUser.RentedCondoUnits ?? user.RentedCondoUnits;
+            user.Property = updatedUser.Property ?? user.Property;
 
             await _context.SaveChangesAsync();
 
