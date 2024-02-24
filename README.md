@@ -8,7 +8,7 @@
 | Despina Koulisakis | 40190212 | @despinakouli |
 | Jack Spiratos | 40210312 | @Spiratatoe |
 | Jad Hanna | 40132590 | @JXOXO |
-| Jose Semaan | 40244141 | @josesemaan |
+| Jose Semaan | 40244141 | @jozesemaan |
 | Nour Hassoun | 40233077 | @NourHadieHassoun |
 | Etienne Paquet | 40208596 | @etiennepaquet1 |
 | Christa Abou Arraj | 40226631 | @christa-ux |
