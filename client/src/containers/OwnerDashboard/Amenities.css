@@ -19,7 +19,14 @@
     font-size: 1.5em;
   }
   .badge {
-    background-color: #7067E1;
+    background-color: #7067E1 !important;
+    color: white !important
+  }
+  
+  
+  .bg-dark {
+    background-color: #9CCDFA !important;
+    color: white !important
   }
   
   /* Add more styles as needed */

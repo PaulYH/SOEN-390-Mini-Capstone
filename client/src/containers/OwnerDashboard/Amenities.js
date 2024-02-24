@@ -3,6 +3,7 @@ import './Amenities.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Amenities = () => {
+
   return (
     <div className="amenities-container">
       <div className="amenities-header">
@@ -11,22 +12,27 @@ const Amenities = () => {
       </div>
       <div className="amenities-list">
         <div className="amenity-item">
-          <h2>Gym & Spa</h2>
+          <h2 style={{display: 'inline'}}>Gym & Spa</h2>&nbsp;
+          <span class="badge bg-dark text-light">Open 24/7</span>
           <p>Indoor kids pool</p>
-          <p>Indoor adult pool <span class="badge bg-light text-dark">10+</span></p>
-          <p>Open 24/7</p>
+          <p>Indoor adult pool <span class="badge badge-age bg-light text-dark">10+</span></p>
+        
         </div>
         <div className="amenity-item">
           <h2>Sky Lounge</h2>
-          <p>Restaurant from 12pm to 7pm</p>
-          <p>Bar (18+) from 7pm to 5am</p>
+          <p>Restaurant <span class="badge bg-dark text-light">from 12pm to 7pm</span></p>
+          <p>Bar <span class="badge badge-age bg-light text-dark">18+</span> <span class="badge bg-dark text-light">from 7pm to 5am</span></p>
         </div>
         <div className="amenity-item">
-          <h2>Outdoor playground</h2>
-          <p>Open 24/7</p>
+          <h2 style={{display: 'inline'}}>Outdoor playground</h2>&nbsp;
+         <span class="badge bg-dark text-light">Open 24/7</span>
         </div>
       </div>
+      
     </div>
+
+
+
   );
 };
 
