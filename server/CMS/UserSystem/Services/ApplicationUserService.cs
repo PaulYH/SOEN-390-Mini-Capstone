@@ -51,6 +51,7 @@ namespace CMS.Api.UserSystem.Services
             user.Lockers = updatedUser.Lockers;
             user.OwnedCondoUnits = updatedUser.OwnedCondoUnits;
             user.RentedCondoUnits = updatedUser.RentedCondoUnits;
+            user.Property = updatedUser.Property;
 
             await _context.SaveChangesAsync();
 
