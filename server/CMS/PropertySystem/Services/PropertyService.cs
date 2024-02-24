@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace CMS.Api.PropertySystem.Services
@@ -43,10 +44,15 @@ namespace CMS.Api.PropertySystem.Services
         {
             var property = await _context.Properties.FindAsync(updatedProperty.Id);
             if (property == null) { return null; }
-            property.PropertyName = updatedProperty.PropertyName;
-            property.CompanyName = updatedProperty.CompanyName;
-            property.City = updatedProperty.City;
-            property.Address = updatedProperty.Address;
+
+            property.PropertyName = updatedProperty.PropertyName.IsNullOrEmpty() ?
+                property.PropertyName : updatedProperty.PropertyName; 
+            property.CompanyName = updatedProperty.CompanyName.IsNullOrEmpty() ?
+                property.CompanyName : updatedProperty.CompanyName;
+            property.City = updatedProperty.City.IsNullOrEmpty() ?
+                property.City : updatedProperty.City;
+            property.Address = updatedProperty.Address.IsNullOrEmpty() ?
+                property.Address : updatedProperty.Address;
 
             await _context.SaveChangesAsync();
             return property;

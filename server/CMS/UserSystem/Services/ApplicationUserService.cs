@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using Microsoft.IdentityModel.Tokens;
+using CMS.Api.PropertySystem.Services;
+using CMS.Api.PropertySystem.Entities;
 
 namespace CMS.Api.UserSystem.Services
 {
@@ -17,12 +19,15 @@ namespace CMS.Api.UserSystem.Services
         private readonly CMSDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly PasswordHasher<ApplicationUser> _passwordHasher;
+        private readonly IPropertyService _propertyService;
 
-        public ApplicationUserService(CMSDbContext context, UserManager<ApplicationUser> userManager)
+        public ApplicationUserService(CMSDbContext context, UserManager<ApplicationUser> userManager, 
+            IPropertyService propertyService)
         {
             _context = context;
             _userManager = userManager;
             _passwordHasher = new PasswordHasher<ApplicationUser>();
+            _propertyService = propertyService;
         }
 
         public async Task<ActionResult<List<ApplicationUser>>> GetAllUsers()
@@ -55,7 +60,12 @@ namespace CMS.Api.UserSystem.Services
             user.Lockers = updatedUser.Lockers ?? user.Lockers;
             user.OwnedCondoUnits = updatedUser.OwnedCondoUnits ?? user.OwnedCondoUnits;
             user.RentedCondoUnits = updatedUser.RentedCondoUnits ?? user.RentedCondoUnits;
-            user.Property = updatedUser.Property ?? user.Property;
+
+            if (updatedUser.Property != null)
+            {
+                var userProperty = await _propertyService.GetPropertyById(updatedUser.Property.Id);
+                user.Property = userProperty.Value ?? user.Property;
+            }
 
             await _context.SaveChangesAsync();
 
