@@ -1,28 +1,35 @@
-.container {
-    display: flex;
-  }
-  
-  .container > div {
-    flex: 1;
-    margin-right: 10px; /* Adjust margin as needed */
-  }
-  
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  th, td {
-    padding: 4px;
-    text-align: left;
-  }
-  
+.parkingLockerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-  
-  input[type="text"] {
-    width: calc(100% - 16px); /* Adjust width to fit input field */
-    padding: 6px;
-    border: 1px solid #ccc;
-  }
-  
-  
+.parkingSpotForm,
+.lockerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.displayArea {
+  margin-top: 20px;
+}
+
+.displayArea h3 {
+  margin-bottom: 10px;
+}
+
+.displayArea ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.displayArea li {
+  margin-bottom: 5px;
+}
+
+.error {
+  background-color: #f44336;
+  color: white;
+}
