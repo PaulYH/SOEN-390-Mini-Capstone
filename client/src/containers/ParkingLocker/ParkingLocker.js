@@ -174,6 +174,50 @@ const ParkingLocker = () => {
         />
         <button type="submit">Add Locker</button>
       </form>
+
+      {selectedProperty && (
+        <>
+          <h3>Parking Spots</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Spot ID</th>
+                <th>Spot Fee</th>
+                <th>Owner</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedProperty.parkingSpots && selectedProperty.parkingSpots.map((spot) => (
+                <tr key={spot.id}>
+                  <td>{spot.externalSpotId}</td>
+                  <td>{spot.spotFee}</td>
+                  <td>{spot.owner ? spot.owner.userName : 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h3>Lockers</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Locker ID</th>
+                <th>Locker Fee</th>
+                <th>Owner</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedProperty.lockers && selectedProperty.lockers.map((locker) => (
+                <tr key={locker.id}>
+                  <td>{locker.externalLockerId}</td>
+                  <td>{locker.lockerFee}</td>
+                  <td>{locker.owner ? locker.owner.userName : 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 };
