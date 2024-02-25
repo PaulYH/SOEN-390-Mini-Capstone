@@ -1,13 +1,23 @@
+/* this page is common to owners and rental users*/
+
 .amenities-container { 
-    color: black;
-    padding: 20px;
+    color: #7067E1;
     border-radius: 8px;
-    text-align: center;
+text-align: center;
   }
-  h2 {
-    text-decoration: none;
+
+  .carousel {
+    margin: 70px;
   }
-  .amenities-header h1 {
+  h5 {
+    background-color:#7067E1 ;
+    color: white;
+  }
+  p {
+    background-color:#7067E1 ;
+    color: white;
+  }
+  /* .amenities-header h1 {
     margin-bottom: 20px;
   }
   
@@ -27,7 +37,7 @@
   .bg-dark {
     background-color: #9CCDFA !important;
     color: white !important
-  }
+  } */
   
   /* Add more styles as needed */
   
