@@ -225,6 +225,34 @@ const PropertiesProfile = () => {
         }
 
     }
+    const downloadFile = async (fileName) => {
+    const fileDownloadUrl = `http://localhost:5127/api/properties/${propertyId}/download/${fileName}`;
+    
+    // Direct approach for same-origin or CORS-enabled downloads
+    fetch(fileDownloadUrl, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        // Create a URL for the blob object
+        const url = window.URL.createObjectURL(blob);
+        // Create a temporary anchor element and trigger the download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName; // Set the file name for the download
+        document.body.appendChild(a); // Append to the document
+        a.click(); // Trigger click to download
+        window.URL.revokeObjectURL(url); // Clean up
+        a.remove(); // Remove the element
+    })
+    .catch(error => {
+        console.error('Error downloading file:', error);
+        setError(`Failed to download file: ${error.message}`);
+    });
+};
 
     
 
@@ -270,21 +298,24 @@ const PropertiesProfile = () => {
                     </button>
                 )}
                 <div className="file-actions">
-                <button className="buttonUpload" onClick={triggerFileInput}>Add File</button>
-                <button className="toggle-files-button" onClick={toggleFileListDisplay}>
-                    {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
-                </button>
+            <button className="buttonUpload" onClick={triggerFileInput}>Add File</button>
+            <button className="toggle-files-button" onClick={toggleFileListDisplay}>
+                {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
+            </button>
+        </div>
+        {showFiles && (
+            <div className="uploaded-files-list">
+                <h3>Uploaded Files:</h3>
+                <ul>
+                    {fileNames.map((fileName, index) => (
+                        // Make each file name a clickable element for download
+                        <li key={index} style={{cursor: 'pointer'}} onClick={() => downloadFile(fileName)}>
+                            {fileName}
+                        </li>
+                    ))}
+                </ul>
             </div>
-            {showFiles && (
-                <div className="uploaded-files-list">
-                    <h3>Uploaded Files:</h3>
-                    <ul>
-                        {fileNames.map((fileName, index) => (
-                            <li key={index}>{fileName}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+        )}
             </div>
         </div>
     );
