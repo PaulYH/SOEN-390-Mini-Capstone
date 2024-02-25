@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+  }
+  
+  .container > div {
+    flex: 1;
+    margin-right: 10px; /* Adjust margin as needed */
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    padding: 4px;
+    text-align: left;
+  }
+  
+
+  
+  input[type="text"] {
+    width: calc(100% - 16px); /* Adjust width to fit input field */
+    padding: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  

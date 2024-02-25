@@ -10,6 +10,8 @@ import Amenities from './containers/OwnerDashboard/Amenities.js';
 import SubmittedRequests from './containers/OwnerDashboard/SubmittedRequests.js';
 
 
+import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js';
+import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js';
 function App() {
   return (
     <Router>
@@ -22,6 +24,8 @@ function App() {
         <Route path="/renterFinance" element={<RenterFinance/>} />
         <Route path="/amenities" element={<Amenities/>} />
         <Route path="/submittedRequests" element={<SubmittedRequests/>} />
+        <Route path="/propertiesprofile" element={<PropertiesProfile />} />
+        <Route path="/parkinglocker" element={<ParkingLocker />} />
       </Routes>
     </Router>
   );

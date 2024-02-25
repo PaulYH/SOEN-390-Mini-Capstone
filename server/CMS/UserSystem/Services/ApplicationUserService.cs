@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.IdentityModel.Tokens;
+using CMS.Api.PropertySystem.Services;
+using CMS.Api.PropertySystem.Entities;
 
 namespace CMS.Api.UserSystem.Services
 {
@@ -16,12 +19,15 @@ namespace CMS.Api.UserSystem.Services
         private readonly CMSDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly PasswordHasher<ApplicationUser> _passwordHasher;
+        private readonly IPropertyService _propertyService;
 
-        public ApplicationUserService(CMSDbContext context, UserManager<ApplicationUser> userManager)
+        public ApplicationUserService(CMSDbContext context, UserManager<ApplicationUser> userManager, 
+            IPropertyService propertyService)
         {
             _context = context;
             _userManager = userManager;
             _passwordHasher = new PasswordHasher<ApplicationUser>();
+            _propertyService = propertyService;
         }
 
         public async Task<ActionResult<List<ApplicationUser>>> GetAllUsers()
@@ -44,13 +50,22 @@ namespace CMS.Api.UserSystem.Services
                 return null;
             }
 
-            user.FirstName = updatedUser.FirstName;
-            user.LastName = updatedUser.LastName;
-            user.PhoneNumber = updatedUser.PhoneNumber;
-            user.ParkingSpots = updatedUser.ParkingSpots;
-            user.Lockers = updatedUser.Lockers;
-            user.OwnedCondoUnits = updatedUser.OwnedCondoUnits;
-            user.RentedCondoUnits = updatedUser.RentedCondoUnits;
+            user.FirstName = updatedUser.FirstName.IsNullOrEmpty() ?
+                user.FirstName : updatedUser.FirstName;
+            user.LastName = updatedUser.LastName.IsNullOrEmpty() ?
+                user.LastName : updatedUser.LastName;
+            user.PhoneNumber = updatedUser.PhoneNumber.IsNullOrEmpty() ?
+                user.PhoneNumber : updatedUser.PhoneNumber;
+            user.ParkingSpots = updatedUser.ParkingSpots ?? user.ParkingSpots;
+            user.Lockers = updatedUser.Lockers ?? user.Lockers;
+            user.OwnedCondoUnits = updatedUser.OwnedCondoUnits ?? user.OwnedCondoUnits;
+            user.RentedCondoUnits = updatedUser.RentedCondoUnits ?? user.RentedCondoUnits;
+
+            if (updatedUser.Property != null)
+            {
+                var userProperty = await _propertyService.GetPropertyById(updatedUser.Property.Id);
+                user.Property = userProperty.Value ?? user.Property;
+            }
 
             await _context.SaveChangesAsync();
 
@@ -152,7 +167,9 @@ namespace CMS.Api.UserSystem.Services
         public async Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email)
         {
             var user = await _context.Users
+                ///////////////REMEMBER TO INCLUDE YOUR STUFF
                                      .Include(u => u.ProfilePicture)
+                                     .Include(u => u.Property)
                                      .FirstOrDefaultAsync(x => x.Email == email);
             return user;
         }
