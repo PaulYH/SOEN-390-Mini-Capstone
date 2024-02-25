@@ -9,6 +9,7 @@ const PropertiesProfile = () => {
     const fileInputRef = useRef(null); // Correctly defining the ref for file input
     const [propertyId, setPropertyId] = useState('');
     const [fileNames, setFileNames] = useState([]);
+    const [showFiles, setShowFiles] = useState(false);
     const [property, setProperty] = useState({
         propertyName: '',
         companyName: '',
@@ -96,7 +97,12 @@ const PropertiesProfile = () => {
     const triggerFileInput = () => {
         fileInputRef.current.click(); // Correct usage of ref to trigger file input
     };
-
+    const toggleFileListDisplay = () => {
+        setShowFiles(!showFiles);
+        if (!showFiles) {
+            fetchFileNames(); // Fetch file names when toggling on
+        }
+    };
     const fetchFileNames = async () => {
         if (!propertyId) {
             setError('Property ID is missing. Unable to fetch file names.');
@@ -263,6 +269,22 @@ const PropertiesProfile = () => {
                         Parking & Locker
                     </button>
                 )}
+                <div className="file-actions">
+                <button className="buttonUpload" onClick={triggerFileInput}>Add File</button>
+                <button className="toggle-files-button" onClick={toggleFileListDisplay}>
+                    {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
+                </button>
+            </div>
+            {showFiles && (
+                <div className="uploaded-files-list">
+                    <h3>Uploaded Files:</h3>
+                    <ul>
+                        {fileNames.map((fileName, index) => (
+                            <li key={index}>{fileName}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             </div>
         </div>
     );
