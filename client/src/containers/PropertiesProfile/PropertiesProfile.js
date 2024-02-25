@@ -8,6 +8,7 @@ const PropertiesProfile = () => {
     const [user, setUser] = useState(null);
     const fileInputRef = useRef(null); // Correctly defining the ref for file input
     const [propertyId, setPropertyId] = useState('');
+    const [fileNames, setFileNames] = useState([]);
     const [property, setProperty] = useState({
         propertyName: '',
         companyName: '',
@@ -95,6 +96,34 @@ const PropertiesProfile = () => {
     const triggerFileInput = () => {
         fileInputRef.current.click(); // Correct usage of ref to trigger file input
     };
+
+    const fetchFileNames = async () => {
+        if (!propertyId) {
+            setError('Property ID is missing. Unable to fetch file names.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5127/api/properties/${propertyId}/allFileNames`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to fetch file names');
+            }
+
+            const fileNames = await response.json(); // Assuming the API returns an array of file names
+            setFileNames(fileNames.value.$values); // Update the state with fetched file names
+        } catch (error) {
+            console.error('Error fetching file names:', error);
+            setError(`Failed to fetch file names: ${error.message}`);
+        }
+    };
+
     const addPropertyToUser = async (propertyId) => {
         try {
             const responseUser = await fetch('http://localhost:5127/api/users/authenticated', {
