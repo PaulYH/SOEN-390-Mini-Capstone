@@ -32,17 +32,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
             </header>
             <section className="financial-overview">
               <h2>My Finances:</h2>
-              <div>Total amount: ${userData.totalAmount.toLocaleString()}</div>
-              <div>Monthly Payments: ${userData.monthlyPayment.toLocaleString()}</div>
-            </section>
-            <section className="payment-status">
               <div>Remaining Amount</div>
-              <div>${userData.remainingAmount.toLocaleString()} CAD</div>
+              <div>${userData.rent.toLocaleString()} CAD</div>
+            </section>
               <div>Last payment made on: {userData.lastPaymentDate}</div>
               <button onClick={handleDownloadInvoice}>
                 {invoiceDownloaded ? 'Invoice Downloaded' : 'Download invoices'}
               </button>
-            </section>
             <nav aria-label="Page navigation example">
             <ul className="pagination justify-content-center">
               <li className="page-item">
