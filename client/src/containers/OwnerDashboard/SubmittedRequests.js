@@ -1,3 +1,5 @@
+/*This page is the same for owners and rental users*/ 
+
 import React, { useState, useEffect } from 'react';
 import './SubmittedRequests.css';
 import { Link } from 'react-router-dom';

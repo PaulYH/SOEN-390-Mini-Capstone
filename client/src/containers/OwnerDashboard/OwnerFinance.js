@@ -1,3 +1,5 @@
+/* Finance page of owners */
+
 import React, { useState, useEffect } from 'react';
 import './OwnerFinance.css';
 import { Link } from 'react-router-dom';
@@ -7,7 +9,6 @@ import  { ReactComponent as Download } from 'bootstrap-icons/icons/box-arrow-dow
 
 
 
-// Mock data
 const userData = {
     userName: 'John Doe',
     companyName: 'Doe Enterprises',

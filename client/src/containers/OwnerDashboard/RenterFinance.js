@@ -1,3 +1,5 @@
+/* Finance page of rental users*/ 
+
 import React, { useState, useEffect } from 'react';
 import './RenterFinance.css';
 import { Link } from 'react-router-dom';
