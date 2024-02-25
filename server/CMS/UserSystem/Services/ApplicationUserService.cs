@@ -36,6 +36,15 @@ namespace CMS.Api.UserSystem.Services
             return users;
         }
 
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey()
+        {
+            var users = await _context.Users.Where(x => 
+                x.hasRequestedOccupantKey == true ||
+                x.hasRequestedOwnerKey == true).ToListAsync();
+
+            return users;
+        }
+
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
@@ -60,6 +69,8 @@ namespace CMS.Api.UserSystem.Services
             user.Lockers = updatedUser.Lockers ?? user.Lockers;
             user.OwnedCondoUnits = updatedUser.OwnedCondoUnits ?? user.OwnedCondoUnits;
             user.RentedCondoUnits = updatedUser.RentedCondoUnits ?? user.RentedCondoUnits;
+            user.hasRequestedOccupantKey = updatedUser.hasRequestedOccupantKey ?? user.hasRequestedOccupantKey;
+            user.hasRequestedOwnerKey = updatedUser.hasRequestedOwnerKey ?? user.hasRequestedOwnerKey;
 
             if (updatedUser.Property != null)
             {
