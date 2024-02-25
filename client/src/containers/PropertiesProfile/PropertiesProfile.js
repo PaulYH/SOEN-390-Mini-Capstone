@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PropertiesProfile.css'; // Import CSS file
 
+import downIcon from '../../assets/downloadIcon.png';
+
 const PropertiesProfile = () => {
     const navigate = useNavigate();
     const [mode, setMode] = useState('create');
@@ -297,26 +299,38 @@ const PropertiesProfile = () => {
                         Parking & Locker
                     </button>
                 )}
-                <div className="file-actions">
-            <button className="buttonUpload" onClick={triggerFileInput}>Add File</button>
-            <button className="toggle-files-button" onClick={toggleFileListDisplay}>
-                {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
-            </button>
+
+
         </div>
-        {showFiles && (
+
+            <div className="file-actions">
+                <button className="toggle-files-button" onClick={toggleFileListDisplay}>
+                    {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
+                </button>
+            </div>
+            {showFiles && (
             <div className="uploaded-files-list">
                 <h3>Uploaded Files:</h3>
-                <ul>
+
                     {fileNames.map((fileName, index) => (
                         // Make each file name a clickable element for download
-                        <li key={index} style={{cursor: 'pointer'}} onClick={() => downloadFile(fileName)}>
+                        <div className="file_item" key={index}  style={{cursor: 'pointer'}} onClick={() => downloadFile(fileName)}>
+                            <img className="icon" src={downIcon}/>
                             {fileName}
-                        </li>
+
+                            
+                        </div>
+                        
                     ))}
-                </ul>
+
             </div>
-        )}
-            </div>
+                )}
+            
+
+
+
+
+
         </div>
     );
 };
