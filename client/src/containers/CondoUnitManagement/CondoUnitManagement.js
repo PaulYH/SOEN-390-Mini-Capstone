@@ -3,7 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import './CondoUnitManagement.css'; // Import CSS file
 
 const CondoUnitManagement = () => {
+
     const navigate = useNavigate();
+    const [isEditMode, setIsEditMode] = useState(false); // state to manage edit mode
+
+ // Function to handle the Edit/Save button click
+ const handleButtonClick = () => {
+    
+    setIsEditMode(!isEditMode); // Toggle between edit and save mode
+    if (isEditMode) {
+        // Code to handle saving the information
+        console.log('Information saved');
+    }
+};
 
     return ( 
     <div className="CondoDetails">
@@ -16,24 +28,28 @@ const CondoUnitManagement = () => {
                 <label>Unit size</label>
                 <input type="text"/>
                 <label>Unit owner</label>
-                <input type="text"/>
+                <input type="text"readOnly/>
                 <label>Condo fee</label>
                 <input type="text" />
             </div>
             <div className="occupant-info">
                 <h1>Occupant Information</h1>
                 <label>Name</label>
-                <input type="text"/>
+                <input type="text"readOnly/>
                 <label>Email</label>
-                <input type="text"/>
+                <input type="text"readOnly/>
                 <label>Phone Number</label>
-                <input type="text"/>
+                <input type="text"readOnly/>
             </div>
         </div>
+        
         <div className="button-container">
-            <button className="parking-locker-button">
+            {/* <button className="saveinfo-button">
                 Save Information
-            </button>
+            </button> */}
+            <button className="parking-locker-button" onClick={handleButtonClick}>
+                    {isEditMode ? 'Save Information' : 'Edit Information'}
+                </button>
         </div>
     </div>
 
