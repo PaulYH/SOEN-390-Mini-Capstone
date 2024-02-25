@@ -8,7 +8,7 @@ import OwnerFinance from './containers/OwnerDashboard/OwnerFinance.js';
 import RenterFinance from './containers/OwnerDashboard/RenterFinance.js';
 import Amenities from './containers/OwnerDashboard/Amenities.js';
 import SubmittedRequests from './containers/OwnerDashboard/SubmittedRequests.js';
-
+import MainDashboard from './containers/OwnerDashboard/MainDashboard.js';
 
 import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js';
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js';
@@ -26,6 +26,7 @@ function App() {
         <Route path="/submittedRequests" element={<SubmittedRequests/>} />
         <Route path="/propertiesprofile" element={<PropertiesProfile />} />
         <Route path="/parkinglocker" element={<ParkingLocker />} />
+        <Route path="/home" element={<MainDashboard />} />
       </Routes>
     </Router>
   );
