@@ -4,19 +4,64 @@ import './PropertiesProfile.css'; // Import CSS file
 
 const PropertiesProfile = () => {
     const navigate = useNavigate();
+    const [mode, setMode] = useState('create');
+    const [user, setUser] = useState(null);
+    const [property, setProperty] = useState({
+        propertyName: '',
+        companyName: '',
+        address: '',
+        city: ''
+    });
+    const [error, setError] = useState('');
 
+    useEffect(() => {
+        fetchUserProperty().then(userProperty => {
+            if (userProperty) {
+                setProperty({
+                  propertyName: userProperty.propertyName || '',
+                  companyName: userProperty.companyName || '',
+                  address: userProperty.address || '',
+                  city: userProperty.city || '',
+                });
+                setMode('view');
+            }
+        });
+    }, []);
 
-    const [buttonText] = useState('Create Property');
-    const [PropertyName, setPropertyName] = useState('');
-    const [CompanyName, setCompanyName] = useState('');
-    const[Address, setAddress] = useState('');
-    const[City, setCity] = useState('');
-    const [setError] = useState('');
-    
-    const NavigateParkingLocker = () => {
-        navigate('/parkinglocker');
+    const fetchUserProperty = async () => {
+        try {
+            const response = await fetch('http://localhost:5127/api/users/authenticated', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch user data');
+            const data = await response.json();
+            console.log(data);
+            console.log(data.property);
+            console.log(data.value.property);
+            return data.value.property || null;
+        } catch (error) {
+            console.error(error);
+            setError('Failed to fetch property');
+        }
     };
-    
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProperty(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleButtonAction = async () => {
+        if (mode === 'create' || mode === 'edit') {
+            await handlePropertyCreation();
+        } else if (mode === 'view') {
+            setMode('edit');
+        }
+    };
     const addPropertyToUser = async (propertyId) => {
         try {
             const responseUser = await fetch('http://localhost:5127/api/users/authenticated', {
@@ -132,9 +177,14 @@ const PropertiesProfile = () => {
                 <button onClick={handleButtonAction} className="action-button">
                     {mode === 'create' ? 'Create Property' : mode === 'view' ? 'Edit' : 'Save'}
                 </button>
-                <button className="parking-locker-button" onClick={NavigateParkingLocker}>
-                    Parking & locker
-                </button>
+                {mode !== 'create' && (
+                    <button className="parking-locker-button" onClick={() => navigate('/parkinglocker')}>
+                        Parking & Locker
+                    </button>
+                )}
+                    <button className="parking-locker-button" onClick={() => navigate('/condounitmanagement')}>
+                        Condo Unit Management
+                    </button>
             </div>
         </div>
     );
