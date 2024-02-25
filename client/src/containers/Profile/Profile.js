@@ -120,7 +120,9 @@ const Profile = () => {
             setTimeout(() => setMessage(''), 3000); // Hide message after 3 seconds
         }
     };
-    
+    const handlePropetiesProfileClick = () => {
+        navigate('/propertiesprofile');
+    }
 
     const handleProfilePictureClick = () => {
         fileInputRef.current.click();
@@ -128,6 +130,7 @@ const Profile = () => {
 
     return (
         <div className="profile">
+            <button onClick={handlePropetiesProfileClick}>Properties Profile</button>
             <button onClick={handleSignOut}>Sign Out</button>
             {user && (
                 <>
