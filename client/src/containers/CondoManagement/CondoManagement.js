@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { nanoid } from "nanoid";
 import "./CondoManagement.css";
@@ -11,6 +11,35 @@ const CondoManagement = () => {
     const navigate = useNavigate();
 
     const [units, setUnits] = useState(data);
+
+        const [property, setProperty] = useState(null);
+
+        useEffect(() => {
+            fetchUserProperty();
+        }, []); 
+
+        
+
+
+    const fetchUserProperty = async () => {
+        try {
+            const response = await fetch('http://localhost:5127/api/users/authenticated', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch user data');
+            const data = await response.json();
+            // console.log(data);
+            // console.log(data.property);
+             console.log(data.value.property);
+            setProperty(data.value.property);
+            return data.value.property || null;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
     const [addUnits, setAddUnits] = useState({
         externalUnitID: '',
