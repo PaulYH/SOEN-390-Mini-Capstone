@@ -1,0 +1,51 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1rem;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    margin: auto;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+    font-size: 32px;
+  }
+  
+  th {
+    background-color: #7570e4
+  }
+  
+  td {
+    background-color: #4c4865
+  }
+  
+  form {
+    display: flex;
+    gap: 5px;
+  }
+  
+  form td:last-child {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  
+  form * {
+    font-size: 28px;
+  }
+  
+  .logo {
+    width: 160px;
+    height: 100px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}

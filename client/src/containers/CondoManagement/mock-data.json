@@ -1,0 +1,44 @@
+[
+    {
+      "id": 1,
+      "externalUnitID": "1234",
+      "size": "4, 1/2",
+      "CondoOwnerEmail": "owner@email.com",
+      "CondoOccupantEmail": "occupant@email.com"
+    },
+    {
+      "id": 2,
+      "externalUnitID": "Jenny Chan",
+      "size": "3 waterfoot road",
+      "CondoOwnerEmail": "333-962-7516",
+      "CondoOccupantEmail": "jenny.chan@email.com"
+    },
+    {
+      "id": 3,
+      "externalUnitID": "Jenny Chan",
+      "size": "3 waterfoot road",
+      "CondoOwnerEmail": "333-962-7516",
+      "CondoOccupantEmail": "jenny.chan@email.com"
+    },
+    {
+      "id": 4,
+      "externalUnitID": "Jenny Chan",
+      "size": "3 waterfoot road",
+      "CondoOwnerEmail": "333-962-7516",
+      "CondoOccupantEmail": "jenny.chan@email.com"
+    },
+     {
+      "id": 5,
+      "externalUnitID": "Jenny Chan",
+      "size": "3 waterfoot road",
+      "CondoOwnerEmail": "333-962-7516",
+      "CondoOccupantEmail": "jenny.chan@email.com"
+    },
+    {
+      "id": 6,
+      "externalUnitID": "Jenny Chan",
+      "size": "3 waterfoot road",
+      "CondoOwnerEmail": "333-962-7516",
+      "CondoOccupantEmail": "jenny.chan@email.com"
+    }
+  ]

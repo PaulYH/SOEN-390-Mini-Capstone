@@ -6,6 +6,8 @@ import Signup from './containers/Signup/Signup.js';
 import Profile from './containers/Profile/Profile.js';
 import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js';
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js';
+import CondoManagement from './containers/CondoManagement/CondoManagement.js';
+
 function App() {
   return (
     <Router>
@@ -16,6 +18,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/propertiesprofile" element={<PropertiesProfile />} />
         <Route path="/parkinglocker" element={<ParkingLocker />} />
+        <Route path="/condomanagement" element={<CondoManagement/>} />
       </Routes>
     </Router>
   );
