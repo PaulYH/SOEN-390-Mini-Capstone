@@ -1,43 +1,43 @@
 /* this page is common to owners and rental users*/
 
-.amenities-container { 
-    color: #7067E1;
-    border-radius: 8px;
-text-align: center;
-  }
+#amenities-container {
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
 
   .carousel {
-    margin: 70px;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 30px;
   }
-  h5 {
+
+  #amenities {
+  color: #7067E1 !important;
+  font-weight: bold;
+  }
+
+  #indoor-adult-pool, #indoor-children-pool, #spa, #lounge, #playground, #time-children-pool, #time-adult-pool, #time-spa, #time-resto, #time-playground, #time-bar {
     background-color:#7067E1 ;
+    border-radius: 15px;
+  }
+  
+#back-button {
+  border-radius: 20px;
+  margin: 20px;
+}
+
+  .carousel-control-prev {
+    margin-bottom: 40px;
     color: white;
+    font-weight: bold;
+    
   }
-  p {
-    background-color:#7067E1 ;
-    color: white;
+  .carousel-control-next {
+    margin-bottom: 40px;
+    color: #7067E1;
+    font-weight: bolder;
+    
   }
-  /* .amenities-header h1 {
-    margin-bottom: 20px;
-  }
-  
-  .amenity-item {
-    margin-bottom: 15px;
-  }
-  
-  .amenity-item h2 {
-    font-size: 1.5em;
-  }
-  .badge {
-    background-color: #7067E1 !important;
-    color: white !important
-  }
-  
-  
-  .bg-dark {
-    background-color: #9CCDFA !important;
-    color: white !important
-  } */
-  
-  /* Add more styles as needed */
+ 
   

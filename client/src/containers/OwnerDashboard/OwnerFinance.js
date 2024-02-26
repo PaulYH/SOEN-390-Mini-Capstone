@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './OwnerFinance.css';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
@@ -30,6 +31,12 @@ const userData = {
     //};
   
     return (
+      
+      <>
+      let navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/home'); };
+      <button type="button" id="back-button" onClick={handleClick}>Back</button> 
       
       <div className="dashboard">
      
@@ -120,6 +127,7 @@ const userData = {
         </ul>
       </nav>
     </div>
+    </>
   );
 };
 
