@@ -11,7 +11,7 @@ import  { ReactComponent as Download } from 'bootstrap-icons/icons/box-arrow-dow
 
 
 const userData = {
-    userName: 'John Doe',
+    
     companyName: 'Doe Enterprises',
     condoNumber: '1234',
     totalAmount: 10000000,
@@ -20,54 +20,49 @@ const userData = {
     lastPaymentDate: 'January 1st, 2024',
   };
   
+
+ 
+
   const OwnerFinanceDashboard = () => {
-    // State for invoice download (mock implementation)
-   // const [invoiceDownloaded, setInvoiceDownloaded] = useState(false);
+    let navigate = useNavigate();
+    const handleClick = () => {
+      navigate('/home'); 
+    };
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
   
-    //const handleDownloadInvoice = () => {
-      // Placeholder for actual download logic
-      //console.log('Downloading invoice...');
-      //setInvoiceDownloaded(true);
-    //};
+    useEffect(() => {
+      fetchUserInfo();
+    }, []);
   
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:5127/api/users/authenticated', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        if (!response.ok) throw new Error('Failed to fetch user data');
+        const userData = await response.json();
+        setFirstName(userData.value.firstName);
+        setLastName(userData.value.lastName);
+      } catch (error) {
+        console.error(error);
+    
+      }
+    };
+
+
+
     return (
       
       <>
-      let navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/home'); };
+     
       <button type="button" id="back-button" onClick={handleClick}>Back</button> 
       
       <div className="dashboard">
      
-     {
-        // navbar
-      }
-      
-       <nav class="navbar navbar-expand-lg navbar-light bg-light"> 
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Dashboard</a> 
-        </li> 
-        <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Calendar</a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Submit a Request </a> 
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
+    
 
 {
         // body
@@ -75,7 +70,7 @@ const userData = {
       
          <img src={require('../../assets/logo.png')} alt="logo" className="logo" />
         <header className="dashboard-header">
-          <h1>{userData.userName}</h1>
+        <h1 style={{color:'black'}}>{`${firstName} ${lastName}`}</h1>
           <div>{userData.companyName}</div>
           <div>Condo Number: <span class="badge badge-size bg-light text-dark">{userData.condoNumber}</span></div>
         </header>
@@ -107,25 +102,6 @@ const userData = {
         }
           <button type="button" class="btn btn-outline-primary">Download Invoice <Download/></button>
         </section>
-
-        {
-        // pagination
-      }
-
-        <nav aria-label="Page navigation example">
-        <ul className="pagination justify-content-center">
-          <li className="page-item">
-            <Link className="page-link" to="/ownerFinance">1</Link>
-          </li>
-          <li className="page-item">
-            <Link className="page-link" to="/submittedRequests">2</Link>
-          </li>
-          <li className="page-item">
-            <Link className="page-link" to="/amenities">3</Link>
-          </li>
-          
-        </ul>
-      </nav>
     </div>
     </>
   );

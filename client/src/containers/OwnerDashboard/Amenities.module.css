@@ -5,7 +5,11 @@
   align-items: center;
   background-color: white;
 }
-
+.logo-amenities {
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
   .carousel {
     margin-left: 100px;
     margin-right: 100px;
@@ -13,9 +17,13 @@
   }
 
   #amenities {
-  color: #7067E1 !important;
+  color:  #5B4DCD!important;
   font-weight: bold;
-  }
+  display: block;
+    background-color: #AA96E1;
+    border-radius: 15px;
+    padding: 10px;
+}
 
   #indoor-adult-pool, #indoor-children-pool, #spa, #lounge, #playground, #time-children-pool, #time-adult-pool, #time-spa, #time-resto, #time-playground, #time-bar {
     background-color:#7067E1 ;

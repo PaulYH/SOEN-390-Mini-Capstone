@@ -1,7 +1,14 @@
 .requests {
     text-align: center;
     padding: 20px;
+    margin: 150px;
+    height: 300px;
 }
-.pagination {
-    margin: 15px;
+#back-button {
+    margin: 20px;
+}
+
+#logo-request {
+height: 120px;
+width: auto;
 }

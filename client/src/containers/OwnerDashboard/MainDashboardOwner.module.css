@@ -1,5 +1,11 @@
 /* this page is common to owners and rental users*/
 
-#dashboard-request-button {
-    background-color: #7067E1 !important;
+.container {
+    /* background-color: white !important; */
+    margin: 70px;
+
+}
+.card {
+    height: 100%;
+    
 }
