@@ -137,20 +137,20 @@ const CondoManagement = () => {
         </table>
       </form>
 
-      <h2>Add a Contact</h2>
+      <h2>Add a Unit</h2>
       <form onSubmit={handleAddUnitsSubmit}>
         <input
           type="text"
           name="externalUnitID"
           required="required"
-          placeholder="Enter unit id..."
+          placeholder="Enter id..."
           onChange={handleAddUnitsChange}
         />
         <input
           type="text"
           name="size"
           required="required"
-          placeholder="Enter the size..."
+          placeholder="Enter size..."
           onChange={handleAddUnitsChange}
 
         />
@@ -158,7 +158,7 @@ const CondoManagement = () => {
           type="email"
           name="CondoOwnerEmail"
           required="required"
-          placeholder="Enter condo owner email..."
+          placeholder="Enter owner email..."
           onChange={handleAddUnitsChange}
 
         />
@@ -166,11 +166,11 @@ const CondoManagement = () => {
           type="email"
           name="CondoOccupantEmail"
           required="required"
-          placeholder="Enter an condo occupant email..."
+          placeholder="Enter occupant email..."
           onChange={handleAddUnitsChange}
 
         />
-        <button type="submit">Add</button>
+        <button className="btn_submit" type="submit">Add</button>
       </form>
     </div>
   );

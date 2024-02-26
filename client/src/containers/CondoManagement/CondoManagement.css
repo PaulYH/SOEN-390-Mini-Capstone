@@ -6,46 +6,57 @@
     height: 100vh;
     font-family: Arial, sans-serif;
     margin: auto;
-  }
+    justify-content: center;
+    align-items: center;
+
+}
   
-  table {
+table {
     border-collapse: collapse;
-    width: 100%;
-  }
+}
   
-  th,
-  td {
+th,
+td {
     border: 1px solid #ffffff;
     text-align: left;
-    padding: 8px;
-    font-size: 32px;
-  }
+}
   
-  th {
+th {
     background-color: #7570e4
-  }
+}
   
-  td {
+td {
     background-color: #4c4865
-  }
-  
-  form {
+}
+
+form {
     display: flex;
     gap: 5px;
-  }
+}
   
-  form td:last-child {
+form td:last-child {
     display: flex;
     justify-content: space-evenly;
-  }
-  
-  form * {
-    font-size: 28px;
-  }
-  
-  .logo {
+}
+
+form * {
+    font-size: 20px;
+}
+
+h2{
+    padding-top: 50px;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.logo {
     width: 160px;
-    height: 100px;
+    height: 100px;  
     margin-bottom: 30px;
     cursor: pointer;
+}
+
+.btn_submit{
+    position: relative;
+    top: -10px; 
 }
