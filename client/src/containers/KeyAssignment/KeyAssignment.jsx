@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import './KeyAssignment.css' // Import CSS file
 import {
@@ -19,6 +21,7 @@ import {
   useDisclosure,
   Select,
   SelectItem,
+  Spinner,
 } from '@nextui-org/react'
 import { DeleteIcon } from './DeleteIcon'
 import { columns, users } from './data'
@@ -27,45 +30,74 @@ export default function KeyAssignment() {
   const themeMode = 'dark'
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [propertyId, setPropertyId] = useState(null)
-  const [userData, setUserData] = useState(null)
-  const [unitData, setUnitData] = useState(null)
   const [modalData, setModalData] = useState(null)
-  const [error, setError] = useState('')
 
-  const fetchUserPropertyId = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:5127/api/users/authenticated',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        }
-      )
-      if (!response.ok) throw new Error('Failed to fetch user data')
-      const data = await response.json()
-      console.log(data)
-      console.log(data.property)
-      console.log(data.value.property)
-      return data.value.property.id || null
-    } catch (error) {
-      console.error(error)
-      setError('Failed to fetch property data')
-    }
+  const authorizationConfig = {
+    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+  }
+  const fetchUserPropertyId = () => {
+    const response = axios.get(
+      'http://localhost:5127/api/users/authenticated',
+      authorizationConfig
+    )
+    return response
   }
 
-  const fetchUserKeyRequests = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5127/api/users/key-requests/${propertyId}`
-      )
-      if (!response.ok) throw new Error('Failed to fetch user key requests')
-    } catch (error) {
-      console.error(error)
-      setError('Failed to fetch user key requests')
-    }
+  const fetchUserKeyRequests = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/users/key-requests/${propertyId}`
+    )
+    return response
   }
+
+  const fetchCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/condo-units/${propertyId}`
+    )
+    return response
+  }
+
+  const {
+    isLoading: userLoading,
+    data: user,
+    isError: isUserError,
+    error: userError,
+    isFetching: userFetching,
+  } = useQuery({
+    queryKey: ['get-property-id-thru-user'],
+    queryFn: fetchUserPropertyId,
+  })
+  const propertyId = user?.data.value?.property.id
+
+  const {
+    isLoading: requestsLoading,
+    data: userRequestData,
+    isError: isRequestError,
+    error: requestError,
+    isFetching: requestFetching,
+  } = useQuery({
+    queryKey: ['get-users-with-key-requests', propertyId],
+    queryFn: fetchUserKeyRequests,
+    enabled: !!propertyId,
+  })
+  const keyRequestUsers = userRequestData?.data.value?.$values
+
+  const {
+    isLoading: condoUnitLoading,
+    data: condoUnitData,
+    isError: isCondoUnitError,
+    error: condoUnitError,
+    isFetching: condoUnitFetching,
+  } = useQuery({
+    queryKey: ['get-condo-units', propertyId],
+    queryFn: fetchCondoUnits,
+    enabled: !!propertyId,
+  })
+  const condoUnits = condoUnitData?.data.value?.$values
+
+  console.log(propertyId)
+  console.log(keyRequestUsers)
+  console.log(condoUnits)
 
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
@@ -114,6 +146,28 @@ export default function KeyAssignment() {
         return cellValue
     }
   }, [])
+
+  if (userLoading || requestsLoading || condoUnitLoading) {
+    return (
+      <div className='mainTable'>
+        <Button
+          className='back-button'
+          color='primary'
+          onClick={() => navigate('/propertiesprofile')}
+        >
+          Back
+        </Button>
+        <img
+          src={require('../../assets/logo.png')}
+          alt='logo'
+          className='logo'
+          onClick={() => navigate('/')}
+        />
+        <h1>Key Requests</h1>
+        <Spinner />
+      </div>
+    )
+  }
 
   return (
     <div className='mainTable'>

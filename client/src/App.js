@@ -7,20 +7,27 @@ import Profile from './containers/Profile/Profile.js'
 import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js'
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js'
 import KeyAssignment from './containers/KeyAssignment/KeyAssignment.jsx'
-import { NextUIProvider } from '@nextui-org/system'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+const queryClient = new QueryClient()
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<Main />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/profile' element={<Profile />} />
-        <Route path='/propertiesprofile' element={<PropertiesProfile />} />
-        <Route path='/parkinglocker' element={<ParkingLocker />} />
-        <Route path='/keyassignment' element={<KeyAssignment />} />
-      </Routes>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Main />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/propertiesprofile' element={<PropertiesProfile />} />
+          <Route path='/parkinglocker' element={<ParkingLocker />} />
+          <Route path='/keyassignment' element={<KeyAssignment />} />
+        </Routes>
+      </Router>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 
