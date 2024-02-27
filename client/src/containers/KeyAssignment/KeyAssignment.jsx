@@ -27,11 +27,13 @@ export default function KeyAssignment() {
   const themeMode = 'dark'
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [userData, setUserData] = useState()
+  const [propertyId, setPropertyId] = useState(null)
+  const [userData, setUserData] = useState(null)
+  const [unitData, setUnitData] = useState(null)
   const [modalData, setModalData] = useState(null)
   const [error, setError] = useState('')
 
-  const fetchUserProperty = async () => {
+  const fetchUserPropertyId = async () => {
     try {
       const response = await fetch(
         'http://localhost:5127/api/users/authenticated',
@@ -46,10 +48,22 @@ export default function KeyAssignment() {
       console.log(data)
       console.log(data.property)
       console.log(data.value.property)
-      return data.value.property || null
+      return data.value.property.id || null
     } catch (error) {
       console.error(error)
-      setError('Failed to fetch property')
+      setError('Failed to fetch property data')
+    }
+  }
+
+  const fetchUserKeyRequests = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5127/api/users/key-requests/${propertyId}`
+      )
+      if (!response.ok) throw new Error('Failed to fetch user key requests')
+    } catch (error) {
+      console.error(error)
+      setError('Failed to fetch user key requests')
     }
   }
 
@@ -110,6 +124,12 @@ export default function KeyAssignment() {
       >
         Back
       </Button>
+      <img
+        src={require('../../assets/logo.png')}
+        alt='logo'
+        className='logo'
+        onClick={() => navigate('/')}
+      />
       <h1>Key Requests</h1>
       <Table>
         <TableHeader columns={columns}>

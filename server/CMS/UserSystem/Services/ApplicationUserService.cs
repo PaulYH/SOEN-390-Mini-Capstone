@@ -32,15 +32,16 @@ namespace CMS.Api.UserSystem.Services
 
         public async Task<ActionResult<List<ApplicationUser>>> GetAllUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .ToListAsync();
             return users;
         }
 
-        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey()
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId)
         {
-            var users = await _context.Users.Where(x => 
+            var users = await _context.Users.Where(x => x.Property != null && x.Property.Id == propertyId && (
                 x.hasRequestedOccupantKey == true ||
-                x.hasRequestedOwnerKey == true).ToListAsync();
+                x.hasRequestedOwnerKey == true)).ToListAsync();
 
             return users;
         }

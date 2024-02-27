@@ -27,10 +27,10 @@ namespace CMS.Api.Controllers
             return Ok(users);
         }
 
-        [HttpGet("key-requests")]
-        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey()
+        [HttpGet("key-requests/{propertyId}")]
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId)
         {
-            var users = await _userService.GetAllUsersWaitingForKey();
+            var users = await _userService.GetAllUsersWaitingForKey(propertyId);
             if (users.Value is null) users = new ActionResult<List<ApplicationUser>>(new List<ApplicationUser>());
             return Ok(users);
         }
