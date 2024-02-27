@@ -12,6 +12,7 @@ namespace CMS.Api.PropertySystem.Services
     public interface ICondoUnitService
     {
         Task<ActionResult<List<CondoUnit>>> GetCondoUnitsByEmail(string email);
+        Task<ActionResult<CondoUnit>> GetCondoUnitsById(Guid id);
         Task<ActionResult<CondoUnit>> CreateCondoUnit(CondoUnit condoUnit);
         Task<bool> DeleteCondoUnit(Guid id);
 

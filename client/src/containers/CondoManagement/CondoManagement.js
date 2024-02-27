@@ -2,44 +2,20 @@ import React, { useState, Fragment, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { nanoid } from "nanoid";
 import "./CondoManagement.css";
-import data from "./mock-data.json";
 import ReadOnlyRow from "./components/ReadOnlyRow";
 import EditableRow from "./components/EditableRow";
 
 const CondoManagement = () => {
 
+    useEffect(() => {
+        fetchUserPropertyId();
+    }, []);
+
     const navigate = useNavigate();
 
-    const [units, setUnits] = useState(data);
+    const [units, setUnits] = useState([]);
 
-        const [property, setProperty] = useState(null);
-
-        useEffect(() => {
-            fetchUserProperty();
-        }, []); 
-
-        
-
-
-    const fetchUserProperty = async () => {
-        try {
-            const response = await fetch('http://localhost:5127/api/users/authenticated', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                },
-            });
-            if (!response.ok) throw new Error('Failed to fetch user data');
-            const data = await response.json();
-            // console.log(data);
-            // console.log(data.property);
-             console.log(data.value.property);
-            setProperty(data.value.property);
-            return data.value.property || null;
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
+    const[propertyId, setPropertyId] = useState('');
 
     const [addUnits, setAddUnits] = useState({
         externalUnitID: '',
@@ -74,8 +50,31 @@ const CondoManagement = () => {
         newUnit[fieldName] = fieldValue;
         setEditUnits(newUnit);
     }
+
+    const fetchUserPropertyId = async () => {
+        try {
+            const response = await fetch('http://localhost:5127/api/users/authenticated', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch user data');
+            const data = await response.json();
+            //  console.log(data);
+            //  console.log(data.property);
+             console.log(data.value.property.id);
+             setPropertyId(data?.value.property.id || ' '); 
+            console.log(data?.value.property.id);
+            return data.value.property.id || null;
+        } catch (error) {
+            console.error(error);
+           // setError('Failed to fetch property');
+        }
+    };
   
-    const handleAddUnitsSubmit = (event) => {
+    const handleAddUnitsSubmit = async (event) => {
+
+        console.log(propertyId);
         event.preventDefault();
 
         const addedUnit = {
@@ -86,8 +85,50 @@ const CondoManagement = () => {
             CondoOccupantEmail: addUnits.CondoOccupantEmail
         };
 
-        const addedUnits = [ ...units, addedUnit];
-        setUnits(addedUnits);
+        console.log(addedUnit.externalUnitID);
+
+        
+
+        try {
+            const response = await fetch('http://localhost:5127/api/condounits', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(addedUnit),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            //console.log('Unit added successfully:', result);
+            console.log(result.value.id);
+            setUnits([...units, result]);
+
+            // fetchUserPropertyId();
+             console.log(propertyId);
+             console.log(units);
+             console.log(result.value.id);
+             console.log(result.value.owner.id);
+             console.log(result.value.occupant.$ref);
+            const response2 = await fetch(`http://localhost:5127/api/properties/add-condo/${propertyId}/${result.value.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(''),
+            })
+            if (!response2.ok) {
+                const data = await response.json(); // Parse JSON response to get error details
+                console.error(data.message || 'Failed to associate units with property');
+                return;
+            }
+        } catch (error) {
+            console.error('Failed to add unit:', error);
+        }
+
     };
 
     const handleEditUnitsSubmit = (event) => {

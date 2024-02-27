@@ -57,5 +57,16 @@ namespace CMS.Api.PropertySystem.Services
                 .ToListAsync();
             return condos;
         }
+
+        public async Task<ActionResult<CondoUnit>> GetCondoUnitsById(Guid id)
+        {
+            var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (condoUnit == null)
+            {
+                return null;
+            }
+            return condoUnit;
+        }
     }
 }
