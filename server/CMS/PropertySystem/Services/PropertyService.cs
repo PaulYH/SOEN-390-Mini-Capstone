@@ -14,12 +14,10 @@ namespace CMS.Api.PropertySystem.Services
     public class PropertyService : IPropertyService
     {
         private readonly CMSDbContext _context;
-
         public PropertyService(CMSDbContext context)
         {
             _context = context;
         }
-
 
         public async Task<ActionResult<List<Property>>> GetAllProperties()
         {
@@ -30,6 +28,8 @@ namespace CMS.Api.PropertySystem.Services
         public async Task<ActionResult<Property>> GetPropertyById(Guid id)
         {
             var property = await _context.Properties
+                .Include(x => x.ParkingSpots)
+                .Include(x => x.Lockers)
                 .FirstOrDefaultAsync(p => p.Id == id);
             return property;
         }

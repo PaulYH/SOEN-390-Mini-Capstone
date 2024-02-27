@@ -44,7 +44,10 @@ namespace CMS.Api.Controllers
             property.CompanyName = request.CompanyName;
             property.Address = request.Address;
             property.City = request.City;
-            return await _propertyService.CreateProperty(property);
+
+            var createdProperty = await _propertyService.CreateProperty(property);
+
+            return Ok(createdProperty);
         }
 
         [HttpPut]

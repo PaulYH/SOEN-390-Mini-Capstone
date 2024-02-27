@@ -42,6 +42,12 @@ namespace CMS.Api.UserSystem.Services
             return user;
         }
 
+        public async Task<ActionResult<ApplicationUser>> GetUserById(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            return user;
+        }
+
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {
             var user = await _context.Users.FindAsync(updatedUser.Id);

@@ -113,6 +113,15 @@ namespace CMS.Api.Controllers
             return Ok(user);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApplicationUser>> GetUserById(string id)
+        {
+            var user = await _userService.GetUserById(id);
+            if (user.Value is null) return NotFound();
+            return Ok(user);
+        }
+
+
         [HttpPut]
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {
