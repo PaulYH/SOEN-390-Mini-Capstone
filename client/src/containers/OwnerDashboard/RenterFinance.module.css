@@ -3,17 +3,12 @@
     text-align: center;
     padding: 20px;
   }
-  
-
-
   .logo {
     width: 160px;
     height: 100px;
     margin-bottom: 30px;
     cursor: pointer;
 }
-
-
   .dashboard-header {
    
     padding: 10px;
@@ -37,17 +32,16 @@
     padding: 10px;
     border-radius: 5px;
   }
-  /*.progress {
-    width: 40% ;
-  
-  }*/
- 
   
   .btn-outline-primary {
     background-color:  #7067E1 !important;
     color: white !important; 
     border: #7067E1;
-  }
   
+}
 
+.button {
+    border-radius: 20px;
+    margin: 20px ;
+  }
   

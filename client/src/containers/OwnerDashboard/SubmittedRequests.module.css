@@ -4,10 +4,10 @@
     margin: 150px;
     height: 300px;
 }
-#back-button {
-    margin: 20px;
-}
-
+.button {
+    border-radius: 20px;
+    margin: 20px ;
+  }
 #logo-request {
 height: 120px;
 width: auto;

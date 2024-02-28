@@ -2,10 +2,18 @@
 
 .container {
     /* background-color: white !important; */
-    margin: 70px;
+    margin: 30px 70px 70px 70px;
 
 }
 .card {
-    height: 100%;
-    
+    height: 100%; 
 }
+.titleDashboard {
+    text-align: left ;
+    margin: 30px;
+}
+#button-dashboard {
+    background-color:  #7067E1 !important;
+    color: white !important; 
+    border: #7067E1;
+  } 

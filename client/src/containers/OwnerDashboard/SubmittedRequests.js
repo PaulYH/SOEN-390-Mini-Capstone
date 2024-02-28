@@ -1,7 +1,7 @@
 /*This page is the same for owners and rental users*/ 
 
 import React, { useState, useEffect } from 'react';
-import './SubmittedRequests.css';
+import styles from './SubmittedRequests.module.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 

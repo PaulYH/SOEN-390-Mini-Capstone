@@ -12,6 +12,7 @@ const MainDashboardOwner = () => {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [companyName, setCompanyName]=useState('');
 
   useEffect(() => {
     fetchUserInfo();
@@ -28,6 +29,7 @@ const MainDashboardOwner = () => {
       const userData = await response.json();
       setFirstName(userData.value.firstName);
       setLastName(userData.value.lastName);
+      setCompanyName(userData.value.property.companyName);
     } catch (error) {
       console.error(error);
   
@@ -47,35 +49,38 @@ const MainDashboardOwner = () => {
       </div>
 
       <div className={styles.container}>
+      <h1 className={styles.titleDashboard}> Your Dashboard</h1>
+
 
 {/* /* Profile-row 2*/ }
     <div className="row" >
-    <div className="col-md-4 col-lg-4 mb-3">
+    <div className="col-md-6 col-lg-6 mb-3">
         <div className="card h-100">
 
     
           <div className="card-body text-center">
             <img src={require('../../assets/profile_default.png')} alt="avatar"
-              className="rounded-circle img-fluid" style={{width: '70px'}}/>
+              className="rounded-circle img-fluid mt-3" style={{width: '70px', marginBottom:'5px'}}/>
             
-            <h5 style={{color:'black'}}>{`${firstName} ${lastName}`}</h5>
+            <h4 style={{color:'black'}}>{`${firstName} ${lastName}`}</h4>
             
             <p className="text-muted mb-1"><strong>Condo Owner: </strong>#1234</p>  
-            <p className="text-muted mb-4">Company</p> 
+           
+            <p className="text-muted mb-4">{companyName}</p>
 
             <div className="d-flex justify-content-center mb-2">
-              <button type="button" className="btn btn-outline-primary ms-1">Edit profile</button>
+            <a href="profile" className="btn btn btn-outline-primary">Edit Profile</a>
             </div>
           </div>
         </div>
         </div>
 
-    <div className="col-md-8 col-lg-8 mb-3">
+    <div className="col-md-6 col-lg-6 mb-3">
       <div className="card h-100">
-      <div className="card-body">
-        <h5 className="card-title">Amenities</h5>
-        <p classname="card-text">With supporting text below as a natural lead-in to additional content.</p>
-        <a href="Amenities" className="btn btn btn-outline-primary">See Details</a>
+      <div className="card-body text-center mt-5" >
+        <h5 className="card-title h2">Amenities</h5>
+        <p classname="card-text h4">Check out the range of available amenities designed to enhance your living experience!</p>
+        <a href="Amenities" className="btn btn-outline-primary" id="button-dashboard">See Details</a>
       </div>
     </div>
     </div>
@@ -86,9 +91,9 @@ const MainDashboardOwner = () => {
     <div className="row" >
     <div className="col-md-6 col-lg-6 mb-3">
     <div className="card h-100">
-      <div className="card-body">
-        <h5 className="card-title">Finances</h5>
-        <p classname="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <div className="card-body text-center">
+        <h5 className="card-title h2">Finances</h5>
+        <p classname="card-text h4"><strong style={{textAlign:'center'}}>Last payment made on: </strong> 01/01/2024</p>
         <a href="OwnerFinance" className="btn btn btn-outline-primary">See Details</a>
       </div>
     </div>
@@ -97,9 +102,9 @@ const MainDashboardOwner = () => {
 {/*Requests-row 4*/ }
 <div className="col-md-6 col-lg-6 mb-3 "> 
         <div className="card h-100">
-        <div className="card-body">
-        <h5 className="card-title">Submitted Requests</h5>
-        <p className="card-text"><strong style={{textAlign:'center'}}>Latest request made on: </strong> 01/01/2024</p>
+        <div className="card-body text-center">
+        <h5 className="card-title h2">Submitted Requests</h5>
+        <p className="card-text text-muted "><strong style={{textAlign:'center'}}>Last request made on: </strong> 01/01/2024</p>
         <a href="SubmittedRequests" className="btn btn-outline-primary">See Details</a>
       </div>
       </div>

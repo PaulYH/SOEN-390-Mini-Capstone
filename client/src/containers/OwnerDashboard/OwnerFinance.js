@@ -1,9 +1,8 @@
 /* Finance page of owners */
 
 import React, { useState, useEffect } from 'react';
-import './OwnerFinance.css';
+import styles from './OwnerFinance.module.css';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
 import  { ReactComponent as Download } from 'bootstrap-icons/icons/box-arrow-down.svg';
@@ -30,6 +29,7 @@ const userData = {
     };
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [companyName, setCompanyName]=useState('');
   
     useEffect(() => {
       fetchUserInfo();
@@ -46,6 +46,7 @@ const userData = {
         const userData = await response.json();
         setFirstName(userData.value.firstName);
         setLastName(userData.value.lastName);
+        setCompanyName(userData.value.property.companyName)
       } catch (error) {
         console.error(error);
     
@@ -58,51 +59,42 @@ const userData = {
       
       <>
      
-      <button type="button" id="back-button" onClick={handleClick}>Back</button> 
+     <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
       
-      <div className="dashboard">
+      <div className="d-flex justify-content-center my-2 mx-3">
      
     
+      <img src={require('../../assets/logo.png')} alt="logo"/></div>
 
+      
 {
         // body
       }
       
-         <img src={require('../../assets/logo.png')} alt="logo" className="logo" />
-        <header className="dashboard-header">
+       
+        <div className={styles.dashboardHeader}>
         <h1 style={{color:'black'}}>{`${firstName} ${lastName}`}</h1>
-          <div>{userData.companyName}</div>
-          <div>Condo Number: <span class="badge badge-size bg-light text-dark">{userData.condoNumber}</span></div>
-        </header>
-        <section className="financial-overview">
+          <div>{companyName}</div>
+          <div className="text-muted">Condo Number: <span className="badge badge-size bg-light text-dark">#1234</span></div>
+        
+        
           <h2>My Finances</h2>
           <div>Total amount: $  <span class="badge badge-size bg-light text-dark">{userData.totalAmount.toLocaleString()}</span></div>
           <div>Monthly Payments: $ <span class="badge badge-size bg-light text-dark">{userData.monthlyPayment.toLocaleString()}</span>
             </div>
-        </section>
-
-        {
-        //to be changed with a percentage that is automatically calculated after each payment
-        }
-        <section className="payment-status">
-
-         {
-        /*<div class="progress">
-        <div class="progress-bar" role="progressbar" style={{width: '25%'}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-      </div>*/
-        } 
-        
-          <div>Remaining Amount</div>
+            <div>Remaining Amount</div>
           <div>${userData.remainingAmount.toLocaleString()} CAD</div>
           <div>Last payment made on: {userData.lastPaymentDate}</div>
-          
-
-          {
-          //To be changed so that there is an actual invoice that is downloaded
-        }
           <button type="button" class="btn btn-outline-primary">Download Invoice <Download/></button>
-        </section>
-    </div>
+       
+        </div>
+
+       
+
+        
+         
+      
+  
     </>
   );
 };
