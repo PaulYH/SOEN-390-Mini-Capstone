@@ -92,5 +92,23 @@ namespace CMS.Api.PropertySystem.Services
 
             return condoUnit;
         }
+
+        public async Task<ActionResult<List<CondoUnit>>> GetOwnedCondoUnitsByUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null) return null;
+            var condoUnits = await _context.CondoUnits.Where(x => x.Owner == user).ToListAsync();
+            if (condoUnits == null) return null;
+            return condoUnits;
+        }
+
+        public async Task<ActionResult<CondoUnit>> GetOccupantCondoUnitByUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null) return null;
+            var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(x => x.Occupant == user);
+            if (condoUnit == null) return null;
+            return condoUnit;
+        }
     }
 }

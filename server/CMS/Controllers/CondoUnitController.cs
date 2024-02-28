@@ -31,6 +31,22 @@ namespace CMS.Api.Controllers
             return Ok(condos);
         }
 
+        [HttpGet("/owner/{id}")]
+        public async Task<ActionResult<List<CondoUnit>>> GetOwnedCondoUnitsByUser(string id)
+        {
+            var condos = await _condoUnitService.GetOwnedCondoUnitsByUser(id);
+            if (condos == null) return NotFound();
+            return Ok(condos);
+        }
+
+        [HttpGet("/occupant/{id}")]
+        public async Task<ActionResult<List<CondoUnit>>> GetOccupantCondoUnitsByUser(string id)
+        {
+            var condo = await _condoUnitService.GetOccupantCondoUnitByUser(id);
+            if (condo == null) return NotFound();
+            return Ok(condo);
+        }
+
         [HttpPost]
         public async Task<ActionResult<CondoUnit>> CreateCondoUnit([FromBody] CreateCondoUnitRequest request)
         {

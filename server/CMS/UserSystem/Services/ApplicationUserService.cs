@@ -50,7 +50,10 @@ namespace CMS.Api.UserSystem.Services
 
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            var user = await _context.Users
+                .Include(x => x.OwnedCondoUnits)
+                .Include(x => x.RentedCondoUnits)
+                .FirstOrDefaultAsync(x => x.Email == email);
             return user;
         }
 
