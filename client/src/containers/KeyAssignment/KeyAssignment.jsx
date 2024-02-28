@@ -233,7 +233,7 @@ export default function KeyAssignment() {
           onClick={() => navigate('/')}
         />
         <h1>Key Requests</h1>
-        <Spinner />
+        <Spinner size='lg' color='secondary' />
       </div>
     )
   }

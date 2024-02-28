@@ -12,6 +12,7 @@ import './Profile.css'
 
 export default function Profile() {
   const navigate = useNavigate()
+  const [loadingValue, setLoadingValue] = useState(0)
   const [user, setUser] = useState(null)
   const [phoneNumber, setPhoneNumber] = useState(null)
   const [imageData, setImageData] = useState(null)
@@ -52,9 +53,55 @@ export default function Profile() {
   } = useQuery({
     queryKey: ['get-authenticated-user'],
     queryFn: fetchAuthenticatedUser,
+    refetchOnWindowFocus: false,
   })
 
   const retrievedUser = userData?.data.value
+
+  const fetchOwnerCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/condounits/owner/${retrievedUser.id}`
+    )
+    return response
+  }
+
+  const fetchOccupantCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/condounits/occupant/${retrievedUser.id}`
+    )
+    return response
+  }
+
+  const {
+    isLoading: ownerUnitsLoading,
+    data: ownerUnitsData,
+    isError: isOwnerUnitsError,
+    error: ownerUnitsError,
+    isFetching: ownerUnitsFetching,
+    status: ownerUnitsStatus,
+  } = useQuery({
+    queryKey: ['get-owner-condo-units', retrievedUser?.id],
+    queryFn: fetchOwnerCondoUnits,
+    enabled: !!retrievedUser,
+    refetchOnWindowFocus: false,
+  })
+
+  const {
+    isLoading: occupantUnitsLoading,
+    data: occupantUnitsData,
+    isError: isOccupantUnitsError,
+    error: occupantUnitsError,
+    isFetching: occupantUnitsFetching,
+    status: occupantUnitsStatus,
+  } = useQuery({
+    queryKey: ['get-occupant-condo-units', retrievedUser?.id],
+    queryFn: fetchOccupantCondoUnits,
+    enabled: !!retrievedUser,
+    refetchOnWindowFocus: false,
+  })
+
+  const retrievedOwnerUnits = ownerUnitsData?.data.value.$values
+  const retrievedOccupantUnits = occupantUnitsData?.data.value
 
   useEffect(() => {
     if (
@@ -71,45 +118,25 @@ export default function Profile() {
       setOwnerRequest(retrievedUser?.hasRequestedOwnerKey)
       constructProfileImage(retrievedUser?.profilePicture?.imageData)
     }
-  }, [navigate, userStatus, retrievedUser])
 
-  const fetchOwnerCondoUnits = () => {
-    const response = axios.get(
-      `http://localhost:5127/api/condounits/owner/${user.id}`
-    )
-    return response
-  }
+    if (ownerUnitsStatus === 'success') {
+      if (retrievedOwnerUnits[0]) {
+        setOwnerKey(retrievedOwnerUnits[0].registrationKey)
+      }
+    }
 
-  const fetchOccupantCondoUnits = () => {
-    const response = axios.get(
-      `http://localhost:5127/api/condounits/occupant/${user.id}`
-    )
-    return response
-  }
-
-  const {
-    isLoading: ownerUnitsLoading,
-    data: ownerUnitsData,
-    isError: isOwnerUnitsError,
-    error: ownerUnitsError,
-    isFetching: ownerUnitsFetching,
-  } = useQuery({
-    queryKey: ['get-owner-condo-units', user?.id],
-    queryFn: fetchOwnerCondoUnits,
-    enabled: !!user,
-  })
-
-  const {
-    isLoading: occupantUnitsLoading,
-    data: occupantUnitsData,
-    isError: isOccupantUnitsError,
-    error: occupantUnitsError,
-    isFetching: occupantUnitsFetching,
-  } = useQuery({
-    queryKey: ['get-occupant-condo-units', user?.id],
-    queryFn: fetchOccupantCondoUnits,
-    enabled: !!user,
-  })
+    if (occupantUnitsStatus === 'success') {
+      if (retrievedOccupantUnits) {
+        setRentalKey(retrievedOccupantUnits.registrationKey)
+      }
+    }
+  }, [
+    navigate,
+    userStatus,
+    retrievedUser,
+    ownerUnitsStatus,
+    occupantUnitsStatus,
+  ])
 
   const constructProfileImage = (imageInfo) => {
     if (imageInfo) {
@@ -229,7 +256,7 @@ export default function Profile() {
       <div className='profile'>
         <p>Loading user profile</p>
         <br />
-        <Spinner size='lg' />
+        <Spinner size='lg' color='secondary' />
       </div>
     )
   }
@@ -270,24 +297,44 @@ export default function Profile() {
             onChange={handlePhoneNumberChange}
           />
 
-          {!rentalRequest && !ownerRequest && (
-            <p>
-              <label>Rented Condo Key</label>
-              <input type='text' value={rentalKey} readOnly />
+          {!rentalRequest &&
+            !ownerRequest &&
+            !retrievedOccupantUnits &&
+            !retrievedOwnerUnits[0] && (
               <p>
-                No rental key yet?{' '}
-                <span className='link' onClick={handleRentalCondoKeyRequest}>
-                  Request Rental Key.
-                </span>
+                <label>Rented Condo Key</label>
+                <input type='text' value={rentalKey} readOnly />
+                <p>
+                  No rental key yet?{' '}
+                  <span className='link' onClick={handleRentalCondoKeyRequest}>
+                    Request Rental Key.
+                  </span>
+                </p>
+                <label>Owned Condo Key</label>
+                <input type='text' value={ownerKey} readOnly />
+                <p>
+                  No condo owner key yet?{' '}
+                  <span className='link' onClick={handleOwnerCondoKeyRequest}>
+                    Request Owner Key.
+                  </span>
+                </p>
               </p>
+            )}
+
+          {!rentalRequest &&
+            !ownerRequest &&
+            retrievedOccupantUnits &&
+            !retrievedOwnerUnits[0] && (
+              <p>
+                <label>Rented Condo Key</label>
+                <input type='text' value={rentalKey} readOnly />
+              </p>
+            )}
+
+          {!rentalRequest && !ownerRequest && retrievedOwnerUnits[0] && (
+            <p>
               <label>Owned Condo Key</label>
               <input type='text' value={ownerKey} readOnly />
-              <p>
-                No condo owner key yet?{' '}
-                <span className='link' onClick={handleOwnerCondoKeyRequest}>
-                  Request Owner Key.
-                </span>
-              </p>
             </p>
           )}
 

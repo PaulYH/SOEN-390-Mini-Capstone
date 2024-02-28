@@ -31,7 +31,7 @@ namespace CMS.Api.Controllers
             return Ok(condos);
         }
 
-        [HttpGet("/owner/{id}")]
+        [HttpGet("owner/{id}")]
         public async Task<ActionResult<List<CondoUnit>>> GetOwnedCondoUnitsByUser(string id)
         {
             var condos = await _condoUnitService.GetOwnedCondoUnitsByUser(id);
@@ -39,7 +39,7 @@ namespace CMS.Api.Controllers
             return Ok(condos);
         }
 
-        [HttpGet("/occupant/{id}")]
+        [HttpGet("occupant/{id}")]
         public async Task<ActionResult<List<CondoUnit>>> GetOccupantCondoUnitsByUser(string id)
         {
             var condo = await _condoUnitService.GetOccupantCondoUnitByUser(id);
