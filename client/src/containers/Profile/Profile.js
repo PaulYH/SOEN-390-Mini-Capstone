@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  useQuery,
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { Spinner } from '@nextui-org/react'
+import axios from 'axios'
 import './Profile.css'
 
-const Profile = () => {
+export default function Profile() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [phoneNumber, setPhoneNumber] = useState(null)
@@ -18,53 +26,97 @@ const Profile = () => {
   const [rentalRequest, setRentalRequest] = useState(false)
   const [ownerRequest, setOwnerRequest] = useState(false)
 
-  useEffect(() => {
-    // Check if the user is authenticated
-    const accessToken = localStorage.getItem('accessToken')
-    const expiresAt = localStorage.getItem('expiresAt')
+  const queryClient = useQueryClient()
+  const accessToken = localStorage.getItem('accessToken')
+  const expiresAt = localStorage.getItem('expiresAt')
 
+  const authorizationConfig = {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  }
+  const fetchAuthenticatedUser = () => {
+    const response = axios.get(
+      'http://localhost:5127/api/users/authenticated',
+      authorizationConfig
+    )
+    console.log(response)
+    return response
+  }
+
+  const {
+    isLoading: userLoading,
+    data: userData,
+    isError: isUserError,
+    error: userError,
+    isFetching: userFetching,
+    status: userStatus,
+  } = useQuery({
+    queryKey: ['get-authenticated-user'],
+    queryFn: fetchAuthenticatedUser,
+  })
+
+  const retrievedUser = userData?.data.value
+
+  useEffect(() => {
     if (
       !(accessToken && expiresAt && new Date(parseInt(expiresAt)) > new Date())
     ) {
       // If not authenticated or token is expired, redirect to /login
       navigate('/login')
-    } else {
-      // If authenticated, fetch user data
-      fetchAuthenticatedUser()
     }
-  }, [navigate])
 
-  const fetchAuthenticatedUser = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:5127/api/users/authenticated',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        }
-      )
+    if (userStatus === 'success') {
+      setUser(retrievedUser)
+      setPhoneNumber(retrievedUser?.phoneNumber || '')
+      setRentalRequest(retrievedUser?.hasRequestedOccupantKey)
+      setOwnerRequest(retrievedUser?.hasRequestedOwnerKey)
+      constructProfileImage(retrievedUser?.profilePicture?.imageData)
+    }
+  }, [navigate, userStatus, retrievedUser])
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data')
-      }
+  const fetchOwnerCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/condounits/owner/${user.id}`
+    )
+    return response
+  }
 
-      const responseData = await response.json()
-      const userData = responseData.value
-      setUser(userData)
-      setPhoneNumber(userData?.phoneNumber || ' ')
-      setRentalRequest(userData.hasRequestedOccupantKey)
-      setOwnerRequest(userData.hasRequestedOwnerKey)
+  const fetchOccupantCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/condounits/occupant/${user.id}`
+    )
+    return response
+  }
 
-      // Construct the profile image URL if imageData is available
-      if (userData?.profilePicture?.imageData) {
-        const imageType =
-          userData.profilePicture.imageType === 1 ? 'png' : 'jpeg'
-        const imageUrl = `data:image/${imageType};base64,${userData.profilePicture.imageData}`
-        setProfileImageUrl(imageUrl)
-      }
-    } catch (error) {
-      console.error(error)
+  const {
+    isLoading: ownerUnitsLoading,
+    data: ownerUnitsData,
+    isError: isOwnerUnitsError,
+    error: ownerUnitsError,
+    isFetching: ownerUnitsFetching,
+  } = useQuery({
+    queryKey: ['get-owner-condo-units', user?.id],
+    queryFn: fetchOwnerCondoUnits,
+    enabled: !!user,
+  })
+
+  const {
+    isLoading: occupantUnitsLoading,
+    data: occupantUnitsData,
+    isError: isOccupantUnitsError,
+    error: occupantUnitsError,
+    isFetching: occupantUnitsFetching,
+  } = useQuery({
+    queryKey: ['get-occupant-condo-units', user?.id],
+    queryFn: fetchOccupantCondoUnits,
+    enabled: !!user,
+  })
+
+  const constructProfileImage = (imageInfo) => {
+    if (imageInfo) {
+      const imageType =
+        retrievedUser.profilePicture.imageType === 1 ? 'png' : 'jpeg'
+      const imageUrl = `data:image/${imageType};base64,${retrievedUser.profilePicture.imageData}`
+      setProfileImageUrl(imageUrl)
     }
   }
 
@@ -72,6 +124,7 @@ const Profile = () => {
     // Clear authentication data from localStorage
     localStorage.removeItem('accessToken')
     localStorage.removeItem('expiresAt')
+    queryClient.removeQueries()
 
     // Redirect to /login
     navigate('/login')
@@ -171,6 +224,16 @@ const Profile = () => {
     })
   }
 
+  if (userLoading || ownerUnitsLoading || occupantUnitsLoading) {
+    return (
+      <div className='profile'>
+        <p>Loading user profile</p>
+        <br />
+        <Spinner size='lg' />
+      </div>
+    )
+  }
+
   return (
     <div className='profile'>
       <button onClick={handlePropetiesProfileClick}>Properties Profile</button>
@@ -257,5 +320,3 @@ const Profile = () => {
     </div>
   )
 }
-
-export default Profile
