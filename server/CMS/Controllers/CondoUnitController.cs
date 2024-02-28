@@ -56,6 +56,26 @@ namespace CMS.Api.Controllers
             return await _condoUnitService.DeleteCondoUnit(id);
         }
 
+        [HttpPut("assign-owner-key/{condoId}/{ownerId}")]
+        public async Task<ActionResult<CondoUnit>> SetUnitOwner(Guid condoId, string ownerId)
+        {
+            var condoUnit = await _condoUnitService.SetUnitOwner(condoId, ownerId);
+
+            if (condoUnit == null)
+                return BadRequest();
+            return Ok(condoUnit);
+        }
+
+        [HttpPut("assign-occupant-key/{condoId}/{ownerId}")]
+        public async Task<ActionResult<CondoUnit>> SetUnitOccupant(Guid condoId, string ownerId)
+        {
+            var condoUnit = await _condoUnitService.SetUnitOccupant(condoId, ownerId);
+
+            if (condoUnit == null)
+                return BadRequest();
+            return Ok(condoUnit);
+        }
+
 
         public class CreateCondoUnitRequest
         {

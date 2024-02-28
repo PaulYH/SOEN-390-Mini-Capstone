@@ -36,6 +36,17 @@ namespace CMS.Api.UserSystem.Services
             return users;
         }
 
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId)
+        {
+            var users = await _context.Users
+                .Include(x => x.ProfilePicture)
+                .Where(x => x.Property != null && x.Property.Id == propertyId && (
+                x.hasRequestedOccupantKey == true ||
+                x.hasRequestedOwnerKey == true)).ToListAsync();
+
+            return users;
+        }
+
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);

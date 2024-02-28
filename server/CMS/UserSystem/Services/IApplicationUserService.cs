@@ -17,5 +17,7 @@ namespace CMS.Api.UserSystem.Services
         Task<ProfilePicture> UploadProfilePicture(byte[] imageData, ImageType imageType);
         Task<(bool Succeeded, IEnumerable<string> Errors, ApplicationUser User)> UpdateUserProfile(string email, string phoneNumber, ProfilePicture profilePicture);
         Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email);
+        Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId);
+
     }
 }
