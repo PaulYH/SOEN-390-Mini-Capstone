@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import './KeyAssignment.css' // Import CSS file
@@ -24,13 +24,20 @@ import {
   Spinner,
 } from '@nextui-org/react'
 import { DeleteIcon } from './DeleteIcon'
-import { columns, users } from './data'
 
 export default function KeyAssignment() {
   const themeMode = 'dark'
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [modalData, setModalData] = useState(null)
+  const [submitDisable, setSubmitDisable] = useState(true)
+  const [chosenUnit, setChosenUnit] = useState(null)
+
+  const columns = [
+    { name: 'USER', uid: 'name' },
+    { name: 'KEY TYPE', uid: 'role' },
+    { name: 'ACTIONS', uid: 'actions' },
+  ]
 
   const authorizationConfig = {
     headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
@@ -95,6 +102,34 @@ export default function KeyAssignment() {
   })
   const condoUnits = condoUnitData?.data.value?.$values
 
+  async function sendOwnerAssociation(condoId, userId) {
+    const response = await fetch(
+      `http://localhost:5127/api/condounits/assign-owner-key/${condoId}/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      }
+    )
+    return response.status
+  }
+
+  async function sendOccupantAssociation(condoId, userId) {
+    const response = await fetch(
+      `http://localhost:5127/api/condounits/assign-occupant-key/${condoId}/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      }
+    )
+    return response.status
+  }
+
   console.log(propertyId)
   console.log(keyRequestUsers)
   console.log(condoUnits)
@@ -106,17 +141,30 @@ export default function KeyAssignment() {
       case 'name':
         return (
           <User
-            avatarProps={{ radius: 'lg', src: user.avatar }}
             description={user.email}
-            name={cellValue}
+            name={user.firstName + ' ' + user.lastName}
           >
             {user.email}
           </User>
         )
       case 'role':
+        if (user.hasRequestedOwnerKey) {
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-sm capitalize'>Owner</p>
+            </div>
+          )
+        }
+        if (user.hasRequestedOccupantKey) {
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-sm capitalize'>Occupant</p>
+            </div>
+          )
+        }
         return (
           <div className='flex flex-col'>
-            <p className='text-bold text-sm capitalize'>{cellValue}</p>
+            <p className='text-bold text-sm capitalize'>ERROR</p>
           </div>
         )
 
@@ -127,6 +175,7 @@ export default function KeyAssignment() {
               <Button
                 onPress={() => {
                   setModalData(user)
+                  setChosenUnit(null)
                   onOpen()
                 }}
                 color='secondary'
@@ -135,11 +184,11 @@ export default function KeyAssignment() {
               </Button>
             </span>
 
-            <Tooltip color='danger' content='Delete request'>
+            {/* <Tooltip color='danger' content='Delete request'>
               <span className='text-lg text-danger cursor-pointer active:opacity-50'>
                 <DeleteIcon />
               </span>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         )
       default:
@@ -196,7 +245,10 @@ export default function KeyAssignment() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody
+          items={keyRequestUsers}
+          emptyContent='No assignment requests to display.'
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
@@ -207,31 +259,75 @@ export default function KeyAssignment() {
         </TableBody>
       </Table>
 
-      <Modal className={themeMode} isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className='flex flex-col gap-1'>
-                Assign Registration Key to User
-              </ModalHeader>
-              <ModalBody>
-                <p>
-                  Assign <b>{modalData.name}</b> as <b>{modalData.role}</b> of:
-                </p>
-                <Select label='Condo'></Select>
-              </ModalBody>
-              <ModalFooter>
-                <Button color='danger' variant='light' onPress={onClose}>
-                  Close
-                </Button>
-                <Button color='primary' onPress={onClose}>
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      {isOpen && (
+        <Modal
+          className={themeMode}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className='flex flex-col gap-1'>
+                  Assign Registration Key to User
+                </ModalHeader>
+                <ModalBody>
+                  <p>
+                    Assign{' '}
+                    <b>{modalData.firstName + ' ' + modalData.lastName}</b> as{' '}
+                    <b>
+                      {modalData.hasRequestedOwnerKey == 1
+                        ? 'Owner'
+                        : 'Occupant'}
+                    </b>{' '}
+                    of:
+                  </p>
+                  <p>{chosenUnit}</p>
+                  <Select
+                    items={condoUnits}
+                    label='Condo'
+                    placeholder='Select a unit'
+                    onSelectionChange={setChosenUnit}
+                    isRequired
+                  >
+                    {(condoUnit) => (
+                      <SelectItem
+                        key={condoUnit.Id}
+                        value={condoUnit.Id}
+                        textValue={`Unit ${condoUnit.externalUnitId}`}
+                      >
+                        Unit {condoUnit.externalUnitId}
+                      </SelectItem>
+                    )}
+                  </Select>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color='danger' variant='light' onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button
+                    color='primary'
+                    isDisabled={chosenUnit == null ? true : false}
+                    onPress={() => {
+                      const response = modalData.hasRequestedOwnerKey
+                        ? sendOwnerAssociation(
+                            chosenUnit.currentKey,
+                            modalData.id
+                          ).then(onClose())
+                        : sendOccupantAssociation(
+                            chosenUnit.currentKey,
+                            modalData.id
+                          ).then(onClose())
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   )
 }
