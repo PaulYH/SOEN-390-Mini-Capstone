@@ -32,6 +32,7 @@ export default function KeyAssignment() {
   const [modalData, setModalData] = useState(null)
   const [submitDisable, setSubmitDisable] = useState(true)
   const [chosenUnit, setChosenUnit] = useState(null)
+  const [users, setUsers] = useState([])
 
   const columns = [
     { name: 'USER', uid: 'name' },
@@ -82,12 +83,19 @@ export default function KeyAssignment() {
     isError: isRequestError,
     error: requestError,
     isFetching: requestFetching,
+    status: requestStatus,
   } = useQuery({
     queryKey: ['get-users-with-key-requests', propertyId],
     queryFn: fetchUserKeyRequests,
     enabled: !!propertyId,
   })
   const keyRequestUsers = userRequestData?.data.value?.$values
+
+  useEffect(() => {
+    if (requestStatus === 'success') {
+      setUsers(keyRequestUsers)
+    }
+  }, [requestStatus, keyRequestUsers])
 
   const {
     isLoading: condoUnitLoading,
@@ -130,10 +138,22 @@ export default function KeyAssignment() {
     return response.status
   }
 
-  console.log(propertyId)
-  console.log(keyRequestUsers)
-  console.log(condoUnits)
+  const findItemIndex = (item) => {
+    return users.findIndex((row) => row === item)
+  }
 
+  const handleRowDeleteSuccess = (itemIndex) => {
+    setUsers((prevItems) => prevItems.filter((_, index) => index !== itemIndex))
+  }
+
+  console.log('Next is propertyId')
+  console.log(propertyId)
+  console.log('Next is keyRequestUsers')
+  console.log(keyRequestUsers)
+  console.log('Next is condoUnits')
+  console.log(condoUnits)
+  console.log('Next is users')
+  console.log(users)
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -246,7 +266,7 @@ export default function KeyAssignment() {
           )}
         </TableHeader>
         <TableBody
-          items={keyRequestUsers}
+          items={users}
           emptyContent='No assignment requests to display.'
         >
           {(item) => (
@@ -282,7 +302,6 @@ export default function KeyAssignment() {
                     </b>{' '}
                     of:
                   </p>
-                  <p>{chosenUnit}</p>
                   <Select
                     items={condoUnits}
                     label='Condo'
@@ -313,11 +332,19 @@ export default function KeyAssignment() {
                         ? sendOwnerAssociation(
                             chosenUnit.currentKey,
                             modalData.id
-                          ).then(onClose())
+                          )
+                            .then(onClose())
+                            .then(
+                              handleRowDeleteSuccess(findItemIndex(modalData))
+                            )
                         : sendOccupantAssociation(
                             chosenUnit.currentKey,
                             modalData.id
-                          ).then(onClose())
+                          )
+                            .then(onClose())
+                            .then(
+                              handleRowDeleteSuccess(findItemIndex(modalData))
+                            )
                     }}
                   >
                     Submit
