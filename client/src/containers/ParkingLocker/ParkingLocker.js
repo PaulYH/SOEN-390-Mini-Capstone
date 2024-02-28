@@ -4,8 +4,8 @@ import './ParkingLocker.css';
 const ParkingLocker = () => {
   const [properties, setProperties] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
-  const [newParkingSpot, setNewParkingSpot] = useState({ externalSpotId: '', spotFee: '', owner: null });
-  const [newLocker, setNewLocker] = useState({ externalLockerId: '', lockerFee: '', owner: null });
+  const [newParkingSpot, setNewParkingSpot] = useState({ externalSpotId: '', spotFee: '', ownerId: '' });
+  const [newLocker, setNewLocker] = useState({ externalLockerId: '', lockerFee: '', ownerId: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,33 +46,45 @@ const ParkingLocker = () => {
     setNewLocker({ ...newLocker, [e.target.name]: e.target.value });
   };
 
+  // Fetch the user ID based on email
+  const fetchUserIdByEmail = async (email) => {
+    try {
+      const response = await fetch(`http://localhost:5127/api/users/${email}`, { method: 'GET', headers: fetchAuthHeaders() });
+      if (!response.ok) throw new Error('User not found');
+      const data = await response.json();
+      return data.value.id;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   const updateProperty = async (type, newData) => {
     setLoading(true);
     try {
       const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
-  
+
       if (type === 'parkingSpot') {
         updatedProperty.parkingSpots = updatedProperty.parkingSpots || [];
-  
-        updatedProperty.parkingSpots.push({
-          ...newData,
-        });
+        updatedProperty.parkingSpots.push(newData);
+        console.log(updatedProperty);
       } else if (type === 'locker') {
         updatedProperty.lockers = updatedProperty.lockers || [];
         updatedProperty.lockers.push(newData);
       }
-  
+
       const payload = {
         ...updatedProperty,
         id: updatedProperty.id
       };
-  
+
+      console.log(payload);
+
       const response = await fetch(`http://localhost:5127/api/properties`, {
         method: 'PUT',
         headers: fetchAuthHeaders(),
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Failed to update property: ${JSON.stringify(errorData)}`);
@@ -84,40 +96,46 @@ const ParkingLocker = () => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
-  const addParkingSpot = (e) => {
+  const addParkingSpot = async (e) => {
     e.preventDefault();
+    try {
+      const ownerId = await fetchUserIdByEmail(newParkingSpot.ownerId);
+      const parkingSpotWithOwner = {
+        ...newParkingSpot,
+        owner: {
+          id: ownerId
+        }
+      };
   
-    const parkingSpotWithOwner = {
-      ...newParkingSpot,
-      owner: {
-        id: newParkingSpot.ownerId
-      }
-    };
-  
-    delete parkingSpotWithOwner.ownerId;
-  
-    updateProperty('parkingSpot', parkingSpotWithOwner);
-    setNewParkingSpot({ externalSpotId: '', spotFee: '', owner: null, ownerId: '' });
-  };  
+      delete parkingSpotWithOwner.ownerId;
 
-  const addLocker = (e) => {
+      updateProperty('parkingSpot', parkingSpotWithOwner);
+      setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const addLocker = async (e) => {
     e.preventDefault();
-  
-    const lockerWithOwner = {
-      ...newLocker,
-      owner: {
-        id: newLocker.ownerId,
-      }
-    };
+    try {
+      const ownerId = await fetchUserIdByEmail(newLocker.ownerId);
+      const lockerWithOwner = {
+        ...newLocker,
+        owner: {
+          id: ownerId
+        }
+      };
 
-    delete lockerWithOwner.ownerId;
-  
-    updateProperty('locker', lockerWithOwner);
-
-    setNewLocker({ externalLockerId: '', lockerFee: '', owner: null, ownerId: '' });
-  };  
+      delete lockerWithOwner.ownerId;
+      updateProperty('locker', lockerWithOwner);
+      setNewLocker({ externalLockerId: '', lockerFee: '', ownerId: '' });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="parkingLockerContainer">
@@ -153,6 +171,13 @@ const ParkingLocker = () => {
           value={newParkingSpot.spotFee}
           onChange={handleParkingSpotChange}
         />
+        <input
+          type="email"
+          name="ownerId"
+          placeholder="Owner Email"
+          value={newParkingSpot.ownerId}
+          onChange={handleParkingSpotChange}
+        />
         <button type="submit">Add Parking Spot</button>
       </form>
 
@@ -172,6 +197,13 @@ const ParkingLocker = () => {
           value={newLocker.lockerFee}
           onChange={handleLockerChange}
         />
+        <input
+          type="email"
+          name="ownerId"
+          placeholder="Owner Email"
+          value={newLocker.ownerId}
+          onChange={handleLockerChange}
+        />
         <button type="submit">Add Locker</button>
       </form>
 
@@ -187,11 +219,11 @@ const ParkingLocker = () => {
               </tr>
             </thead>
             <tbody>
-              {selectedProperty.parkingSpots && selectedProperty.parkingSpots.map((spot) => (
-                <tr key={spot.id}>
+              {selectedProperty.parkingSpots?.map((spot, index) => (
+                <tr key={index}>
                   <td>{spot.externalSpotId}</td>
                   <td>{spot.spotFee}</td>
-                  <td>{spot.owner ? spot.owner.userName : 'N/A'}</td>
+                  <td>{spot.owner?.email}</td>
                 </tr>
               ))}
             </tbody>
@@ -207,11 +239,11 @@ const ParkingLocker = () => {
               </tr>
             </thead>
             <tbody>
-              {selectedProperty.lockers && selectedProperty.lockers.map((locker) => (
-                <tr key={locker.id}>
+              {selectedProperty.lockers?.map((locker, index) => (
+                <tr key={index}>
                   <td>{locker.externalLockerId}</td>
                   <td>{locker.lockerFee}</td>
-                  <td>{locker.owner ? locker.owner.userName : 'N/A'}</td>
+                  <td>{locker.owner?.email}</td>
                 </tr>
               ))}
             </tbody>
