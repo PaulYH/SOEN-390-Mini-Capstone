@@ -18,6 +18,6 @@ namespace CMS.Api.PropertySystem.Services
 
         Task<ActionResult<CondoUnit>> SetUnitOwner(Guid unitId, string ownerId);
         Task<ActionResult<CondoUnit>> SetUnitOccupant(Guid unitId, string occupantId);
-
+        Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit);
     }
 }

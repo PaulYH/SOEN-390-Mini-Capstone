@@ -11,6 +11,7 @@ using System;
 using CMS.Api.PropertySystem.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Reflection.Metadata.Ecma335;
+using Microsoft.IdentityModel.Tokens;
 
 
 
@@ -102,6 +103,24 @@ namespace CMS.Api.PropertySystem.Services
                 return null;
             }
             return condoUnit;
+        }
+
+
+
+        public async Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit)
+        {
+            var condo = await _context.CondoUnits.FindAsync(updatedCondoUnit.Id);
+            if (condo == null) { return null; }
+
+            condo.ExternalUnitId = updatedCondoUnit.ExternalUnitId != -1 ?
+                condo.ExternalUnitId : updatedCondoUnit.ExternalUnitId;
+            condo.Size = updatedCondoUnit.Size != -1 ?
+                condo.Size : updatedCondoUnit.Size;
+            condo.FeePerSquareFoot = updatedCondoUnit.FeePerSquareFoot != -1?
+                condo.FeePerSquareFoot : updatedCondoUnit.FeePerSquareFoot;
+
+            await _context.SaveChangesAsync();
+            return condo;
         }
     }
 }

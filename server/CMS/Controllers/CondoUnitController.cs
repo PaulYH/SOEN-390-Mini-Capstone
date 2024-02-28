@@ -76,6 +76,14 @@ namespace CMS.Api.Controllers
             return Ok(condoUnit);
         }
 
+        [HttpPut]
+        public async Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit)
+        {
+            var condo = await _condoUnitService.UpdateCondoUnit(updatedCondoUnit);
+            if (condo is null) return NotFound();
+            return Ok(condo);
+        }
+
 
         public class CreateCondoUnitRequest
         {
