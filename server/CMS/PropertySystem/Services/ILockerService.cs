@@ -7,5 +7,7 @@ namespace CMS.Api.PropertySystem.Services
     {
         Task<ActionResult<Locker>> CreateLocker(Locker locker);
         Task<ActionResult<Locker>> UpdateLocker(Locker updatedLocker);
+        // Task<ActionResult<IEnumerable<Locker>>> GetLockersByOwner(string ownerId);
+
     }
 }

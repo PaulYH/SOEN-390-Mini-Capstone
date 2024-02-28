@@ -40,5 +40,15 @@ namespace CMS.Api.PropertySystem.Services
             await _context.SaveChangesAsync();
             return locker;
         }
+
+        // how do you check the lockers property id?
+        /*
+        public async Task<ActionResult<IEnumerable<Locker>>> GetLockersByProperty(string propertyId)
+        {
+            var lockers = await _context.Lockers.
+                Where(l => l.Property == propertyId)
+                .ToListAsync();
+        }
+        */
     }
 }

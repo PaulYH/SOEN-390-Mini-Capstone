@@ -7,5 +7,6 @@ namespace CMS.Api.PropertySystem.Services
     {
         Task<ActionResult<ParkingSpot>> CreateParkingSpot(ParkingSpot parkingSpot);
         Task<ActionResult<ParkingSpot>> UpdateParkingSpot(ParkingSpot updatedParkingSpot);
+
     }
 }

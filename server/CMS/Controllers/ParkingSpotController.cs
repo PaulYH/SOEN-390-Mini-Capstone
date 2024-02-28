@@ -46,5 +46,8 @@ namespace CMS.Api.Controllers
             if (locker is null) { return NotFound(); }
             return Ok(locker);
         }
+
+
+        
     }
 }

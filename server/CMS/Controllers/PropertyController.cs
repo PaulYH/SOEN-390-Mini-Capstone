@@ -16,9 +16,18 @@ namespace CMS.Api.Controllers
 
     {
         private readonly IPropertyService _propertyService;
-        public PropertyController(IPropertyService propertyService)
+        private readonly ILockerService _lockerService;
+        private readonly IParkingSpotService _parkingSpotService;
+        private readonly IApplicationUserService _applicationUserService;
+        public PropertyController(IPropertyService propertyService,
+            ILockerService lockerService,
+            IParkingSpotService parkingSpotService,
+            IApplicationUserService applicationUserService)
         {
             _propertyService = propertyService;
+            _lockerService = lockerService;
+            _parkingSpotService = parkingSpotService;
+            _applicationUserService = applicationUserService;
         }
 
         [HttpGet]
@@ -53,8 +62,39 @@ namespace CMS.Api.Controllers
         [HttpPut]
         public async Task<ActionResult<Property>> UpdateProperty(Property updatedProperty)
         {
-            var property = await _propertyService.UpdateProperty(updatedProperty);
+            var returnedProperty = await _propertyService.GetPropertyById(updatedProperty.Id);
+
+            if (returnedProperty is null) return NotFound();
+            var property = returnedProperty.Value;
             if (property is null) return NotFound();
+
+            if (property.Lockers is null) property.Lockers = new List<Locker>();
+            if (property.ParkingSpots is null) property.ParkingSpots = new List<ParkingSpot>();
+
+            if (updatedProperty.Lockers is not null)
+            {
+                foreach (Locker l in updatedProperty.Lockers)
+                {
+                    var owner = await _applicationUserService.GetUserById(l.Owner.Id);
+                    l.Owner = owner.Value;
+                    await _lockerService.CreateLocker(l);
+
+                    property.Lockers.Add(l);
+                }
+            }
+            if (updatedProperty.ParkingSpots is not null)
+            {
+                foreach (ParkingSpot p in updatedProperty.ParkingSpots)
+                {
+                    var owner = await _applicationUserService.GetUserById(p.Owner.Id);
+                    p.Owner = owner.Value;
+                    await _parkingSpotService.CreateParkingSpot(p);
+                    property.ParkingSpots.Add(p);
+                }
+            }
+
+            await _propertyService.UpdateProperty(property);
+
             return Ok(property);
         }
 
