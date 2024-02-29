@@ -37,7 +37,7 @@ namespace CMS.Api.Controllers
             CondoUnit condoUnit = new CondoUnit();
             condoUnit.ExternalUnitId = request.ExternalUnitId;
             condoUnit.Size = request.Size;
-            condoUnit.FeePerSquareFoot = request.FeetPerSquareFoot;
+            condoUnit.FeePerSquareFoot = request.FeePerSquareFoot;
 
             var owner = await _applicationUserService.GetUserByEmail(request.CondoOwnerEmail);
             var occupant = await _applicationUserService.GetUserByEmail(request.CondoOccupantEmail);
@@ -69,7 +69,7 @@ namespace CMS.Api.Controllers
         {
             public int ExternalUnitId { get; set; }
             public int Size { get; set; }
-            public decimal FeetPerSquareFoot { get; set; }
+            public decimal FeePerSquareFoot { get; set; }
             public required string CondoOwnerEmail { get; set; }
             public required string CondoOccupantEmail { get; set; }
 

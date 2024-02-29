@@ -1,9 +1,7 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { nanoid } from "nanoid";
 import "./CondoManagement.css";
-import ReadOnlyRow from "./components/ReadOnlyRow";
-import EditableRow from "./components/EditableRow";
 
 const CondoManagement = () => {
 
@@ -20,18 +18,11 @@ const CondoManagement = () => {
     const [addUnits, setAddUnits] = useState({
         externalUnitID: '',
         size: '',
+        feePerSquareFoot: '',
         CondoOwnerEmail: '',
         CondoOccupantEmail: ''
     })
 
-    const [editUnits, setEditUnits] = useState({
-        externalUnitID: '',
-        size: '',
-        CondoOwnerEmail: '',
-        CondoOccupantEmail: ''
-    })
-
-    const [editUnitId, setEditUnitId] = useState(null);
     
     const handleAddUnitsChange = (event) => {
         event.preventDefault();
@@ -41,15 +32,6 @@ const CondoManagement = () => {
         newUnit[fieldName] = fieldValue;
         setAddUnits(newUnit);
     };
-
-    const handleEditUnitsChange = (event) => {
-        event.preventDefault();
-        const fieldName = event.target.getAttribute('name');
-        const fieldValue = event.target.value;
-        const newUnit = { ...editUnits};
-        newUnit[fieldName] = fieldValue;
-        setEditUnits(newUnit);
-    }
 
     const fetchUserPropertyId = async () => {
         try {
@@ -81,6 +63,7 @@ const CondoManagement = () => {
             id: nanoid(),
             externalUnitID: addUnits.externalUnitID,
             size: addUnits.size,
+            feePerSquareFoot: addUnits.feePerSquareFoot,
             CondoOwnerEmail: addUnits.CondoOwnerEmail,
             CondoOccupantEmail: addUnits.CondoOccupantEmail
         };
@@ -103,8 +86,8 @@ const CondoManagement = () => {
             }
     
             const result = await response.json();
-            //console.log('Unit added successfully:', result);
-            console.log(result.value.id);
+            console.log('Unit added successfully:', result);
+            console.log(result.value);
             setUnits(prevUnits => [...prevUnits, result.value]);
             console.log(units);
 
@@ -130,106 +113,37 @@ const CondoManagement = () => {
             console.error('Failed to add unit:', error);
         }
 
+        console.log(units.feePerSquareFoot);
+
 
     };
 
-
-    const handleEditUnitsSubmit = async (event) => {
-        event.preventDefault();
-
-        const editedUnit = {
-            id: editUnitId,
-            externalUnitID: editUnits.externalUnitID,
-            size: editUnits.size,
-            CondoOwnerEmail: editUnits.CondoOwnerEmail,
-            CondoOccupantEmail: editUnits.CondoOccupantEmail
-        }
-
-        try {
-            const response = await fetch(`http://localhost:5127/api/condounits/${editedUnit.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(editedUnit),
-            });
-            console.log(editedUnit);
-    
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-    
-            const result = await response.json();
-            console.log('Unit updated successfully:', result);
-    
-            // Update the local state to reflect the edit without needing to reload from the server
-            const updatedUnits = units.map((unit) => {
-                if (unit.id === editUnitId) {
-                    return; // Adjust according to how your API returns the updated object
-                }
-                return unit;
-            });
-    
-            setUnits(updatedUnits);
-            setEditUnitId(null); // Reset edit state
-    
-        } catch (error) {
-            console.error('Failed to update unit:', error);
-        }
-    };
- 
-    const handleEditClick = (event, unit) => {
-        event.preventDefault();
-        setEditUnitId(unit.id);
-
-        const unitValues = {
-            externalUnitID: unit.externalUnitId,
-            size: unit.size,
-            CondoOwnerEmail: unit.owner.email,
-            CondoOccupantEmail: unit.occupant.email
-        }
-
-        setEditUnits(unitValues);
-    }
-
-    const handleCancelClick = () => {
-        setEditUnitId(null);
-    }
 
     return (
     <div className="app-container">
     <img src={require('../../assets/logo.png')} alt="logo" className="logo" onClick={() => navigate('/')} />
-      <form onSubmit={handleEditUnitsSubmit}>
         <table>
           <thead>
             <tr>
               <th>Unit id</th>
               <th>Unit size</th>
+              <th>Condo fee</th>
               <th>Condo owner</th>
               <th>Condo Occupant</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {units.map((unit) => (
-                <Fragment>
-                    {editUnitId === unit.id ? (
-                    <EditableRow 
-                        editUnits = {editUnits}
-                        handleEditUnitsChange={handleEditUnitsChange}
-                        handleCancelClick={handleCancelClick}
-                    /> 
-                    ) : (
-                    <ReadOnlyRow 
-                        unit={unit} 
-                        handleEditClick={handleEditClick}
-                    />
-                    )}
-                </Fragment>
+                <tr>
+                <td>{unit.externalUnitId}</td>
+                <td>{unit.size}</td>
+                <td>{unit.feePerSquareFoot}</td>
+                <td>{unit.owner.email}</td>
+                <td>{unit.occupant && unit.occupant.email ? unit.occupant.email : unit.owner.email}</td>
+                </tr>
             ))}
           </tbody>
         </table>
-      </form>
 
       <h2>Add a Unit</h2>
       <form onSubmit={handleAddUnitsSubmit}>
@@ -245,6 +159,14 @@ const CondoManagement = () => {
           name="size"
           required="required"
           placeholder="Enter size..."
+          onChange={handleAddUnitsChange}
+
+        />
+         <input
+          type="text"
+          name="feePerSquareFoot"
+          required="required"
+          placeholder="Enter condo fee per square foot..."
           onChange={handleAddUnitsChange}
 
         />

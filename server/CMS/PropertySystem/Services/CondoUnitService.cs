@@ -52,6 +52,7 @@ namespace CMS.Api.PropertySystem.Services
             var condos = await _context.CondoUnits
                 .Include(c => c.Id)
                 .Include(c => c.Owner)
+                .Include(c => c.FeePerSquareFoot)
                 .Include(c => c.ExternalUnitId)
                 .Include(c => c.Occupant)
                 .Where(c => c.Owner.Email == email)
