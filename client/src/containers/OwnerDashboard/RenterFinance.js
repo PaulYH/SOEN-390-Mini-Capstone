@@ -1,9 +1,8 @@
 /* Finance page of owners */
 
 import React, { useState, useEffect } from 'react';
-import styles from  './RenterFinance.module.css';
+import styles from './RenterFinance.module.css';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
 import  { ReactComponent as Download } from 'bootstrap-icons/icons/box-arrow-down.svg';
@@ -14,16 +13,14 @@ const userData = {
     
     companyName: 'Doe Enterprises',
     condoNumber: '1234',
-    totalAmount: 10000000,
-    monthlyPayment: 3000,
-    remainingAmount: 123456,
+    rent: 3000,
     lastPaymentDate: 'January 1st, 2024',
   };
   
 
- 
-
+  
   const RenterFinanceDashboard = () => {
+   
     let navigate = useNavigate();
     const handleClick = () => {
       navigate('/home'); 
@@ -60,53 +57,51 @@ const userData = {
       
       <>
      
-      <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+     <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
       
-      <div className="dashboard">
+      <div className="d-flex justify-content-center my-4" style={{marginLeft:'40px'}}>
      
     
+      <img src={require('../../assets/logo.png')} alt="logo"/></div>
+
 
 {
         // body
       }
       
-         <img src={require('../../assets/logo.png')} alt="logo" className="logo text-center" />
-        <header className="dashboard-header">
-        <h1 style={{color:'black'}}>{`${firstName} ${lastName}`}</h1>
-          <div>{companyName}</div>
-          <div>Condo Number: <span class="badge badge-size bg-light text-dark">{userData.condoNumber}</span></div>
-        </header>
-        <section className="financial-overview">
-          <h2>My Finances</h2>
-          <div>Total amount: $  <span class="badge badge-size bg-light text-dark">{userData.totalAmount.toLocaleString()}</span></div>
-          <div>Monthly Payments: $ <span class="badge badge-size bg-light text-dark">{userData.monthlyPayment.toLocaleString()}</span>
-            </div>
-        </section>
-
-        {
-        //to be changed with a percentage that is automatically calculated after each payment
-        }
-        <section className="payment-status">
-
-         {
-        /*<div class="progress">
-        <div class="progress-bar" role="progressbar" style={{width: '25%'}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-      </div>*/
-        } 
+      <h1 className="ms-5" style={{color:'black', marginBottom:'-20px'}}>Finances</h1>
+        <div className={styles.dashboardHeader}>
         
-          <div>Remaining Amount</div>
-          <div>${userData.remainingAmount.toLocaleString()} CAD</div>
-          <div>Last payment made on: {userData.lastPaymentDate}</div>
+        
+        <div className="row">
+          <div className="col-lg-12 col-md-12 ms-4 me-4 d-flex justify-content-center">
+        <div className="card d-flex justify-content-center" style={{width:'70%'}}>
+          {/* <h2 className={styles.Finances}>My Finances</h2> */}
+          {/* <div className="text-muted" style={{textAlign:'left'}}>Condo Owner:<span className="badge badge-size bg-light text-dark">{`${firstName} ${lastName}`}</span> </div>
+          <div className="text-muted" style={{textAlign:'left'}}>Company name:<span className="badge badge-size bg-light text-dark">{companyName}</span> </div>
+          <div className="text-muted" style={{textAlign:'left'}}>Condo Number: <span className="badge badge-size bg-light text-dark">#1234</span></div> */}
           
+<div className="card-body">
+            <span className="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+  <button className={`btn ${styles.disabledButton}`} type="button" disabled >Rent: {userData.rent}$</button>
+</span>
+  
+          <div className="m-3" >Last payment made on: {userData.lastPaymentDate} <br />
+          <button type="button" className="btn btn-outline-primary m-3">Download Invoice <Download/></button>
+          </div>
+          </div>
+          </div>
+          </div>
+          </div>
+        
+       </div>
 
-          {
-          //To be changed so that there is an actual invoice that is downloaded
-        }
-          <button type="button" class="btn btn-outline-primary">Download Invoice <Download/></button>
-        </section>
-    </div>
+        
+         
+      
+  
     </>
   );
 };
 
-export default RenterFinanceDashboard ;
+export default RenterFinanceDashboard;

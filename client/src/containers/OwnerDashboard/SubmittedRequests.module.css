@@ -1,14 +1,11 @@
-.requests {
-    text-align: center;
-    padding: 20px;
-    margin: 150px;
-    height: 300px;
-}
+
 .button {
     border-radius: 20px;
     margin: 20px ;
   }
-#logo-request {
-height: 120px;
-width: auto;
+  .logo {
+    width: 160px;
+    height: 100px;
+    margin-bottom: 30px;
+    cursor: pointer;
 }

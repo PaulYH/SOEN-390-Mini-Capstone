@@ -20,7 +20,6 @@
 }
 
   
-
   
   .btn-outline-primary {
     background-color:  #7067E1 !important;
@@ -34,4 +33,11 @@
 }
 .Finances {
   text-decoration: none;
+}
+.amount {
+  font-size: 25px;
+}
+#customButtonContainer {
+  display: flex;
+  justify-content: center;
 }

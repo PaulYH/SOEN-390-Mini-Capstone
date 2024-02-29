@@ -5,35 +5,71 @@ import styles from './SubmittedRequests.module.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'bootstrap/dist/js/bootstrap';
 
+
+
+const userData = {
+    
+  companyName: 'Doe Enterprises',
+  condoNumber: '1234',
+  totalAmount: 10000000,
+  monthlyPayment: 3000,
+  remainingAmount: 123456,
+  lastPaymentDate: 'January 1st, 2024',
+};
 
 const SubmittedRequests = () => {
-
   let navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/home'); 
-  };
+    const handleClick = () => {
+      navigate('/home'); 
+    };
+    // const [firstName, setFirstName] = useState('');
+    // const [lastName, setLastName] = useState('');
+    // const [companyName, setCompanyName]=useState('');
+  
+    // useEffect(() => {
+    //   fetchUserInfo();
+    // }, []);
+  
+    // const fetchUserInfo = async () => {
+    //   try {
+    //     const response = await fetch('http://localhost:5127/api/users/authenticated', {
+    //       headers: {
+    //         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+    //       },
+    //     });
+    //     if (!response.ok) throw new Error('Failed to fetch user data');
+    //     const userData = await response.json();
+    //     setFirstName(userData.value.firstName);
+    //     setLastName(userData.value.lastName);
+    //     setCompanyName(userData.value.property.companyName)
+    //   } catch (error) {
+    //     console.error(error);
+    
+    //   }
+    // };
+
 
 return (
   <>
-  <button type="button" id="back-button" onClick={handleClick}>Back</button> 
-        <div className="requests">
+<button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+ <div className="d-flex justify-content-center my-4" style={{marginLeft:'40px'}}>
+     
+    
+     <img src={require('../../assets/logo.png')} alt="logo"/></div>
+<div className="d-flex justify-content-center">
+<div className="card d-flex justify-content-center" style={{width:'70%'}} >
 
+    <div className="accordion " id="accordionExample" >
+  <div className="accordion-item text-center">
 
-  
- {
-        // navbar
-      }
+    <div> 
 
-  <img src={require('../../assets/logo.png')} alt="logo" className="logo" id="logo-request" />
-
-
-  
-    <div class="accordion" id="accordionExample">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-        Request 1- <span class="date"> 1/1/2024</span>
+    </div>
+    <h2 className="accordion-header">
+      <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Request 1- <span className="date"> 1/1/2024</span>
       </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
@@ -47,7 +83,7 @@ return (
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Request 2 <span class="date"> 1/31/2024</span>
+        Request 2- <span class="date"> 1/31/2024</span>
       </button>
     </h2>
     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -60,7 +96,7 @@ return (
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-        Request 3 <span class="date"> 2/2/2024</span>
+        Request 3- <span class="date"> 2/2/2024</span>
       </button>
     </h2>
     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -70,12 +106,13 @@ return (
         <strong>Update: Request approved</strong>
       </div>
     </div>
+    </div>
   </div>
 </div>
 
+</div>
 
-   
-  </div>
+  
   </>
 );
 };
