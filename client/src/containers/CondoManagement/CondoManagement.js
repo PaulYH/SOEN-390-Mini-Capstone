@@ -134,7 +134,7 @@ const CondoManagement = () => {
     };
 
 
-    const handleEditUnitsSubmit = (event) => {
+    const handleEditUnitsSubmit = async (event) => {
         event.preventDefault();
 
         const editedUnit = {
@@ -145,27 +145,48 @@ const CondoManagement = () => {
             CondoOccupantEmail: editUnits.CondoOccupantEmail
         }
 
-        const newUnits = [...units];
-
-        const index = units.findIndex((unit) => unit.id === editUnitId);
-
-        newUnits[index] = editedUnit;
-
-        setUnits(newUnits);
-
-        setEditUnitId(null);
-
-    }
+        try {
+            const response = await fetch(`http://localhost:5127/api/condounits/${editedUnit.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editedUnit),
+            });
+            console.log(editedUnit);
+    
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            console.log('Unit updated successfully:', result);
+    
+            // Update the local state to reflect the edit without needing to reload from the server
+            const updatedUnits = units.map((unit) => {
+                if (unit.id === editUnitId) {
+                    return; // Adjust according to how your API returns the updated object
+                }
+                return unit;
+            });
+    
+            setUnits(updatedUnits);
+            setEditUnitId(null); // Reset edit state
+    
+        } catch (error) {
+            console.error('Failed to update unit:', error);
+        }
+    };
  
     const handleEditClick = (event, unit) => {
         event.preventDefault();
         setEditUnitId(unit.id);
 
         const unitValues = {
-            externalUnitID: unit.externalUnitID,
+            externalUnitID: unit.externalUnitId,
             size: unit.size,
-            CondoOwnerEmail: unit.CondoOwnerEmail,
-            CondoOccupantEmail: unit.CondoOccupantEmail
+            CondoOwnerEmail: unit.owner.email,
+            CondoOccupantEmail: unit.occupant.email
         }
 
         setEditUnits(unitValues);
