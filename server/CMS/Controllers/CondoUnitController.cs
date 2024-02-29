@@ -27,7 +27,10 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<CondoUnit>> GetCondoUnitsByEmail(string email)
         {
             var condos = await _condoUnitService.GetCondoUnitsByEmail(email);
-            if (condos == null)  return NotFound(); 
+            if (condos == null) 
+            {
+                return Ok(new List<CondoUnit>());
+            }
             return Ok(condos);
         }
 

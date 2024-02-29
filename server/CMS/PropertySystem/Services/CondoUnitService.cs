@@ -50,13 +50,10 @@ namespace CMS.Api.PropertySystem.Services
         public async Task<ActionResult<List<CondoUnit>>> GetCondoUnitsByEmail(string email)
         {
             var condos = await _context.CondoUnits
-                .Include(c => c.Id)
-                .Include(c => c.Owner)
-                .Include(c => c.FeePerSquareFoot)
-                .Include(c => c.ExternalUnitId)
-                .Include(c => c.Occupant)
-                .Where(c => c.Owner.Email == email)
-                .ToListAsync();
+                    .Include(c => c.Owner) 
+                    .Include(c => c.Occupant) 
+                    .Where(c => c.Owner.Email == email)
+                    .ToListAsync();
             return condos;
         }
 

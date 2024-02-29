@@ -5,14 +5,8 @@ import "./CondoManagement.css";
 
 const CondoManagement = () => {
 
-    useEffect(() => {
-        fetchUserPropertyId();
-    }, []);
-
     const navigate = useNavigate();
-
     const [units, setUnits] = useState([]);
-
     const[propertyId, setPropertyId] = useState('');
 
     const [addUnits, setAddUnits] = useState({
@@ -23,7 +17,11 @@ const CondoManagement = () => {
         CondoOccupantEmail: ''
     })
 
-    
+    useEffect(() => {
+        fetchUserProfile();
+        fetchUserPropertyId();
+    }, []);
+
     const handleAddUnitsChange = (event) => {
         event.preventDefault();
         const fieldName = event.target.getAttribute('name');
@@ -33,7 +31,55 @@ const CondoManagement = () => {
         setAddUnits(newUnit);
     };
 
-    const fetchUserPropertyId = async () => {
+    const fetchUserProfile = async () => { //to get the user email
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await fetch('http://localhost:5127/manage/info', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+
+            const { email } = await response.json();
+            console.log(email);
+           fetchCondoUnitsByEmail(email);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchCondoUnitsByEmail = async (email) => { //with the email fetch the condo units that correspond
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await fetch(`http://localhost:5127/api/condounits/${email}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch condo units');
+            }
+
+            const units = await response.json();
+            setUnits(Array.isArray(units) ? units : []); //to make sure we get an array
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+
+
+    const fetchUserPropertyId = async () => { 
         try {
             const response = await fetch('http://localhost:5127/api/users/authenticated', {
                 headers: {
@@ -42,17 +88,14 @@ const CondoManagement = () => {
             });
             if (!response.ok) throw new Error('Failed to fetch user data');
             const data = await response.json();
-            //  console.log(data);
-            //  console.log(data.property);
-             console.log(data.value.property.id);
-             setPropertyId(data?.value.property.id || ' '); 
-            console.log(data?.value.property.id);
+            setPropertyId(data?.value.property.id || ' '); 
             return data.value.property.id || null;
         } catch (error) {
             console.error(error);
-           // setError('Failed to fetch property');
+           return null;
         }
     };
+
   
     const handleAddUnitsSubmit = async (event) => {
 
@@ -70,8 +113,6 @@ const CondoManagement = () => {
 
         console.log(addedUnit.externalUnitID);
 
-        
-
         try {
             const response = await fetch('http://localhost:5127/api/condounits', {
                 method: 'POST',
@@ -86,17 +127,8 @@ const CondoManagement = () => {
             }
     
             const result = await response.json();
-            console.log('Unit added successfully:', result);
-            console.log(result.value);
             setUnits(prevUnits => [...prevUnits, result.value]);
-            console.log(units);
 
-            // fetchUserPropertyId();
-             console.log(propertyId);
-             console.log(result);
-             console.log(result.value.id);
-             console.log(result.value.owner.id);
-             console.log(result.value.occupant.$ref);
             const response2 = await fetch(`http://localhost:5127/api/properties/add-condo/${propertyId}/${result.value.id}`, {
                 method: 'PUT',
                 headers: {
@@ -133,7 +165,7 @@ const CondoManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {units.map((unit) => (
+            {units.length > 0 ? units.map((unit) => (
                 <tr>
                 <td>{unit.externalUnitId}</td>
                 <td>{unit.size}</td>
@@ -141,7 +173,7 @@ const CondoManagement = () => {
                 <td>{unit.owner.email}</td>
                 <td>{unit.occupant && unit.occupant.email ? unit.occupant.email : unit.owner.email}</td>
                 </tr>
-            ))}
+            )) : <tr><td colSpan="5">No units, add one!</td></tr>}
           </tbody>
         </table>
 
