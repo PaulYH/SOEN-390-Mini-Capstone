@@ -3,10 +3,10 @@ import React from "react";
 const ReadOnlyRow = ({ unit, handleEditClick }) => {
     return (
         <tr>
-            <td>{unit.externalUnitID}</td>
+            <td>{unit.externalUnitId}</td>
             <td>{unit.size}</td>
-            <td>{unit.CondoOwnerEmail}</td>
-            <td>{unit.CondoOccupantEmail}</td>
+            <td>{unit.owner.email}</td>
+            <td>{unit.occupant && unit.occupant.email ? unit.occupant.email : unit.owner.email}</td>
             <td> 
                 <button 
                     type="button"
@@ -20,3 +20,4 @@ const ReadOnlyRow = ({ unit, handleEditClick }) => {
 }
 
 export default ReadOnlyRow
+

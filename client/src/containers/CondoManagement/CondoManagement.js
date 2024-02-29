@@ -105,11 +105,12 @@ const CondoManagement = () => {
             const result = await response.json();
             //console.log('Unit added successfully:', result);
             console.log(result.value.id);
-            setUnits([...units, result]);
+            setUnits(prevUnits => [...prevUnits, result.value]);
+            console.log(units);
 
             // fetchUserPropertyId();
              console.log(propertyId);
-             console.log(units);
+             console.log(result);
              console.log(result.value.id);
              console.log(result.value.owner.id);
              console.log(result.value.occupant.$ref);
@@ -129,7 +130,9 @@ const CondoManagement = () => {
             console.error('Failed to add unit:', error);
         }
 
+
     };
+
 
     const handleEditUnitsSubmit = (event) => {
         event.preventDefault();
