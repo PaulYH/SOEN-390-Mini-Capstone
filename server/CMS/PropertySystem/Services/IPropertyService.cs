@@ -12,7 +12,6 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<Property>> UpdatePropertyProfile(Property updatedProperty);
         Task<ActionResult<CondoUnit>> AddPropertyCondoUnit(Guid propertyId, Guid condoId);
         Task<ActionResult<bool>> DeleteProperty(Guid id);
-        Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id);
 
 
 

@@ -15,9 +15,6 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<CondoUnit>> GetCondoUnitsById(Guid id);
         Task<ActionResult<CondoUnit>> CreateCondoUnit(CondoUnit condoUnit);
         Task<bool> DeleteCondoUnit(Guid id);
-
-        Task<ActionResult<CondoUnit>> SetUnitOwner(Guid unitId, string ownerId);
-        Task<ActionResult<CondoUnit>> SetUnitOccupant(Guid unitId, string occupantId);
         Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit);
     }
 }

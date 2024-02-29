@@ -38,15 +38,6 @@ namespace CMS.Api.PropertySystem.Services
             return property;
         }
 
-        public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
-        {
-            var property = await _context.Properties
-                .Include(p => p.CondoUnits)
-                .FirstOrDefaultAsync(p => p.Id == id);
-            if (property == null || property.CondoUnits == null) { return null; }
-            return property.CondoUnits.ToList();
-        }
-
         public async Task<ActionResult<Property>> CreateProperty(Property property)
         {
             _context.Properties.Add(property);
