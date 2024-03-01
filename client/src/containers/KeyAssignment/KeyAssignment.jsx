@@ -26,20 +26,21 @@ import {
 import { DeleteIcon } from './DeleteIcon'
 
 export default function KeyAssignment() {
-  const themeMode = 'dark'
+  const themeMode = 'dark' // for the components that are not set to dark mode despite the global dark mode setting in index.js
   const navigate = useNavigate()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [modalData, setModalData] = useState(null)
-  const [submitDisable, setSubmitDisable] = useState(true)
-  const [chosenUnit, setChosenUnit] = useState(null)
-  const [users, setUsers] = useState([])
+  const { isOpen, onOpen, onOpenChange } = useDisclosure() // used to open/close Modal component
+  const [modalData, setModalData] = useState(null) // used to set the Modal's data to that of selected user
+  const [chosenUnit, setChosenUnit] = useState(null) // selected unit to assign to user
+  const [users, setUsers] = useState([]) // the user data from the API call
 
   const columns = [
+    // the columns used by Table component
     { name: 'USER', uid: 'name' },
     { name: 'KEY TYPE', uid: 'role' },
     { name: 'ACTIONS', uid: 'actions' },
   ]
 
+  // function definitions for all of this page's API calls
   const authorizationConfig = {
     headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
   }
@@ -65,6 +66,7 @@ export default function KeyAssignment() {
     return response
   }
 
+  // calls API to get the id of the current user's property
   const {
     isLoading: userLoading,
     data: user,
@@ -77,6 +79,7 @@ export default function KeyAssignment() {
   })
   const propertyId = user?.data.value?.property.id
 
+  // calls API to get all users with pending key requests
   const {
     isLoading: requestsLoading,
     data: userRequestData,
@@ -91,12 +94,14 @@ export default function KeyAssignment() {
   })
   const keyRequestUsers = userRequestData?.data.value?.$values
 
+  // sets 'users' variable to retrieved user data for use in the HTML components
   useEffect(() => {
     if (requestStatus === 'success') {
       setUsers(keyRequestUsers)
     }
   }, [requestStatus, keyRequestUsers])
 
+  // calls API to get all of the property's condo units
   const {
     isLoading: condoUnitLoading,
     data: condoUnitData,
@@ -110,6 +115,7 @@ export default function KeyAssignment() {
   })
   const condoUnits = condoUnitData?.data.value?.$values
 
+  // calls API to assign a user as owner of a chosen condo unit
   async function sendOwnerAssociation(condoId, userId) {
     const response = await fetch(
       `http://localhost:5127/api/condounits/assign-owner-key/${condoId}/${userId}`,
@@ -124,6 +130,7 @@ export default function KeyAssignment() {
     return response.status
   }
 
+  // calls API to assign a user as occupant of a chosen condo unit
   async function sendOccupantAssociation(condoId, userId) {
     const response = await fetch(
       `http://localhost:5127/api/condounits/assign-occupant-key/${condoId}/${userId}`,
@@ -138,22 +145,17 @@ export default function KeyAssignment() {
     return response.status
   }
 
+  // finds the index of an item in the table
   const findItemIndex = (item) => {
     return users.findIndex((row) => row === item)
   }
 
+  // deletes a user request row
   const handleRowDeleteSuccess = (itemIndex) => {
     setUsers((prevItems) => prevItems.filter((_, index) => index !== itemIndex))
   }
 
-  console.log('Next is propertyId')
-  console.log(propertyId)
-  console.log('Next is keyRequestUsers')
-  console.log(keyRequestUsers)
-  console.log('Next is condoUnits')
-  console.log(condoUnits)
-  console.log('Next is users')
-  console.log(users)
+  // handles rendering of the Table component's rows and columns
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -192,7 +194,7 @@ export default function KeyAssignment() {
         return (
           <div className='relative flex items-center gap-2'>
             <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-              <Button
+              <Button // Assign button appears for each user in table, opens assignment Modal when clicked
                 onPress={() => {
                   setModalData(user)
                   setChosenUnit(null)
@@ -216,6 +218,7 @@ export default function KeyAssignment() {
     }
   }, [])
 
+  // shows loading spinner while waiting for API calls to complete
   if (userLoading || requestsLoading || condoUnitLoading) {
     return (
       <div className='mainTable'>
@@ -238,9 +241,10 @@ export default function KeyAssignment() {
     )
   }
 
+  // the main content of the page
   return (
     <div className='mainTable'>
-      <Button
+      <Button // back button redirects to property profile page
         className='back-button'
         color='primary'
         onClick={() => navigate('/propertiesprofile')}
