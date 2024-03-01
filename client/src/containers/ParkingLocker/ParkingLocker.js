@@ -3,7 +3,8 @@ import './ParkingLocker.css';
 
 const ParkingLocker = () => {
   const [properties, setProperties] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [selectedPropertyId, setSelectedPropertyId] = useState('');
+  const [selectedPropertyDetails, setSelectedPropertyDetails] = useState(null);
   const [newParkingSpot, setNewParkingSpot] = useState({ externalSpotId: '', spotFee: '', ownerId: '' });
   const [newLocker, setNewLocker] = useState({ externalLockerId: '', lockerFee: '', ownerId: '' });
   const [loading, setLoading] = useState(false);
@@ -25,8 +26,27 @@ const ParkingLocker = () => {
       const data = await response.json();
       setProperties(data.value.$values);
       if (data.value.$values.length > 0) {
-        setSelectedProperty(data.value.$values[0]); // Automatically select the first property by default
+        setSelectedPropertyId(data.value.$values[0].id); // Automatically select the first property by default
       }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch details for the selected property
+  const fetchPropertyDetails = async (propertyId) => {
+    setLoading(true);
+    try {
+      const headers = fetchAuthHeaders();
+      const response = await fetch(`http://localhost:5127/api/properties/${propertyId}`, { method: 'GET', headers });
+      if (!response.ok) throw new Error('Failed to fetch property details');
+      const data = await response.json();
+      // Ensure parkingSpots and lockers are arrays
+      data.value.parkingSpots = data.value.parkingSpots?.$values || [];
+      data.value.lockers = data.value.lockers?.$values || [];
+      setSelectedPropertyDetails(data.value);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,6 +57,12 @@ const ParkingLocker = () => {
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  useEffect(() => {
+    if (selectedPropertyId) {
+      fetchPropertyDetails(selectedPropertyId);
+    }
+  }, [selectedPropertyId]);
 
   const handleParkingSpotChange = (e) => {
     setNewParkingSpot({ ...newParkingSpot, [e.target.name]: e.target.value });
@@ -61,26 +87,18 @@ const ParkingLocker = () => {
   const updateProperty = async (type, newData) => {
     setLoading(true);
     try {
-      const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
-
-      if (type === 'parkingSpot') {
-        delete updatedProperty.$id;
-        updatedProperty.parkingSpots = updatedProperty.parkingSpots || [];
-        updatedProperty.parkingSpots.push(newData);
-      } else if (type === 'locker') {
-        delete updatedProperty.$id;
-        updatedProperty.lockers = updatedProperty.lockers || [];
-        updatedProperty.lockers.push(newData);
-      }
-
       const payload = {
-        ...updatedProperty,
-        id: updatedProperty.id
+        ...selectedPropertyDetails,
+        id: selectedPropertyDetails.id,
       };
 
-      console.log(payload);
+      if (type === 'parkingSpot') {
+        payload.parkingSpots.push(newData);
+      } else if (type === 'locker') {
+        payload.lockers.push(newData);
+      }
 
-      const response = await fetch(`http://localhost:5127/api/properties`, {
+      const response = await fetch(`http://localhost:5127/api/properties/${selectedPropertyId}`, {
         method: 'PUT',
         headers: fetchAuthHeaders(),
         body: JSON.stringify(payload),
@@ -88,10 +106,10 @@ const ParkingLocker = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Failed to update property: ${JSON.stringify(errorData)}`);
+        throw new Error(`Failed to update property: ${errorData.detail}`);
       }
       alert('Update successful');
-      fetchProperties();
+      fetchPropertyDetails(selectedPropertyId); // Refresh the property details
     } catch (err) {
       setError(`Error updating: ${err.message}`);
     } finally {
@@ -102,20 +120,13 @@ const ParkingLocker = () => {
   const addParkingSpot = async (e) => {
     e.preventDefault();
     try {
-      const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
-      
       const ownerId = await fetchUserIdByEmail(newParkingSpot.ownerId);
       const parkingSpotWithOwner = {
         ...newParkingSpot,
-        owner: {
-          id: ownerId
-        },
-        OwnerId: ownerId,
-        PropertyId: updatedProperty.id,
-        Property: updatedProperty
+        ownerId: ownerId,
+        propertyId: selectedPropertyId,
       };
-  
-      delete parkingSpotWithOwner.ownerId;
+
       updateProperty('parkingSpot', parkingSpotWithOwner);
       setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' });
     } catch (err) {
@@ -126,20 +137,13 @@ const ParkingLocker = () => {
   const addLocker = async (e) => {
     e.preventDefault();
     try {
-      const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
-
       const ownerId = await fetchUserIdByEmail(newLocker.ownerId);
       const lockerWithOwner = {
         ...newLocker,
-        owner: {
-          id: ownerId
-        },
-        OwnerId: ownerId,
-        PropertyId: updatedProperty.id,
-        Property: updatedProperty
+        ownerId: ownerId,
+        propertyId: selectedPropertyId,
       };
 
-      delete lockerWithOwner.ownerId;
       updateProperty('locker', lockerWithOwner);
       setNewLocker({ externalLockerId: '', lockerFee: '', ownerId: '' });
     } catch (err) {
@@ -150,12 +154,13 @@ const ParkingLocker = () => {
   return (
     <div className="parkingLockerContainer">
       {error && <p className="error">{error}</p>}
+      {loading && <p>Loading...</p>}
       <div className="propertySelector">
         <label htmlFor="propertySelector">Select Property:</label>
         <select
           id="propertySelector"
-          value={selectedProperty ? selectedProperty.id : ''}
-          onChange={(e) => setSelectedProperty(properties.find(p => p.id === e.target.value))}
+          value={selectedPropertyId}
+          onChange={(e) => setSelectedPropertyId(e.target.value)}
         >
           {properties.map((property) => (
             <option key={property.id} value={property.id}>
@@ -164,6 +169,57 @@ const ParkingLocker = () => {
           ))}
         </select>
       </div>
+
+      {selectedPropertyDetails && (
+        <>
+          <div>
+            <h3>Parking Spots</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>External Spot ID</th>
+                  <th>Spot Fee</th>
+                  <th>Owner ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedPropertyDetails.parkingSpots.map((spot) => (
+                  <tr key={spot.id}>
+                    <td>{spot.id}</td>
+                    <td>{spot.externalSpotId}</td>
+                    <td>{spot.spotFee}</td>
+                    <td>{spot.ownerId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Lockers</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>External Locker ID</th>
+                  <th>Locker Fee</th>
+                  <th>Owner ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedPropertyDetails.lockers.map((locker) => (
+                  <tr key={locker.id}>
+                    <td>{locker.id}</td>
+                    <td>{locker.externalLockerId}</td>
+                    <td>{locker.lockerFee}</td>
+                    <td>{locker.ownerId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <form onSubmit={addParkingSpot} className="form">
         <h2>Add Parking Spot</h2>
@@ -216,50 +272,6 @@ const ParkingLocker = () => {
         />
         <button type="submit">Add Locker</button>
       </form>
-
-      {selectedProperty && (
-        <>
-          <h3>Parking Spots</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Spot ID</th>
-                <th>Spot Fee</th>
-                <th>Owner</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedProperty.parkingSpots?.map((spot, index) => (
-                <tr key={index}>
-                  <td>{spot.externalSpotId}</td>
-                  <td>{spot.spotFee}</td>
-                  <td>{spot.owner?.email}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <h3>Lockers</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Locker ID</th>
-                <th>Locker Fee</th>
-                <th>Owner</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedProperty.lockers?.map((locker, index) => (
-                <tr key={index}>
-                  <td>{locker.externalLockerId}</td>
-                  <td>{locker.lockerFee}</td>
-                  <td>{locker.owner?.email}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
     </div>
   );
 };
