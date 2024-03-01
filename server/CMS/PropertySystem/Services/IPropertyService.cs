@@ -11,7 +11,7 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<Property>> CreateProperty(Property property);
         Task<ActionResult<Property>> UpdateProperty(Property updatedProperty);
         Task<ActionResult<bool>> DeleteProperty(Guid id);
-
-
+        Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id);
+        
     }
 }

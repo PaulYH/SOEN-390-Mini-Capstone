@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
+using CMS.Api.Migrations;
 
 
 namespace CMS.Api.PropertySystem.Services
@@ -32,6 +33,15 @@ namespace CMS.Api.PropertySystem.Services
             var property = await _context.Properties
                 .FirstOrDefaultAsync(p => p.Id == id);
             return property;
+        }
+
+        public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
+        {
+            var property = await _context.Properties
+                .Include(p => p.CondoUnits)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (property == null || property.CondoUnits == null) { return null; }
+            return property.CondoUnits.ToList();
         }
 
         public async Task<ActionResult<Property>> CreateProperty(Property property)

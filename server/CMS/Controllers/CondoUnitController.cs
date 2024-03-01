@@ -31,6 +31,22 @@ namespace CMS.Api.Controllers
             return Ok(condos);
         }
 
+        [HttpGet("owner/{id}")]
+        public async Task<ActionResult<List<CondoUnit>>> GetOwnedCondoUnitsByUser(string id)
+        {
+            var condos = await _condoUnitService.GetOwnedCondoUnitsByUser(id);
+            if (condos == null) return NotFound();
+            return Ok(condos);
+        }
+
+        [HttpGet("occupant/{id}")]
+        public async Task<ActionResult<List<CondoUnit>>> GetOccupantCondoUnitsByUser(string id)
+        {
+            var condo = await _condoUnitService.GetOccupantCondoUnitByUser(id);
+            if (condo == null) return NotFound();
+            return Ok(condo);
+        }
+
         [HttpPost]
         public async Task<ActionResult<CondoUnit>> CreateCondoUnit([FromBody] CreateCondoUnitRequest request)
         {
@@ -56,7 +72,25 @@ namespace CMS.Api.Controllers
             return await _condoUnitService.DeleteCondoUnit(id);
         }
 
+        [HttpPut("assign-owner-key/{condoId}/{ownerId}")]
+        public async Task<ActionResult<CondoUnit>> SetUnitOwner(Guid condoId, string ownerId)
+        {
+            var condoUnit = await _condoUnitService.SetUnitOwner(condoId, ownerId);
 
+            if (condoUnit == null)
+                return BadRequest();
+            return Ok(condoUnit);
+        }
+
+        [HttpPut("assign-occupant-key/{condoId}/{ownerId}")]
+        public async Task<ActionResult<CondoUnit>> SetUnitOccupant(Guid condoId, string ownerId)
+        {
+            var condoUnit = await _condoUnitService.SetUnitOccupant(condoId, ownerId);
+
+            if (condoUnit == null)
+                return BadRequest();
+            return Ok(condoUnit);
+        }
         public class CreateCondoUnitRequest
         {
             public int ExternalUnitId { get; set; }

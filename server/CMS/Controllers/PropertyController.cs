@@ -36,6 +36,13 @@ namespace CMS.Api.Controllers
             return Ok(property);
         }
 
+        [HttpGet("/condo-units/{id}")]
+        public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
+        {
+            var condoUnits = await _propertyService.GetAllCondoUnits(id);
+            if (condoUnits == null) return NotFound();
+            return Ok(condoUnits);
+        }
         [HttpPost]
         public async Task<ActionResult<Property>> CreateProperty(Property request)
         {

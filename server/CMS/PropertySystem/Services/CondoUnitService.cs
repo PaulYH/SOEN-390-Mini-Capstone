@@ -57,5 +57,58 @@ namespace CMS.Api.PropertySystem.Services
                 .ToListAsync();
             return condos;
         }
+
+        public async Task<ActionResult<CondoUnit>> SetUnitOwner(Guid unitId, string ownerId)
+        {
+            var condoUnit = await _context.CondoUnits.FindAsync(unitId);
+            if (condoUnit == null)
+                return null;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == ownerId);
+            if (user == null)
+                return null;
+
+            user.hasRequestedOwnerKey = false;
+            condoUnit.Owner = user;
+            condoUnit.Occupant = user;
+
+            await _context.SaveChangesAsync();
+
+            return condoUnit;
+        }
+
+        public async Task<ActionResult<CondoUnit>> SetUnitOccupant(Guid unitId, string occupantId)
+        {
+            var condoUnit = await _context.CondoUnits.FindAsync(unitId);
+            if (condoUnit == null)
+                return null;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == occupantId);
+            if (user == null)
+                return null;
+
+            user.hasRequestedOccupantKey = false;
+            condoUnit.Occupant = user;
+
+            await _context.SaveChangesAsync();
+
+            return condoUnit;
+        }
+
+        public async Task<ActionResult<List<CondoUnit>>> GetOwnedCondoUnitsByUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null) return null;
+            var condoUnits = await _context.CondoUnits.Where(x => x.Owner == user).ToListAsync();
+            if (condoUnits == null) return null;
+            return condoUnits;
+        }
+
+        public async Task<ActionResult<CondoUnit>> GetOccupantCondoUnitByUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null) return null;
+            var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(x => x.Occupant == user);
+            if (condoUnit == null) return null;
+            return condoUnit;
+        }
     }
 }
