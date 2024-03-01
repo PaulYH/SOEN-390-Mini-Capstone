@@ -71,25 +71,33 @@ namespace CMS.Api.Controllers
             if (property.Lockers is null) property.Lockers = new List<Locker>();
             if (property.ParkingSpots is null) property.ParkingSpots = new List<ParkingSpot>();
 
-            if (updatedProperty.Lockers is not null)
+            if (updatedProperty.Lockers != null)
             {
                 foreach (Locker l in updatedProperty.Lockers)
                 {
-                    var owner = await _applicationUserService.GetUserById(l.Owner.Id);
-                    l.Owner = owner.Value;
-                    await _lockerService.CreateLocker(l);
+                    l.Property = null;
+                    l.Owner = null;
 
-                    property.Lockers.Add(l);
+                    var createdLocker = await _lockerService.CreateLocker(l);
+                    if (createdLocker.Value != null)
+                    {
+                        property.Lockers.Add(createdLocker.Value);
+                    }
                 }
             }
-            if (updatedProperty.ParkingSpots is not null)
+
+            if (updatedProperty.ParkingSpots != null)
             {
                 foreach (ParkingSpot p in updatedProperty.ParkingSpots)
                 {
-                    var owner = await _applicationUserService.GetUserById(p.Owner.Id);
-                    p.Owner = owner.Value;
-                    await _parkingSpotService.CreateParkingSpot(p);
-                    property.ParkingSpots.Add(p);
+                    p.Property = null;
+                    p.Owner = null;
+
+                    var createdSpot = await _parkingSpotService.CreateParkingSpot(p);
+                    if (createdSpot.Value != null)
+                    {
+                        property.ParkingSpots.Add(createdSpot.Value);
+                    }
                 }
             }
 

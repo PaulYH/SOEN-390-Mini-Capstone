@@ -64,10 +64,11 @@ const ParkingLocker = () => {
       const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
 
       if (type === 'parkingSpot') {
+        delete updatedProperty.$id;
         updatedProperty.parkingSpots = updatedProperty.parkingSpots || [];
         updatedProperty.parkingSpots.push(newData);
-        console.log(updatedProperty);
       } else if (type === 'locker') {
+        delete updatedProperty.$id;
         updatedProperty.lockers = updatedProperty.lockers || [];
         updatedProperty.lockers.push(newData);
       }
@@ -101,16 +102,20 @@ const ParkingLocker = () => {
   const addParkingSpot = async (e) => {
     e.preventDefault();
     try {
+      const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
+      
       const ownerId = await fetchUserIdByEmail(newParkingSpot.ownerId);
       const parkingSpotWithOwner = {
         ...newParkingSpot,
         owner: {
           id: ownerId
-        }
+        },
+        OwnerId: ownerId,
+        PropertyId: updatedProperty.id,
+        Property: updatedProperty
       };
   
       delete parkingSpotWithOwner.ownerId;
-
       updateProperty('parkingSpot', parkingSpotWithOwner);
       setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' });
     } catch (err) {
@@ -121,12 +126,17 @@ const ParkingLocker = () => {
   const addLocker = async (e) => {
     e.preventDefault();
     try {
+      const updatedProperty = JSON.parse(JSON.stringify(selectedProperty));
+
       const ownerId = await fetchUserIdByEmail(newLocker.ownerId);
       const lockerWithOwner = {
         ...newLocker,
         owner: {
           id: ownerId
-        }
+        },
+        OwnerId: ownerId,
+        PropertyId: updatedProperty.id,
+        Property: updatedProperty
       };
 
       delete lockerWithOwner.ownerId;
