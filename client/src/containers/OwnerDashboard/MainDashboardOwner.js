@@ -3,12 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import styles from './MainDashboardOwner.module.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
 
 
 
 const MainDashboardOwner = () => {
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    // Clear authentication data from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('expiresAt');
+
+    // Redirect to /login
+    navigate('/login');
+}
+
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -103,7 +114,7 @@ const MainDashboardOwner = () => {
 <div className="col-md-6 col-lg-6 mb-3 "> 
         <div className="card h-100">
         <div className="card-body text-center">
-        <h5 className="card-title h2">Submitted Requests</h5>
+        <h5 className="card-title h2">Submitted Activity Requests</h5>
         <p className="card-text text-muted "><strong style={{textAlign:'center'}}>Last request made on: </strong> 01/01/2024</p>
         <a href="SubmittedRequests" className="btn btn-outline-primary">See Details</a>
       </div>
@@ -112,6 +123,11 @@ const MainDashboardOwner = () => {
 
   </div>
   </div>
+
+  <div className="d-flex justify-content-center me-3 ms-3 mb-4">
+  
+  <button onClick={handleSignOut}>Sign Out</button>
+</div>
 </> 
 
     );
