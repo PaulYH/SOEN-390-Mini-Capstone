@@ -16,11 +16,11 @@ namespace CMS.Api.PropertySystem.Entities
         // New PropertyId foreign key
         public Guid PropertyId { get; set; }
         [ForeignKey("PropertyId")]
-        public Property Property { get; set; }
+        public Property? Property { get; set; }
 
         // Corrected Owner relationship
         public string OwnerId { get; set; }
         [ForeignKey("OwnerId")]
-        public ApplicationUser Owner { get; set; }
+        public ApplicationUser? Owner { get; set; }
     }
 }

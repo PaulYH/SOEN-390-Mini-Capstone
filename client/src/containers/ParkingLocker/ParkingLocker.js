@@ -98,7 +98,8 @@ const ParkingLocker = () => {
 
   const fetchUserIdByEmail = async (email) => {
     try {
-      const response = await fetch(`http://localhost:5127/api/users/${email}`, { method: 'GET', headers: fetchAuthHeaders() });
+      const headers = fetchAuthHeaders();
+      const response = await fetch(`http://localhost:5127/api/users/${email}`, { method: 'GET', headers });
       if (!response.ok) throw new Error('User not found');
       const data = await response.json();
       return data.value.id;
@@ -111,17 +112,11 @@ const ParkingLocker = () => {
     setLoading(true);
     try {
       const payload = {
-        ...selectedPropertyDetails,
         id: selectedPropertyDetails.id,
+        [type === 'parkingSpot' ? 'parkingSpots' : 'lockers']: [newData],
       };
 
-      if (type === 'parkingSpot') {
-        payload.parkingSpots.push(newData);
-      } else if (type === 'locker') {
-        payload.lockers.push(newData);
-      }
-
-      const response = await fetch(`http://localhost:5127/api/properties/${selectedPropertyId}`, {
+      const response = await fetch(`http://localhost:5127/api/properties`, {
         method: 'PUT',
         headers: fetchAuthHeaders(),
         body: JSON.stringify(payload),
@@ -131,7 +126,6 @@ const ParkingLocker = () => {
         const errorData = await response.json();
         throw new Error(`Failed to update property: ${errorData.detail}`);
       }
-      alert('Update successful');
       fetchPropertyDetails(selectedPropertyId);
     } catch (err) {
       setError(`Error updating: ${err.message}`);
