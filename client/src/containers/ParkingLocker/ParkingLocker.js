@@ -10,13 +10,11 @@ const ParkingLocker = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Function to get authentication headers
   const fetchAuthHeaders = () => ({
     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
     'Content-Type': 'application/json',
   });
 
-  // Fetch the list of properties
   const fetchProperties = async () => {
     setLoading(true);
     try {
@@ -26,7 +24,7 @@ const ParkingLocker = () => {
       const data = await response.json();
       setProperties(data.value.$values);
       if (data.value.$values.length > 0) {
-        setSelectedPropertyId(data.value.$values[0].id); // Automatically select the first property by default
+        setSelectedPropertyId(data.value.$values[0].id);
       }
     } catch (err) {
       setError(err.message);
@@ -35,7 +33,33 @@ const ParkingLocker = () => {
     }
   };
 
-  // Fetch details for the selected property
+  const fetchUserEmailById = async (id) => {
+    try {
+      const headers = fetchAuthHeaders();
+      const response = await fetch(`http://localhost:5127/api/users/id/${id}`, { method: 'GET', headers });
+      if (!response.ok) throw new Error('User email fetch failed');
+      const { value } = await response.json();
+      return value.email;
+    } catch (err) {
+      console.error('Error fetching user email:', err);
+      return 'Unknown';
+    }
+  };
+
+  const enrichPropertyDetailsWithUserEmails = async (propertyDetails) => {
+    const parkingSpotsWithOwnerEmail = await Promise.all(propertyDetails.parkingSpots.map(async (spot) => {
+      const ownerEmail = await fetchUserEmailById(spot.ownerId);
+      return { ...spot, ownerEmail };
+    }));
+
+    const lockersWithOwnerEmail = await Promise.all(propertyDetails.lockers.map(async (locker) => {
+      const ownerEmail = await fetchUserEmailById(locker.ownerId);
+      return { ...locker, ownerEmail };
+    }));
+
+    return { ...propertyDetails, parkingSpots: parkingSpotsWithOwnerEmail, lockers: lockersWithOwnerEmail };
+  };
+
   const fetchPropertyDetails = async (propertyId) => {
     setLoading(true);
     try {
@@ -43,10 +67,10 @@ const ParkingLocker = () => {
       const response = await fetch(`http://localhost:5127/api/properties/${propertyId}`, { method: 'GET', headers });
       if (!response.ok) throw new Error('Failed to fetch property details');
       const data = await response.json();
-      // Ensure parkingSpots and lockers are arrays
       data.value.parkingSpots = data.value.parkingSpots?.$values || [];
       data.value.lockers = data.value.lockers?.$values || [];
-      setSelectedPropertyDetails(data.value);
+      const enrichedPropertyDetails = await enrichPropertyDetailsWithUserEmails(data.value);
+      setSelectedPropertyDetails(enrichedPropertyDetails);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,7 +96,6 @@ const ParkingLocker = () => {
     setNewLocker({ ...newLocker, [e.target.name]: e.target.value });
   };
 
-  // Fetch the user ID based on email
   const fetchUserIdByEmail = async (email) => {
     try {
       const response = await fetch(`http://localhost:5127/api/users/${email}`, { method: 'GET', headers: fetchAuthHeaders() });
@@ -109,7 +132,7 @@ const ParkingLocker = () => {
         throw new Error(`Failed to update property: ${errorData.detail}`);
       }
       alert('Update successful');
-      fetchPropertyDetails(selectedPropertyId); // Refresh the property details
+      fetchPropertyDetails(selectedPropertyId);
     } catch (err) {
       setError(`Error updating: ${err.message}`);
     } finally {
@@ -177,19 +200,17 @@ const ParkingLocker = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>External Spot ID</th>
                   <th>Spot Fee</th>
-                  <th>Owner ID</th>
+                  <th>Owner Email</th>
                 </tr>
               </thead>
               <tbody>
                 {selectedPropertyDetails.parkingSpots.map((spot) => (
                   <tr key={spot.id}>
-                    <td>{spot.id}</td>
                     <td>{spot.externalSpotId}</td>
                     <td>{spot.spotFee}</td>
-                    <td>{spot.ownerId}</td>
+                    <td>{spot.ownerEmail}</td>
                   </tr>
                 ))}
               </tbody>
@@ -200,19 +221,17 @@ const ParkingLocker = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>External Locker ID</th>
                   <th>Locker Fee</th>
-                  <th>Owner ID</th>
+                  <th>Owner Email</th>
                 </tr>
               </thead>
               <tbody>
                 {selectedPropertyDetails.lockers.map((locker) => (
                   <tr key={locker.id}>
-                    <td>{locker.id}</td>
                     <td>{locker.externalLockerId}</td>
                     <td>{locker.lockerFee}</td>
-                    <td>{locker.ownerId}</td>
+                    <td>{locker.ownerEmail}</td>
                   </tr>
                 ))}
               </tbody>
