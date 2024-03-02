@@ -183,7 +183,7 @@ const PropertiesProfile = () => {
                     </button>
                 )}
                     <button className="parking-locker-button" onClick={() => navigate('/condomanagement')}>
-                        Condo management
+                        Condo Management
                     </button>
             </div>
         </div>

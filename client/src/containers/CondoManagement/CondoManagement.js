@@ -157,10 +157,10 @@ const CondoManagement = () => {
         <table>
           <thead>
             <tr>
-              <th>Unit id</th>
-              <th>Unit size</th>
-              <th>Condo fee</th>
-              <th>Condo owner</th>
+              <th>Unit Number</th>
+              <th>Unit Size (sq ft)</th>
+              <th>Condo Fee ($)</th>
+              <th>Condo Owner</th>
               <th>Condo Occupant</th>
             </tr>
           </thead>

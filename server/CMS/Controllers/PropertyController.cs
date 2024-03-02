@@ -56,9 +56,9 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPut("add-condo/{propertyId}/{condoId}")]
-        public async Task<ActionResult<CondoUnit>> AddPropertyCondoUnit(Guid propertyId, Guid condoId)
+        public async Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId)
         {
-            var unit = await _propertyService.AddPropertyCondoUnit(propertyId, condoId);
+            var unit = await _propertyService.AssociateCondoUnitWithProperty(propertyId, condoId);
             if (unit is null) return NotFound();
             return Ok(unit);
         }

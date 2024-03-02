@@ -62,7 +62,7 @@ namespace CMS.Api.PropertySystem.Services
             return property;
         }
 
-        public async Task<ActionResult<CondoUnit>> AddPropertyCondoUnit(Guid propertyId, Guid condoId)
+        public async Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId)
         {
             var property = await _context.Properties.FindAsync(propertyId);
             if (property == null) { return null; }
@@ -70,7 +70,7 @@ namespace CMS.Api.PropertySystem.Services
             if (property.CondoUnits == null)
                 property.CondoUnits = new List<CondoUnit>();
 
-            var unit = await _condoService.GetCondoUnitsById(condoId);
+            var unit = await _condoService.GetCondoUnitById(condoId);
 
             if (unit.Value == null) { return null; }
 
