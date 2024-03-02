@@ -59,7 +59,7 @@ namespace CMS.Api.PropertySystem.Services
 
        
 
-        public async Task<ActionResult<CondoUnit>> GetCondoUnitsById(Guid id)
+        public async Task<ActionResult<CondoUnit>> GetCondoUnitById(Guid id)
         {
             var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(c => c.Id == id);
 
