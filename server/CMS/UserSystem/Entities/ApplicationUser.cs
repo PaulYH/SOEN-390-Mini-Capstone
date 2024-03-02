@@ -17,6 +17,7 @@ namespace CMS.Api.UserSystem.Entities
         public ICollection<Locker>? Lockers { get; set; }
 
         // Used by Owners
+
         [InverseProperty("Owner")]
         public ICollection<CondoUnit>? OwnedCondoUnits { get; set; }
 

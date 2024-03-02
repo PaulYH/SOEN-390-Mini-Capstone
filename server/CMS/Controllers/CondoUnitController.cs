@@ -27,7 +27,10 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<CondoUnit>> GetCondoUnitsByEmail(string email)
         {
             var condos = await _condoUnitService.GetCondoUnitsByEmail(email);
-            if (condos == null)  return NotFound(); 
+            if (condos == null) 
+            {
+                return Ok(new List<CondoUnit>());
+            }
             return Ok(condos);
         }
 
@@ -37,7 +40,7 @@ namespace CMS.Api.Controllers
             CondoUnit condoUnit = new CondoUnit();
             condoUnit.ExternalUnitId = request.ExternalUnitId;
             condoUnit.Size = request.Size;
-            condoUnit.FeePerSquareFoot = request.FeetPerSquareFoot;
+            condoUnit.FeePerSquareFoot = request.FeePerSquareFoot;
 
             var owner = await _applicationUserService.GetUserByEmail(request.CondoOwnerEmail);
             var occupant = await _applicationUserService.GetUserByEmail(request.CondoOccupantEmail);
@@ -56,12 +59,20 @@ namespace CMS.Api.Controllers
             return await _condoUnitService.DeleteCondoUnit(id);
         }
 
+        [HttpPut]
+        public async Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit)
+        {
+            var condo = await _condoUnitService.UpdateCondoUnit(updatedCondoUnit);
+            if (condo is null) return NotFound();
+            return Ok(condo);
+        }
+
 
         public class CreateCondoUnitRequest
         {
             public int ExternalUnitId { get; set; }
             public int Size { get; set; }
-            public decimal FeetPerSquareFoot { get; set; }
+            public decimal FeePerSquareFoot { get; set; }
             public required string CondoOwnerEmail { get; set; }
             public required string CondoOccupantEmail { get; set; }
 

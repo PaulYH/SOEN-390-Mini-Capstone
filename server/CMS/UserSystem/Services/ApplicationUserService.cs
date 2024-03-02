@@ -36,6 +36,7 @@ namespace CMS.Api.UserSystem.Services
             return users;
         }
 
+
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);

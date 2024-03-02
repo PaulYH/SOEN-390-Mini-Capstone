@@ -299,6 +299,9 @@ const PropertiesProfile = () => {
                         Parking & Locker
                     </button>
                 )}
+                    <button className="parking-locker-button" onClick={() => navigate('/condomanagement')}>
+                        Condo Management
+                    </button>
 
 
         </div>

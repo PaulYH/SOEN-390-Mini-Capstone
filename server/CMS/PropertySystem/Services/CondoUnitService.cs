@@ -11,6 +11,7 @@ using System;
 using CMS.Api.PropertySystem.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Reflection.Metadata.Ecma335;
+using Microsoft.IdentityModel.Tokens;
 
 
 
@@ -49,13 +50,42 @@ namespace CMS.Api.PropertySystem.Services
         public async Task<ActionResult<List<CondoUnit>>> GetCondoUnitsByEmail(string email)
         {
             var condos = await _context.CondoUnits
-                .Include(c => c.Id)
-                .Include(c => c.Owner)
-                .Include(c => c.ExternalUnitId)
-                .Include(c => c.Occupant)
-                .Where(c => c.Owner.Email == email)
-                .ToListAsync();
+                    .Include(c => c.Owner) 
+                    .Include(c => c.Occupant) 
+                    .Where(c => c.Owner.Email == email)
+                    .ToListAsync();
             return condos;
+        }
+
+       
+
+        public async Task<ActionResult<CondoUnit>> GetCondoUnitsById(Guid id)
+        {
+            var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (condoUnit == null)
+            {
+                return null;
+            }
+            return condoUnit;
+        }
+
+
+
+        public async Task<ActionResult<CondoUnit>> UpdateCondoUnit(CondoUnit updatedCondoUnit)
+        {
+            var condo = await _context.CondoUnits.FindAsync(updatedCondoUnit.Id);
+            if (condo == null) { return null; }
+
+            condo.ExternalUnitId = updatedCondoUnit.ExternalUnitId != -1 ?
+                condo.ExternalUnitId : updatedCondoUnit.ExternalUnitId;
+            condo.Size = updatedCondoUnit.Size != -1 ?
+                condo.Size : updatedCondoUnit.Size;
+            condo.FeePerSquareFoot = updatedCondoUnit.FeePerSquareFoot != -1?
+                condo.FeePerSquareFoot : updatedCondoUnit.FeePerSquareFoot;
+
+            await _context.SaveChangesAsync();
+            return condo;
         }
     }
 }

@@ -12,6 +12,8 @@ import MainDashboard from './containers/OwnerDashboard/MainDashboardOwner.js';
 
 import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js';
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js';
+import CondoManagement from './containers/CondoManagement/CondoManagement.js';
+
 function App() {
   return (
     <Router>
@@ -26,6 +28,7 @@ function App() {
         <Route path="/submittedRequests" element={<SubmittedRequests/>} />
         <Route path="/propertiesprofile" element={<PropertiesProfile />} />
         <Route path="/parkinglocker" element={<ParkingLocker />} />
+        <Route path="/condomanagement" element={<CondoManagement/>} />
         <Route path="/home" element={<MainDashboard />} />
       </Routes>
     </Router>

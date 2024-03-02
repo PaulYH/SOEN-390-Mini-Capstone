@@ -27,6 +27,8 @@ namespace CMS.Api.Controllers
             return Ok(users);
         }
 
+
+
         [HttpGet("authenticated")]
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetAuthenticatedUser()
