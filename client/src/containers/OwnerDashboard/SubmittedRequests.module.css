@@ -1,0 +1,11 @@
+
+.button {
+    border-radius: 20px;
+    margin: 20px ;
+  }
+  .logo {
+    width: 160px;
+    height: 100px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}

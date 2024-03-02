@@ -1,0 +1,24 @@
+/* this page is common to owners and rental users*/
+
+.amenitiesContainer {
+  margin: 20px 200px 50px 200px;
+
+}
+
+.button {
+  border-radius: 20px;
+  margin: 20px ;
+}
+.photoTitle {
+background-color:#7067E1;
+border-radius: 20px;
+font-size: 25px;
+font-weight: bold;
+}
+.photoDetail {
+  font-size: 18px;
+  border-radius: 20px;
+  background-color: #9CCDFA;
+}
+
+  
