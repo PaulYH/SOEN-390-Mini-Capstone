@@ -11,7 +11,9 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<Property>> CreateProperty(Property property);
         Task<ActionResult<Property>> UpdateProperty(Property updatedProperty);
         Task<ActionResult<bool>> DeleteProperty(Guid id);
-
+        Task<ActionResult<string>> WriteFile(Guid id, IFormFile file);
+        Task<string> DownloadFile(Guid id, string fileName);
+        Task<ActionResult<List<string>>> GetAllFileNames(Guid id);
 
     }
 }
