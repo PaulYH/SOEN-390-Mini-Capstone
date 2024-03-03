@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './PropertiesProfile.css' // Import CSS file
+
+import downIcon from '../../assets/downloadIcon.png'
 
 const PropertiesProfile = () => {
   const navigate = useNavigate()
   const [mode, setMode] = useState('create')
   const [user, setUser] = useState(null)
+  const fileInputRef = useRef(null) // Correctly defining the ref for file input
+  const [propertyId, setPropertyId] = useState('')
+  const [fileNames, setFileNames] = useState([])
+  const [showFiles, setShowFiles] = useState(false)
   const [property, setProperty] = useState({
     propertyName: '',
     companyName: '',
@@ -40,9 +46,7 @@ const PropertiesProfile = () => {
       )
       if (!response.ok) throw new Error('Failed to fetch user data')
       const data = await response.json()
-      console.log(data)
-      console.log(data.property)
-      console.log(data.value.property)
+      setPropertyId(data.value.property?.id || '')
       return data.value.property || null
     } catch (error) {
       console.error(error)
@@ -65,6 +69,78 @@ const PropertiesProfile = () => {
       setMode('edit')
     }
   }
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file) // Assuming 'file' is the name expected by your API
+    console.log(propertyId)
+    try {
+      const response = await fetch(
+        `http://localhost:5127/api/properties/${propertyId}/upload`,
+        {
+          method: 'POST',
+          headers: {
+            // 'Content-Type': 'multipart/form-data', // This header is set automatically by the browser when using FormData
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: formData,
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to upload file')
+      }
+
+      alert('File uploaded successfully')
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      setError(`Failed to upload file: ${error.message}`)
+    }
+  }
+
+  const triggerFileInput = () => {
+    fileInputRef.current.click() // Correct usage of ref to trigger file input
+  }
+  const toggleFileListDisplay = () => {
+    setShowFiles(!showFiles)
+    if (!showFiles) {
+      fetchFileNames() // Fetch file names when toggling on
+    }
+  }
+  const fetchFileNames = async () => {
+    if (!propertyId) {
+      setError('Property ID is missing. Unable to fetch file names.')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5127/api/properties/${propertyId}/allFileNames`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to fetch file names')
+      }
+
+      const fileNames = await response.json() // Assuming the API returns an array of file names
+      setFileNames(fileNames.value.$values) // Update the state with fetched file names
+    } catch (error) {
+      console.error('Error fetching file names:', error)
+      setError(`Failed to fetch file names: ${error.message}`)
+    }
+  }
+
   const addPropertyToUser = async (propertyId) => {
     try {
       const responseUser = await fetch(
@@ -80,7 +156,7 @@ const PropertiesProfile = () => {
       }
       const userData = await responseUser.json() // Parse JSON response to get user data
       const userId = userData.value.id // Access the user ID from the parsed data
-      console.log(userId)
+
       const response = await fetch('http://localhost:5127/api/users', {
         method: 'PUT',
         headers: {
@@ -99,9 +175,6 @@ const PropertiesProfile = () => {
         console.error(data.message || 'Failed to associate property with user')
         return
       }
-
-      // Handle successful association
-      console.log('Property successfully associated with user')
     } catch (error) {
       console.error('An error occurred while processing your request', error)
     }
@@ -170,6 +243,34 @@ const PropertiesProfile = () => {
       )
     }
   }
+  const downloadFile = async (fileName) => {
+    const fileDownloadUrl = `http://localhost:5127/api/properties/${propertyId}/download/${fileName}`
+
+    // Direct approach for same-origin or CORS-enabled downloads
+    fetch(fileDownloadUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create a URL for the blob object
+        const url = window.URL.createObjectURL(blob)
+        // Create a temporary anchor element and trigger the download
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName // Set the file name for the download
+        document.body.appendChild(a) // Append to the document
+        a.click() // Trigger click to download
+        window.URL.revokeObjectURL(url) // Clean up
+        a.remove() // Remove the element
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error)
+        setError(`Failed to download file: ${error.message}`)
+      })
+  }
 
   return (
     <div className='signup'>
@@ -216,6 +317,37 @@ const PropertiesProfile = () => {
         readOnly={mode === 'view'}
       />
 
+      <div className='buttonDiv'>
+        <input
+          type='file'
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+        />
+        <button className='buttonUpload' onClick={triggerFileInput}>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth='2'
+            stroke='currentColor'
+            aria-hidden='true'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H11M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125'
+            />
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M17 15V18M17 21V18M17 18H14M17 18H20'
+            />
+          </svg>
+          ADD FILE
+        </button>
+      </div>
+
       <div className='button-container'>
         <button onClick={handleButtonAction} className='action-button'>
           {mode === 'create'
@@ -232,10 +364,40 @@ const PropertiesProfile = () => {
             Parking & Locker
           </button>
         )}
+        <button
+          className='parking-locker-button'
+          onClick={() => navigate('/condomanagement')}
+        >
+          Condo Management
+        </button>
         <button onClick={() => navigate('/keyassignment')}>
           Key Assignment
         </button>
       </div>
+
+      <div className='file-actions'>
+        <button className='toggle-files-button' onClick={toggleFileListDisplay}>
+          {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
+        </button>
+      </div>
+      {showFiles && (
+        <div className='uploaded-files-list'>
+          <h3>Uploaded Files:</h3>
+
+          {fileNames.map((fileName, index) => (
+            // Make each file name a clickable element for download
+            <div
+              className='file_item'
+              key={index}
+              style={{ cursor: 'pointer' }}
+              onClick={() => downloadFile(fileName)}
+            >
+              <img className='icon' src={downIcon} />
+              {fileName}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

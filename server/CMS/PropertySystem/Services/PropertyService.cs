@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
 using CMS.Api.Migrations;
+using Microsoft.AspNetCore.StaticFiles;
 
 
 namespace CMS.Api.PropertySystem.Services
@@ -15,10 +16,12 @@ namespace CMS.Api.PropertySystem.Services
     public class PropertyService : IPropertyService
     {
         private readonly CMSDbContext _context;
+        private readonly ICondoUnitService _condoService;
 
-        public PropertyService(CMSDbContext context)
+        public PropertyService(CMSDbContext context, ICondoUnitService condoService)
         {
             _context = context;
+            _condoService = condoService;
         }
 
 
@@ -50,7 +53,7 @@ namespace CMS.Api.PropertySystem.Services
             await _context.SaveChangesAsync();
             return property;
         }
-        public async Task<ActionResult<Property>> UpdateProperty(Property updatedProperty)
+        public async Task<ActionResult<Property>> UpdatePropertyProfile(Property updatedProperty)
         {
             var property = await _context.Properties.FindAsync(updatedProperty.Id);
             if (property == null) { return null; }
@@ -68,6 +71,24 @@ namespace CMS.Api.PropertySystem.Services
             return property;
         }
 
+        public async Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId)
+        {
+            var property = await _context.Properties.FindAsync(propertyId);
+            if (property == null) { return null; }
+
+            if (property.CondoUnits == null)
+                property.CondoUnits = new List<CondoUnit>();
+
+            var unit = await _condoService.GetCondoUnitById(condoId);
+
+            if (unit.Value == null) { return null; }
+
+            property.CondoUnits.Add(unit.Value);
+
+            await _context.SaveChangesAsync();
+
+            return unit;
+        }
 
         public async Task<ActionResult<bool>> DeleteProperty(Guid id)
         {
@@ -79,6 +100,59 @@ namespace CMS.Api.PropertySystem.Services
                 await _context.SaveChangesAsync();
                 return true;
             }
+        }
+
+        public async Task<ActionResult<string>> WriteFile(Guid id, IFormFile file)
+        {
+            string fileName = "";
+            try
+            {
+                var ext = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+                var originalFileName = file.FileName.Substring(0, file.FileName.LastIndexOf('.'));
+                fileName = originalFileName + ext;
+
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"Data\\Upload\\{id}");
+
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+
+                var path = Path.Combine(Directory.GetCurrentDirectory(), $"Data\\Upload\\{id}", fileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                return fileName;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<string> DownloadFile(Guid id, string fileName)
+        {
+            var filePath =  Path.Combine(Directory.GetCurrentDirectory(), $"Data\\Upload\\{id}", fileName);
+
+            return filePath;
+        }
+
+        public async Task<ActionResult<List<string>>> GetAllFileNames(Guid id)
+        {
+            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), $"Data\\Upload\\{id}");
+
+            if (!Directory.Exists(fileDirectory))
+                return null;
+
+            DirectoryInfo dir = new DirectoryInfo(fileDirectory);
+            FileInfo[] files = dir.GetFiles();
+
+            List<string> result = new List<string>();
+            foreach (FileInfo file in files)
+            {
+                result.Add(file.Name);
+            }
+
+            return result;
         }
     }
 }

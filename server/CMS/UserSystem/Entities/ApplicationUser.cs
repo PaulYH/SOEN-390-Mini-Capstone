@@ -19,6 +19,7 @@ namespace CMS.Api.UserSystem.Entities
 
         // Used by Owners
         public bool? hasRequestedOwnerKey { get; set; } = false;
+
         [InverseProperty("Owner")]
         public ICollection<CondoUnit>? OwnedCondoUnits { get; set; }
 

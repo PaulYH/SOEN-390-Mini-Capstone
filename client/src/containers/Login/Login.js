@@ -53,8 +53,8 @@ const Login = () => {
             localStorage.setItem('accessToken', tokenData.accessToken);
             localStorage.setItem('expiresAt', expiresAt.getTime().toString());
     
-            // If the login was successful, navigate to the profile page
-            navigate('/profile');
+            // If the login was successful, navigate to the home
+            navigate('/home');
         } catch (error) {
             // Handle network error or other exceptions
             setError('An error occurred while processing your request');
