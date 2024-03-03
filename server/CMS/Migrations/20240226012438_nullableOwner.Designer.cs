@@ -4,6 +4,7 @@ using CMS.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMS.Api.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240226012438_nullableOwner")]
+    partial class nullableOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,21 +88,21 @@ namespace CMS.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ApplicationUser")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("ExternalLockerId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("LockerFee")
                         .HasColumnType("decimal(6, 2)");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("PropertyId")
+                    b.Property<Guid?>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("ApplicationUser");
 
                     b.HasIndex("PropertyId");
 
@@ -112,13 +115,13 @@ namespace CMS.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ApplicationUser")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("ExternalSpotId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("PropertyId")
+                    b.Property<Guid?>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("SpotFee")
@@ -126,7 +129,7 @@ namespace CMS.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("ApplicationUser");
 
                     b.HasIndex("PropertyId");
 
@@ -350,12 +353,6 @@ namespace CMS.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool?>("hasRequestedOccupantKey")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("hasRequestedOwnerKey")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -555,34 +552,26 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.ApplicationUser", "Owner")
                         .WithMany("Lockers")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("ApplicationUser");
 
-                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
+                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", null)
                         .WithMany("Lockers")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("PropertyId");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.ParkingSpot", b =>
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.ApplicationUser", "Owner")
                         .WithMany("ParkingSpots")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("ApplicationUser");
 
-                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
+                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", null)
                         .WithMany("ParkingSpots")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("PropertyId");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.ReservableRoom", b =>

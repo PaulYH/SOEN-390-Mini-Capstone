@@ -4,6 +4,7 @@ using CMS.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMS.Api.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240229020853_Correction")]
+    partial class Correction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +95,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("decimal(6, 2)");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("PropertyId")
@@ -116,6 +120,7 @@ namespace CMS.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("PropertyId")
@@ -350,12 +355,6 @@ namespace CMS.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool?>("hasRequestedOccupantKey")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("hasRequestedOwnerKey")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -555,7 +554,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.ApplicationUser", "Owner")
                         .WithMany("Lockers")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
                         .WithMany("Lockers")
@@ -572,7 +573,9 @@ namespace CMS.Api.Migrations
                 {
                     b.HasOne("CMS.Api.UserSystem.Entities.ApplicationUser", "Owner")
                         .WithMany("ParkingSpots")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
                         .WithMany("ParkingSpots")
