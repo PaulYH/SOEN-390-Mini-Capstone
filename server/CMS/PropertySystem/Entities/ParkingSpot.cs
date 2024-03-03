@@ -19,7 +19,7 @@ namespace CMS.Api.PropertySystem.Entities
         public Property? Property { get; set; }
 
         // Corrected Owner relationship
-        public string OwnerId { get; set; }
+        public string? OwnerId { get; set; }
         [ForeignKey("OwnerId")]
         public ApplicationUser? Owner { get; set; }
     }

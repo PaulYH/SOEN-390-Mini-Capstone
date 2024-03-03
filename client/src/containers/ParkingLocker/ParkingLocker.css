@@ -1,6 +1,6 @@
 .parkingLockerContainer {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #EEE;
+  color: #eee;
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
@@ -8,34 +8,35 @@
 
 .propertySelector {
   margin-bottom: 20px;
-  display: flex;
+  display: none;
   align-items: center;
 }
 
 .propertySelector label {
   font-weight: bold;
   margin-right: 10px;
-  color: #ADC6FF;
+  color: #adc6ff;
 }
 
 .propertySelector select {
   background-color: #333;
-  color: #EEE;
+  color: #eee;
   border: 2px solid #555;
   border-radius: 5px;
   padding: 5px 10px;
 }
 
 .error {
-  color: #FFD2D2;
-  background-color: #66101F;
+  color: #ffd2d2;
+  background-color: #66101f;
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 5px;
 }
 
-h2, h3 {
-  color: #59AFFF;
+h2,
+h3 {
+  color: #59afff;
 }
 
 table {
@@ -43,10 +44,12 @@ table {
   border-collapse: collapse;
   margin-bottom: 20px;
   background-color: #222;
-  color: #EEE;
+  color: #eee;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid #444;
 }
 
@@ -66,14 +69,14 @@ tr:hover {
 }
 
 .form {
-  background-color: #2D2D2D;
+  background-color: #2d2d2d;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 5px;
-  color: #EEE;
+  color: #eee;
 }
 
 .form h2 {
   margin-top: 0;
-  color: #ADC6FF;
+  color: #adc6ff;
 }
