@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using CMS.Api.PropertySystem.Entities;
 
 namespace CMS.Api.PropertySystem.Services
@@ -12,10 +12,9 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<Property>> UpdatePropertyProfile(Property updatedProperty);
         Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId);
         Task<ActionResult<bool>> DeleteProperty(Guid id);
+        Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id);
         Task<ActionResult<string>> WriteFile(Guid id, IFormFile file);
         Task<string> DownloadFile(Guid id, string fileName);
         Task<ActionResult<List<string>>> GetAllFileNames(Guid id);
-
-
     }
 }
