@@ -27,6 +27,14 @@ namespace CMS.Api.Controllers
             return Ok(users);
         }
 
+        [HttpGet("key-requests/{propertyId}")]
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId)
+        {
+            var users = await _userService.GetAllUsersWaitingForKey(propertyId);
+            if (users.Value is null) users = new ActionResult<List<ApplicationUser>>(new List<ApplicationUser>());
+            return Ok(users);
+        }
+
         [HttpGet("authenticated")]
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetAuthenticatedUser()

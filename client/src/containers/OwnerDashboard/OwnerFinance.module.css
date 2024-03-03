@@ -1,0 +1,43 @@
+.dashboard {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  .logo {
+    width: 160px;
+    height: 100px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+.dashboardHeader {
+   text-align: center; 
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+.badge-size {
+  font-size: 15px !important;
+}
+
+  
+  
+  .btn-outline-primary {
+    background-color:  #7067E1 !important;
+    color: white !important; 
+    border: #7067E1;
+  
+}
+.button {
+  border-radius: 20px;
+  margin: 20px ;
+}
+.Finances {
+  text-decoration: none;
+}
+.amount {
+  font-size: 25px;
+}
+#customButtonContainer {
+  display: flex;
+  justify-content: center;
+}

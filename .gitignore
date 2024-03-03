@@ -450,3 +450,5 @@ chrome-user-data
 *.swp
 *.swo
 /server/CMS/Controllers/CondoUnitController.cs
+
+/server/CMS/Data/Upload/*/

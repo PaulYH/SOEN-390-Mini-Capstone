@@ -120,4 +120,74 @@ textarea {
     text-align: center;
     margin: 1rem auto;
   }
+
+  /* button css for file upload */
+  .buttonDiv{
+    padding-top: 0.15rem;
+    padding-bottom: 0.55rem;
+
+  }
+
+  .buttonUpload {
+    border: none;
+    display: flex;
+    padding: 0.55rem 3.75rem;
+    background-color: #C7BFFF;
+    color: #000000;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
+    transition: all .6s ease;
+  }
+  
+  .buttonUpload:hover {
+    box-shadow: 0 10px 15px -3px #488aec4f, 0 4px 6px -2px #488aec17;
+  }
+  
+  .buttonUpload:focus,button:active {
+    opacity: .85;
+    box-shadow: none;
+  }
+  
+  .buttonUpload svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+
+  .file_item{
+    display: flex;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 10px;
+    padding: 10px 15px 10px 15px;
+    color: black;
+    
+  }
+
+  .file_item:hover {
+    color: #C7BFFF;
+  }
+
+  .file-actions{
+    justify-content: center;
+    margin: 0;
+  }
+
+  .icon{
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 25px;
+
+  }
   
