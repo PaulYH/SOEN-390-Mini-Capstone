@@ -234,7 +234,7 @@ const PropertiesProfile = () => {
         address: responseData.address || '',
         city: responseData.city || '',
       })
-      const propertyId = responseData.id
+      const propertyId = responseData.value.id
       addPropertyToUser(propertyId)
       setMode('view')
     } catch (error) {
