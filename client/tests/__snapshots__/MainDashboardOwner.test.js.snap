@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MainDashboardOwner Component renders correctly 1`] = `
+Array [
+  <div
+    className="d-flex justify-content-center my-2 mx-3"
+  >
+    <img
+      alt="logo"
+      src="test-file-stub"
+    />
+  </div>,
+  <div>
+    <h1>
+       Your Dashboard
+    </h1>
+    <div
+      className="row"
+    >
+      <div
+        className="col-md-6 col-lg-6 mb-3"
+      >
+        <div
+          className="card h-100"
+        >
+          <div
+            className="card-body text-center"
+          >
+            <img
+              alt="avatar"
+              className="rounded-circle img-fluid mt-3"
+              src="test-file-stub"
+              style={
+                Object {
+                  "marginBottom": "5px",
+                  "width": "70px",
+                }
+              }
+            />
+            <h4
+              style={
+                Object {
+                  "color": "black",
+                }
+              }
+            >
+               
+            </h4>
+            <p
+              className="text-muted mb-1"
+            >
+              <strong>
+                Condo Owner: 
+              </strong>
+              #1234
+            </p>
+            <p
+              className="text-muted mb-4"
+            />
+            <div
+              className="d-flex justify-content-center mb-2"
+            >
+              <a
+                className="btn btn btn-outline-primary"
+                href="profile"
+              >
+                Edit Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="col-md-6 col-lg-6 mb-3"
+      >
+        <div
+          className="card h-100"
+        >
+          <div
+            className="card-body text-center mt-5"
+          >
+            <h5
+              className="card-title h2"
+            >
+              Amenities
+            </h5>
+            <p
+              classname="card-text h4"
+            >
+              Check out the range of available amenities designed to enhance your living experience!
+            </p>
+            <a
+              className="btn btn-outline-primary"
+              href="Amenities"
+              id="button-dashboard"
+            >
+              See Details
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="row"
+    >
+      <div
+        className="col-md-6 col-lg-6 mb-3"
+      >
+        <div
+          className="card h-100"
+        >
+          <div
+            className="card-body text-center"
+          >
+            <h5
+              className="card-title h2"
+            >
+              Finances
+            </h5>
+            <p
+              classname="card-text h4"
+            >
+              <strong
+                style={
+                  Object {
+                    "textAlign": "center",
+                  }
+                }
+              >
+                Last payment made on: 
+              </strong>
+               01/01/2024
+            </p>
+            <a
+              className="btn btn btn-outline-primary"
+              href="OwnerFinance"
+            >
+              See Details
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        className="col-md-6 col-lg-6 mb-3 "
+      >
+        <div
+          className="card h-100"
+        >
+          <div
+            className="card-body text-center"
+          >
+            <h5
+              className="card-title h2"
+            >
+              Submitted Activity Requests
+            </h5>
+            <p
+              className="card-text text-muted "
+            >
+              <strong
+                style={
+                  Object {
+                    "textAlign": "center",
+                  }
+                }
+              >
+                Last request made on: 
+              </strong>
+               01/01/2024
+            </p>
+            <a
+              className="btn btn-outline-primary"
+              href="SubmittedRequests"
+            >
+              See Details
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="d-flex justify-content-center me-3 ms-3 mb-4"
+  >
+    <button
+      onClick={[Function]}
+    >
+      Sign Out
+    </button>
+  </div>,
+]
+`;
