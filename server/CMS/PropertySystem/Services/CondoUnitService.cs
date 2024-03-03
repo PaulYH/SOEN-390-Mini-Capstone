@@ -108,7 +108,7 @@ namespace CMS.Api.PropertySystem.Services
             var condoUnit = await _context.CondoUnits.FirstOrDefaultAsync(x => x.Occupant == user);
             if (condoUnit == null) return null;
             return condoUnit;
-       
+        }
 
         public async Task<ActionResult<CondoUnit>> GetCondoUnitById(Guid id)
         {
