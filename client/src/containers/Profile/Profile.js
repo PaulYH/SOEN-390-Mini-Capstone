@@ -6,7 +6,7 @@ import {
   QueryClient,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Spinner } from '@nextui-org/react'
+import { Button, Spinner } from '@nextui-org/react'
 import axios from 'axios'
 import './Profile.css'
 
@@ -263,6 +263,13 @@ export default function Profile() {
 
   return (
     <div className='profile'>
+      <Button
+        className='back-button'
+        color='primary'
+        onClick={() => navigate('/home')}
+      >
+        Back
+      </Button>
       <button onClick={handlePropetiesProfileClick}>Properties Profile</button>
       <button onClick={handleSignOut}>Sign Out</button>
       {user && (

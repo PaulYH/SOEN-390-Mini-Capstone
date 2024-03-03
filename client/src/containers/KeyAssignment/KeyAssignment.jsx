@@ -26,7 +26,7 @@ import {
 import { DeleteIcon } from './DeleteIcon'
 
 export default function KeyAssignment() {
-  const themeMode = 'dark' // for the components that are not set to dark mode despite the global dark mode setting in index.js
+  const themeMode = 'light' // for the components that are not set to a specific theme mode despite the global theme mode setting in index.js
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure() // used to open/close Modal component
   const [modalData, setModalData] = useState(null) // used to set the Modal's data to that of selected user

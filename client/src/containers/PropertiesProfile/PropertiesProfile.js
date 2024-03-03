@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@nextui-org/react'
 import './PropertiesProfile.css' // Import CSS file
 
 import downIcon from '../../assets/downloadIcon.png'
@@ -274,6 +275,13 @@ const PropertiesProfile = () => {
 
   return (
     <div className='signup'>
+      <Button
+        className='back-button'
+        color='primary'
+        onClick={() => navigate('/profile')}
+      >
+        Back
+      </Button>
       <img
         src={require('../../assets/logo.png')}
         alt='logo'
@@ -318,67 +326,75 @@ const PropertiesProfile = () => {
       />
 
       <div className='buttonDiv'>
-        <input
-          type='file'
-          style={{ display: 'none' }}
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-        />
-        <button className='buttonUpload' onClick={triggerFileInput}>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth='2'
-            stroke='currentColor'
-            aria-hidden='true'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H11M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125'
-            />
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M17 15V18M17 21V18M17 18H14M17 18H20'
-            />
-          </svg>
-          ADD FILE
-        </button>
-      </div>
-
-      <div className='button-container'>
-        <button onClick={handleButtonAction} className='action-button'>
+        <Button className='buttonUpload' onClick={handleButtonAction}>
           {mode === 'create'
             ? 'Create Property'
             : mode === 'view'
             ? 'Edit'
             : 'Save'}
-        </button>
-        {mode !== 'create' && (
-          <button
-            className='parking-locker-button'
-            onClick={() => navigate('/parkinglocker')}
+        </Button>
+      </div>
+
+      <div className='button-container'>
+        <div>
+          <input
+            type='file'
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+          />
+          <Button className='buttonUpload' onClick={triggerFileInput}>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth='2'
+              stroke='currentColor'
+              aria-hidden='true'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H11M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125'
+              />
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M17 15V18M17 21V18M17 18H14M17 18H20'
+              />
+            </svg>
+            ADD FILE
+          </Button>
+          <Button
+            className='buttonUpload'
+            onClick={() => navigate('/keyassignment')}
           >
-            Parking & Locker
-          </button>
-        )}
-        <button
-          className='parking-locker-button'
-          onClick={() => navigate('/condomanagement')}
-        >
-          Condo Management
-        </button>
-        <button onClick={() => navigate('/keyassignment')}>
-          Key Assignment
-        </button>
+            Key Assignment
+          </Button>
+        </div>
+
+        <div>
+          {mode !== 'create' && (
+            <Button
+              className='buttonUpload'
+              onClick={() => navigate('/parkinglocker')}
+            >
+              Parking & Locker
+            </Button>
+          )}
+          <Button
+            className='buttonUpload'
+            onClick={() => navigate('/condomanagement')}
+          >
+            Condo Management
+          </Button>
+        </div>
       </div>
 
       <div className='file-actions'>
-        <button className='toggle-files-button' onClick={toggleFileListDisplay}>
+        <Button className='buttonUpload' onClick={toggleFileListDisplay}>
           {showFiles ? 'Hide Uploaded Files' : 'Show Uploaded Files'}
-        </button>
+        </Button>
       </div>
       {showFiles && (
         <div className='uploaded-files-list'>
