@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '@nextui-org/react'
 import './ParkingLocker.css'
 
 const ParkingLocker = () => {
+  const navigate = useNavigate()
   const [properties, setProperties] = useState([])
   const [selectedPropertyId, setSelectedPropertyId] = useState('')
   const [selectedPropertyDetails, setSelectedPropertyDetails] = useState(null)
@@ -201,6 +204,13 @@ const ParkingLocker = () => {
 
   return (
     <div className='parkingLockerContainer'>
+      <Button
+        className='back-button'
+        color='primary'
+        onClick={() => navigate('/propertiesprofile')}
+      >
+        Back
+      </Button>
       {error && <p className='error'>{error}</p>}
       {loading && <p>Loading...</p>}
       <div className='propertySelector'>
