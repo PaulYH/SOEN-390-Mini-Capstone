@@ -134,7 +134,7 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {
             var user = await _userService.UpdateUser(updatedUser);
-            if (user is null) return NotFound();
+            if (user.Value is null) return NotFound();
 
             return Ok(user);
         }
