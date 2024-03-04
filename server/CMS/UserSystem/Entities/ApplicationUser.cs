@@ -13,10 +13,17 @@ namespace CMS.Api.UserSystem.Entities
         public Property? Property { get; set; }
 
         // Used by Owners & Renters
+        public bool? hasRequestedOccupantKey { get; set; } = false;
+
+[InverseProperty("Owner")]
         public ICollection<ParkingSpot>? ParkingSpots { get; set; }
+        
+        [InverseProperty("Owner")]
         public ICollection<Locker>? Lockers { get; set; }
 
         // Used by Owners
+        public bool? hasRequestedOwnerKey { get; set; } = false;
+
         [InverseProperty("Owner")]
         public ICollection<CondoUnit>? OwnedCondoUnits { get; set; }
 

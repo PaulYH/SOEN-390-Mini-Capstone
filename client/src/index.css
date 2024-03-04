@@ -1,62 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-  background-color: #1C1B1F;
-  color: #E5E1E6;
+  background-color: #1c1b1f;
+  color: #e5e1e6;
 }
 
 .container {
-  background-color: #302D37;
-  color: #E6E1E5;
+  background-color: #302d37;
+  color: #e6e1e5;
 }
 
 .container-variant {
-  background-color: #47464F;
-  color: #C9C5D0;
+  background-color: #47464f;
+  color: #c9c5d0;
 }
 
 .primary {
-  background-color: #C7BFFF;
-  color: #2A009F;
+  background-color: #c7bfff;
+  color: #2a009f;
 }
 
 .primary-container {
-  background-color: #4129BA;
-  color: #E4DFFF;
+  background-color: #4129ba;
+  color: #e4dfff;
 }
 
 .secondary {
-  background-color: #CDC2DC;
-  color: #332D41;
+  background-color: #cdc2dc;
+  color: #332d41;
 }
 
 .secondary-container {
-  background-color: #433C52;
-  color: #EDDFFF;
+  background-color: #433c52;
+  color: #eddfff;
 }
 
 .tertiary {
-  background-color: #9FCAFF;
+  background-color: #9fcaff;
   color: #003258;
 }
 
 .tertiary-container {
-  background-color: #00497D;
-  color: #D1E4FF;
+  background-color: #00497d;
+  color: #d1e4ff;
 }
 
 .error {
-  background-color: #FFB4AB;
+  background-color: #ffb4ab;
   color: #690005;
 }
 
 .error-container {
-  background-color: #93000A;
-  color: #FFDAD6;
+  background-color: #93000a;
+  color: #ffdad6;
 }
 
 .outline {
-  outline-color: #928F99;
+  outline-color: #928f99;
 }
 
 .outline-variant {
-  outline-color: #57545D;
+  outline-color: #57545d;
 }

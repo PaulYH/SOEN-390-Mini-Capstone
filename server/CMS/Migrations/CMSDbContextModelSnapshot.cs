@@ -94,7 +94,7 @@ namespace CMS.Api.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("PropertyId")
+                    b.Property<Guid>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -118,7 +118,7 @@ namespace CMS.Api.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("PropertyId")
+                    b.Property<Guid>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("SpotFee")
@@ -350,6 +350,12 @@ namespace CMS.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<bool?>("hasRequestedOccupantKey")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("hasRequestedOwnerKey")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -551,11 +557,15 @@ namespace CMS.Api.Migrations
                         .WithMany("Lockers")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", null)
+                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
                         .WithMany("Lockers")
-                        .HasForeignKey("PropertyId");
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.ParkingSpot", b =>
@@ -564,11 +574,15 @@ namespace CMS.Api.Migrations
                         .WithMany("ParkingSpots")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", null)
+                    b.HasOne("CMS.Api.PropertySystem.Entities.Property", "Property")
                         .WithMany("ParkingSpots")
-                        .HasForeignKey("PropertyId");
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.ReservableRoom", b =>

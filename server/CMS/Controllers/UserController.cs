@@ -27,6 +27,14 @@ namespace CMS.Api.Controllers
             return Ok(users);
         }
 
+        [HttpGet("key-requests/{propertyId}")]
+        public async Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId)
+        {
+            var users = await _userService.GetAllUsersWaitingForKey(propertyId);
+            if (users.Value is null) users = new ActionResult<List<ApplicationUser>>(new List<ApplicationUser>());
+            return Ok(users);
+        }
+
         [HttpGet("authenticated")]
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetAuthenticatedUser()
@@ -113,11 +121,20 @@ namespace CMS.Api.Controllers
             return Ok(user);
         }
 
+        [HttpGet("id/{id}")]
+        public async Task<ActionResult<ApplicationUser>> GetUserById(string id)
+        {
+            var user = await _userService.GetUserById(id);
+            if (user.Value is null) return NotFound();
+            return Ok(user);
+        }
+
+
         [HttpPut]
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {
             var user = await _userService.UpdateUser(updatedUser);
-            if (user is null) return NotFound();
+            if (user.Value is null) return NotFound();
 
             return Ok(user);
         }

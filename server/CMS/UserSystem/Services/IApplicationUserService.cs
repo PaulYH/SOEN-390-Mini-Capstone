@@ -12,10 +12,12 @@ namespace CMS.Api.UserSystem.Services
     {
         Task<ActionResult<List<ApplicationUser>>> GetAllUsers();
         Task<ActionResult<ApplicationUser>> GetUserByEmail(string email);
+        Task<ActionResult<ApplicationUser>> GetUserById(string id);
         Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser);
         Task<IdentityResult> RegisterUser(RegisterRequest registerRequest);
         Task<ProfilePicture> UploadProfilePicture(byte[] imageData, ImageType imageType);
         Task<(bool Succeeded, IEnumerable<string> Errors, ApplicationUser User)> UpdateUserProfile(string email, string phoneNumber, ProfilePicture profilePicture);
         Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email);
+        Task<ActionResult<List<ApplicationUser>>> GetAllUsersWaitingForKey(Guid propertyId);
     }
 }

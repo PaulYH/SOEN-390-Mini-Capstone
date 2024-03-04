@@ -1,0 +1,82 @@
+/* KeyAssignment.css */
+/* Styles for the heading */
+
+/* FormComponent.css */
+.mainTable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  width: 700px;
+  margin: auto;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  outline: none;
+}
+
+.error {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: blue;
+  cursor: pointer;
+}
+textarea {
+  padding: 50px;
+  max-width: 170px;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+}
+.button-container {
+  display: flex;
+}
+.back-button {
+  margin-right: 620px;
+}
+
+/* CardContainer */
+
+.container2 {
+  overflow: auto;
+  display: flex;
+  scroll-snap-type: x mandatory;
+  width: 90%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.card {
+  background: white;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  border-radius: 10px;
+  padding: 2rem;
+  margin: 1rem;
+  width: 100%;
+}
+
+.title {
+  color: black;
+  width: 100%;
+  display: inline-block;
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  margin: 1rem auto;
+}
