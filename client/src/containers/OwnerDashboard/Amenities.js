@@ -11,9 +11,15 @@ const Amenities = () => {
   const handleClick = () => {
     navigate('/home'); 
   };
+  const handleClickCreate = () => {
+    navigate('/roomReserve'); 
+  };
   return (
     <>
     <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+    <button type="button" className={styles.buttonCreate} onClick={handleClickCreate}>Create</button> 
+
+
 
     <div className="d-flex justify-content-center">
       <img src={require('../../assets/logo.png')} alt="logo" className="text-center" style={{margin:'10px'}}/>

@@ -13,6 +13,7 @@ import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js'
 import KeyAssignment from './containers/KeyAssignment/KeyAssignment.jsx'
 import CondoManagement from './containers/CondoManagement/CondoManagement.js'
+import RoomReservation from './containers/OwnerDashboard/RoomReservation.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -36,6 +37,7 @@ function App() {
           <Route path='/keyassignment' element={<KeyAssignment />} />
           <Route path='/condomanagement' element={<CondoManagement />} />
           <Route path='/home' element={<MainDashboard />} />
+          <Route path='/roomReserve' element ={<RoomReservation/>} />
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />
