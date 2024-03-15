@@ -1,10 +1,6 @@
 ﻿using CMS.Api.Controllers;
 using CMS.Api.UserSystem.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using Moq;
-using System;
 
 namespace CMS.Tests.Controllers
 {
@@ -281,4 +277,3 @@ namespace CMS.Tests.Controllers
     }
 }
 
-        
