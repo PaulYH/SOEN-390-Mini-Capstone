@@ -27,7 +27,7 @@ namespace CMS.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Locker>> CreateLocker(Locker request)
         {
-            if (request is null) { return NotFound(); }
+            if (request is null || request.Owner is null) { return NotFound(); }
             var owner = await _applicationUserService.GetUserById(request.Owner.Id);
             if (owner != null) { request.Owner = owner.Value; }
             var createdLocker = await _lockerService.CreateLocker(request);
