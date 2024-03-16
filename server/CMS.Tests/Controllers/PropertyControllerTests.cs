@@ -95,7 +95,7 @@ namespace CMS.Tests.Controllers
                 .NotBeNull();
             _propertyService.Verify(x => x.GetAllCondoUnits(It.IsAny<Guid>()), Times.Once());
         }
-        // not working atm
+       
         [Fact] 
         public async Task GetAllCondoUnits_ShouldReturnNotFound_WhenDataNotFound()
         {
@@ -130,7 +130,7 @@ namespace CMS.Tests.Controllers
             _propertyService.Verify(x => x.CreateProperty(It.IsAny<Property>()), Times.Once());
         }
 
-        //tests updating property
+        
         [Fact]
         public async Task UpdateProperty_ShouldReturnOkResponse_WhenDataFound()
         {
@@ -255,7 +255,7 @@ namespace CMS.Tests.Controllers
             Assert.NotNull(result);
             var fileResult = Assert.IsType<FileContentResult>(result);
             Assert.NotNull(fileResult.FileContents);
-            Assert.Equal("text/plain", fileResult.ContentType); // Updated to expect "text/plain"
+            Assert.Equal("text/plain", fileResult.ContentType);
 
             _propertyService.Verify(x => x.DownloadFile(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once());
         }

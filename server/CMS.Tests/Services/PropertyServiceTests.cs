@@ -183,7 +183,7 @@ namespace CMS.Tests.Services
             var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), $"Data\\Upload\\{id}");
             Directory.CreateDirectory(fileDirectory);
 
-            // Create some dummy files in the directory
+            
             var expectedFileNames = new List<string> { "test1.txt", "test2.txt" };
             foreach (var fileName in expectedFileNames)
             {
