@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Amenities.module.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { Button } from '@nextui-org/react'
+
 
 const Amenities = () => {
   let navigate = useNavigate();
@@ -13,7 +15,7 @@ const Amenities = () => {
   };
   return (
     <>
-    <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+    <Button type="button"  style={{   margin: '20px' }} onClick={handleClick}>Back</Button> 
 
     <div className="d-flex justify-content-center">
       <img src={require('../../assets/logo.png')} alt="logo" className="text-center" style={{margin:'10px'}}/>

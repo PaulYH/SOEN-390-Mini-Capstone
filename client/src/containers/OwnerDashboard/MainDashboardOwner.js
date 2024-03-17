@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
 
-
+import { Button } from '@nextui-org/react'
 
 const MainDashboardOwner = () => {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ const MainDashboardOwner = () => {
 
   <div className="d-flex justify-content-center me-3 ms-3 mb-4">
   
-  <button onClick={handleSignOut}>Sign Out</button>
+  <Button style={{backgroundColor: '#C7BFFF' }}  onClick={handleSignOut}>Sign Out</Button>
 </div>
 </> 
 
