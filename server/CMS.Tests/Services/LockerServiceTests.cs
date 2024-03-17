@@ -69,8 +69,7 @@ namespace CMS.Tests.Services
         [Fact]
         public async Task UpdateLocker_ShouldReturnNull_WhenNullAttributes()
         {
-            var locker = _context.Lockers.First();
-            var locker2 = new Locker() { Id = locker.Id};
+            var locker2 = new Locker() {};
 
             var result = await _lockerService.UpdateLocker(locker2);
 
