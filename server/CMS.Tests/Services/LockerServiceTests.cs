@@ -10,11 +10,11 @@ namespace CMS.Tests.Services
 {
     public class LockerServiceTests : LockerServiceTestsBase
     {
-        private readonly Mock<ILockerService> _lockerService;
+        private readonly ILockerService _lockerService;
 
         public LockerServiceTests()
         {
-            _lockerService = new Mock<ILockerService>();
+            _lockerService = new LockerService(_context);
         }
 
         [Fact]
@@ -38,23 +38,41 @@ namespace CMS.Tests.Services
             result.Should().NotBeNull();
         }
 
-
         [Fact]
         public async Task UpdateLocker_ShouldReturnLocker_WhenDataFound()
         {
             var locker = _context.Lockers.First();
             locker.LockerFee = 1000;
-            var result = await _lockerService.UpdateProperty(locker);
+            var result = await _lockerService.UpdateLocker(locker);
 
             result.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task UpdateLocker_ShouldReturnNull_WhenNullLocker()
+        public async Task UpdateLocker_ShouldReturnNull_WhenNullLockerId()
         {
-            Locker? locker = null;
+            var locker = new Locker()
+            {
+                ExternalLockerId = 1,
+                LockerFee = 1,
+                PropertyId = Guid.NewGuid(),
+                Property = new Property(),
+                OwnerId = Guid.NewGuid().ToString(),
+                Owner = new ApplicationUser()
+            };
 
             var result = await _lockerService.UpdateLocker(locker);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateLocker_ShouldReturnNull_WhenNullAttributes()
+        {
+            var locker = _context.Lockers.First();
+            var locker2 = new Locker() { Id = locker.Id};
+
+            var result = await _lockerService.UpdateLocker(locker2);
 
             result.Should().BeNull();
         }
