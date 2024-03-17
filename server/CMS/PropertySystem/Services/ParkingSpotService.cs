@@ -25,7 +25,6 @@ namespace CMS.Api.PropertySystem.Services
             return parkingSpot;
         }
 
-
         public async Task<ActionResult<ParkingSpot>> UpdateParkingSpot(ParkingSpot updatedParkingSpot)
         {
             var parkingSpot = await _context.ParkingSpots.FindAsync(updatedParkingSpot.Id);
