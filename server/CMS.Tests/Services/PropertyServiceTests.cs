@@ -87,7 +87,7 @@ namespace CMS.Tests.Services
             result.Should().NotBeNull();
         }
         [Fact]
-        public async Task UpdateProperty_ShouldReturnProperty_WhenDataNotFound()
+        public async Task UpdateProperty_ShouldReturnNotFound_WhenDataNotFound()
         {
             //Arrange
             var property = new Property()
