@@ -171,7 +171,7 @@ namespace CMS.Tests.Controllers
                 .NotBeNull();
             _propertyService.Verify(x => x.AssociateCondoUnitWithProperty(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
-        // Does not work atm
+        
         [Fact]
         public async Task AssociateCondoUnitWithProperty_ShouldReturnNotFound_WhenDataNotFound()
         {
@@ -280,7 +280,7 @@ namespace CMS.Tests.Controllers
                 .NotBeNull();
             _propertyService.Verify(x => x.GetAllFileNames(It.IsAny<Guid>()), Times.Once());
         }
-        // Not working atm
+       
         [Fact]
         public async Task GetAllFileNames_ShouldReturnNotFound_WhenDataNotFound()
         {
