@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import {Button} from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
@@ -69,10 +70,18 @@ const RoomReservation = () => {
                         inline
                     />
             </div>
+            <Button color="primary">
+      Submit
+    </Button>
             </div>
+           
             </div>
-            
+           
+
+         
+
         </>
+    
     );
 };
 

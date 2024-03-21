@@ -4,7 +4,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Amenities.module.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import {
+  Button
+} from '@nextui-org/react'
 
 const Amenities = () => {
   let navigate = useNavigate();
@@ -14,6 +16,9 @@ const Amenities = () => {
   const handleClickCreate = () => {
     navigate('/roomReserve'); 
   };
+  const handleClickSeeReservation=()  => {
+    navigate('/roombooking'); 
+  }
   return (
     <>
     <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
@@ -89,6 +94,9 @@ const Amenities = () => {
     <span className="visually-hidden">Next</span>
   </button>
 </div>
+<Button color="primary" style={{marginTop:'10px'}} onClick={handleClickSeeReservation}>
+      Check reservation 
+    </Button> 
 </div>
 </>
   );
