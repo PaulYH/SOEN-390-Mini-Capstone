@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 import  { ReactComponent as Download } from 'bootstrap-icons/icons/box-arrow-down.svg';
 
+import { Button } from '@nextui-org/react'
 
 
 const userData = {
@@ -59,7 +60,7 @@ const userData = {
       
       <>
      
-     <button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+     <Button type="button"  style={{   margin: '20px' }} onClick={handleClick}>Back</Button> 
       
      <div className="d-flex justify-content-center my-4" style={{marginLeft:'40px'}}>
      
@@ -90,7 +91,13 @@ const userData = {
             </div>
             <div className={styles.amount}>Remaining Amount: <span class="badge badge-size bg-light text-dark">${userData.remainingAmount.toLocaleString()}</span> </div>
           <div className="m-3" >Last payment made on: {userData.lastPaymentDate} <br />
-          <button type="button" className="btn btn-outline-primary m-3">Download Invoice <Download/></button>
+          
+          <Button  
+          color="primary"
+          variant="ghost"
+          style={{ marginTop:'10px' }}>
+            Download Invoice <Download/>
+          </Button> 
           </div>
           </div>
           </div>

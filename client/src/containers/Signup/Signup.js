@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
+import { Button } from '@nextui-org/react'
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -129,7 +130,7 @@ const Signup = () => {
             <label>Confirm Password</label>
             <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             {error && <p className="error">{error}</p>}
-            <button onClick={handleSignup}>Signup</button>
+            <Button style={{ backgroundColor: '#C7BFFF', alignSelf:'center', marginBottom:'5px'}} onClick={handleSignup}>Signup</Button>
             <p>Already a user? <span className="link" onClick={() => navigate('/login')}>Login</span></p>
         </div>
     );
