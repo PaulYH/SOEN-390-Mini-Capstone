@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using CMS.Tests.Services.TestBases;
 namespace CMS.Tests.Services
 {
     public class LockerServiceTests : LockerServiceTestsBase
