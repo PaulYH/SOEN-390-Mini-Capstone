@@ -91,14 +91,6 @@ namespace CMS.Api.Controllers
 
                 return Ok(updateResult.User);
             }
-            catch (FormatException)
-            {
-                return BadRequest("Invalid image data format.");
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
                 // Log the exception details for debugging purposes
