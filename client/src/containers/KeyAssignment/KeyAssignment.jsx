@@ -224,7 +224,7 @@ export default function KeyAssignment() {
       <div className='mainTable'>
         <Button
           className='back-button'
-          color='primary'
+          
           onClick={() => navigate('/propertiesprofile')}
         >
           Back
@@ -246,7 +246,6 @@ export default function KeyAssignment() {
     <div className='mainTable'>
       <Button // back button redirects to property profile page
         className='back-button'
-        color='primary'
         onClick={() => navigate('/propertiesprofile')}
       >
         Back

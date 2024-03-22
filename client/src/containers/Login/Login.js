@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
+import { Button } from '@nextui-org/react'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -91,7 +92,7 @@ const Login = () => {
         onKeyPress={handleKeyPress}
       />
       {error && <p className='error'>{error}</p>}
-      <button onClick={handleLogin}>Login</button>
+      <Button style={{ backgroundColor: '#C7BFFF', alignSelf:'center', marginBottom:'5px'}} onClick={handleLogin}>Login</Button>
       <p>
         Don't have an account?{' '}
         <span className='link' onClick={() => navigate('/signup')}>

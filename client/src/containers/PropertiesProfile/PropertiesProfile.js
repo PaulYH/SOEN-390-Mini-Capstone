@@ -5,6 +5,8 @@ import './PropertiesProfile.css' // Import CSS file
 
 import downIcon from '../../assets/downloadIcon.png'
 
+
+
 const PropertiesProfile = () => {
   const navigate = useNavigate()
   const [mode, setMode] = useState('create')
@@ -277,7 +279,7 @@ const PropertiesProfile = () => {
     <div className='signup'>
       <Button
         className='back-button'
-        color='primary'
+        style={{ alignSelf:'start' }}
         onClick={() => navigate('/profile')}
       >
         Back
