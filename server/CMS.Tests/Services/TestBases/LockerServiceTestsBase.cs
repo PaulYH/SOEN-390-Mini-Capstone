@@ -7,16 +7,16 @@ using CMS.Api.PropertySystem.Entities;
 using CMS.Api.UserSystem.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-namespace CMS.Tests.Services
+namespace CMS.Tests.Services.TestBases
 {
-    public abstract class ParkingSpotServiceTestsBase : IDisposable
+    public abstract class LockerServiceTestsBase : IDisposable
     {
         private static DbContextOptions<CMSDbContext> dbContextOptions = new DbContextOptionsBuilder<CMSDbContext>()
-            .UseInMemoryDatabase(databaseName: "ParkingSpotTests")
+            .UseInMemoryDatabase(databaseName: "LockerTests")
             .Options;
         public CMSDbContext _context;
 
-        protected ParkingSpotServiceTestsBase() 
+        protected LockerServiceTestsBase()
         {
             _context = new CMSDbContext(dbContextOptions);
             _context.Database.EnsureCreated();
@@ -45,11 +45,11 @@ namespace CMS.Tests.Services
                 ReservableRooms = null
             };
 
-            var locker = new ParkingSpot()
+            var locker = new Locker()
             {
                 Id = Guid.NewGuid(),
-                ExternalSpotId = 1,
-                SpotFee = 1,
+                ExternalLockerId = 1,
+                LockerFee = 1,
                 PropertyId = property.Id,
                 Property = property,
                 OwnerId = owner.Id,
@@ -59,7 +59,7 @@ namespace CMS.Tests.Services
 
             _context.Users.Add(owner);
             _context.Properties.Add(property);
-            _context.ParkingSpots.Add(locker);
+            _context.Lockers.Add(locker);
             _context.SaveChanges();
         }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CMS.Api.PropertySystem.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-namespace CMS.Tests.Services
+namespace CMS.Tests.Services.TestBases
 {
     public abstract class PropertyServiceTestsBase : IDisposable
     {
@@ -15,7 +15,7 @@ namespace CMS.Tests.Services
             .UseInMemoryDatabase(databaseName: "PropertyTests")
             .Options;
         public CMSDbContext _context;
-        
+
         protected PropertyServiceTestsBase()
         {
             _context = new CMSDbContext(dbContextOptions);
@@ -25,7 +25,7 @@ namespace CMS.Tests.Services
         public void Dispose()
         {
             _context.Database.EnsureDeleted();
-            
+
         }
         private void SeedDatabase()
         {
@@ -75,7 +75,7 @@ namespace CMS.Tests.Services
             _context.ParkingSpots.Add(parkingSpot);
             _context.Lockers.Add(locker);
             _context.CondoUnits.Add(condoUnit);
-            _context.SaveChanges(); 
+            _context.SaveChanges();
 
         }
     }
