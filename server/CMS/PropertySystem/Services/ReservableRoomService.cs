@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
+using CMS.Api.UserSystem.Entities;
 namespace CMS.Api.PropertySystem.Services
 {
     public class ReservableRoomService : IReservableRoomService
@@ -20,22 +21,31 @@ namespace CMS.Api.PropertySystem.Services
             }
             public async Task<ActionResult<ReservableRoom>> CreateRoom(ReservableRoom room)
         {
-            _context.Reservations.Add(room);
+            _context.ReservableRooms.Add(room);
+            await _context.SaveChangesAsync();
+            return room;
+        }
+        public async Task<ActionResult<ReservableRoom>> DeleteRoom(ReservableRoom room)
+        {
+            _context.ReservableRooms.Remove(room);
             await _context.SaveChangesAsync();
             return room;
         }
         public async Task<ActionResult<ReservableRoom>> UpdateRoom(ReservableRoom updatedRoom)
         {
-            var room = await _context.ParkingSpots.FindAsync(updatedRoom.Id);
+            var room = await _context.ReservableRooms.FindAsync(updatedRoom.Id);
             if (room == null) { return null; }
-            room.SpotFee = updatedRoom.SpotFee.Equals(null) ?
-                room.SpotFee : updatedRoom.SpotFee;
-            room.ExternalSpotId = updatedRoom.ExternalRoomId.Equals(null) ?
-                room.ExternalSpotId : updatedRoom.ExternalRoomId;
-            room.Owner = updatedRoom.ReservedBy.Equals(null) ?
-                room.Owner : updatedRoom.ReservedBy;
+            room.ExternalRoomId = updatedRoom.ExternalRoomId.Equals(null) ?
+                room.ExternalRoomId : updatedRoom.ExternalRoomId;
             await _context.SaveChangesAsync();
             return room;
+        }
+    
+        public async Task<ActionResult<List<ReservableRoom>>> GetAllReservableRooms()
+        {
+            var rooms = await _context.ReservableRooms
+                .ToListAsync();
+            return rooms;
         }
     }
 }

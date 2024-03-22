@@ -5,7 +5,7 @@ namespace CMS.Api.PropertySystem.Services
 {
     public interface IReservableRoomService
     {
-        Task<ActionResult<ReservableRoomService>> CreateRoom(ReservableRoomService room);
-        Task<ActionResult<ReservableRoomService>> UpdateRoom(ReservableRoomService updatedRoom);
+        Task<ActionResult<ReservableRoom>> CreateRoom(ReservableRoom room);
+        Task<ActionResult<ReservableRoom>> UpdateRoom(ReservableRoom updatedRoom);
     }
 }
