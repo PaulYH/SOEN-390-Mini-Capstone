@@ -21,7 +21,7 @@ namespace CMS.Api.PropertySystem.Services
         {
             _context = context;
         }
-        public async Task<ActionResult<Reservation>> CreateRoom(Reservation room) 
+        public async Task<ActionResult<Reservation>> CreateReservation(Reservation room) 
         {
             _context.Reservations.Add(room);
             await _context.SaveChangesAsync();
@@ -34,14 +34,14 @@ namespace CMS.Api.PropertySystem.Services
             return room;
         }
 
-        public async Task<ActionResult<List<Reservation>>> GetAllReservations() //httpGet
+        public async Task<ActionResult<List<Reservation>>> GetAllReservations() 
         {
             var rooms = await _context.Reservations
                 .ToListAsync();
             return rooms;
         }
 
-        public async Task<ActionResult<List<Reservation>>> GetAllReservationsByUserId(string id)  //httpget -> id
+        public async Task<ActionResult<List<Reservation>>> GetAllReservationsByUserId(string id)  
         {
             var reservations=await _context.Reservations.Where(x => x.ReservedBy.Id == id).ToListAsync();
             return reservations;

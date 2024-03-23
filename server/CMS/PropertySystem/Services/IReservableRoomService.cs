@@ -7,5 +7,8 @@ namespace CMS.Api.PropertySystem.Services
     {
         Task<ActionResult<ReservableRoom>> CreateRoom(ReservableRoom room);
         Task<ActionResult<ReservableRoom>> UpdateRoom(ReservableRoom updatedRoom);
+        Task<ActionResult<ReservableRoom>> DeleteRoom(ReservableRoom room);
+        Task<ActionResult<List<ReservableRoom>>> GetAllReservableRooms();
+
     }
 }

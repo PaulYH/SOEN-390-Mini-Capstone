@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace CMS.Api.Controllers
 {
-    public class ReservationController
-    {
-
+    
 
 
         [Route("api/reservations")]
@@ -45,13 +43,13 @@ namespace CMS.Api.Controllers
 
            
             [HttpPost]
-            public async Task<ActionResult<Reservation>> CreateRoom(Reservation room)
+            public async Task<ActionResult<Reservation>> CreateReservation(Reservation room)
             {
                 Reservation reservation = new Reservation();
                 room.StartTime = room.StartTime;
                 room.EndTime = room.EndTime;
 
-                var createdReservation = await _reservationService.CreateRoom(reservation);
+                var createdReservation = await _reservationService.CreateReservation(reservation);
                 return Ok(createdReservation);
             }
 
@@ -70,4 +68,4 @@ namespace CMS.Api.Controllers
         }
     }
 
-}
+}}
