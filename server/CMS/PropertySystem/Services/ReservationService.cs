@@ -21,13 +21,13 @@ namespace CMS.Api.PropertySystem.Services
         {
             _context = context;
         }
-        public async Task<ActionResult<Reservation>> CreateRoom(Reservation room) //http post
+        public async Task<ActionResult<Reservation>> CreateRoom(Reservation room) 
         {
             _context.Reservations.Add(room);
             await _context.SaveChangesAsync();
             return room;
         }
-        public async Task<ActionResult<Reservation>> DeleteReservation(Reservation room) //http delete or http put
+        public async Task<ActionResult<Reservation>> DeleteReservation(Reservation room) 
         {
             _context.Reservations.Remove(room);
             await _context.SaveChangesAsync();
