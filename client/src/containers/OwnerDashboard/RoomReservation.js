@@ -70,7 +70,7 @@ const RoomReservation = () => {
                         inline
                     />
             </div>
-            <Button color="primary">
+            <Button color="primary" onClick={handleClick}>
       Submit
     </Button>
             </div>
