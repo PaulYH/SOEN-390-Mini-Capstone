@@ -4,8 +4,8 @@ import {Button} from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
-//import DatePicker from 'react-datepicker';
-// import "react-datepicker/dist/react-datepicker.css"; 
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css"; 
 
 const RoomReservation = () => {
     let navigate = useNavigate();
@@ -63,7 +63,7 @@ const RoomReservation = () => {
             </div>
             
 
-{/* <div style={{display:'flex', justifyContent:'center'}}>
+<div style={{display:'flex', justifyContent:'center'}}>
             <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
@@ -72,10 +72,10 @@ const RoomReservation = () => {
             </div>
             <Button color="primary">
       Submit
-    </Button>*/}
+    </Button>
             </div>
            
-             </div> 
+            </div>
            
 
          
