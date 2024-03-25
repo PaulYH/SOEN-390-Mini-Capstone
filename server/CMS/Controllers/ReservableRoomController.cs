@@ -11,7 +11,7 @@ namespace CMS.Api.Controllers
     {
         private readonly IReservableRoomService _roomService;
         private readonly IApplicationUserService _applicationUserService;
-        public ReservableRoomController(IReservationService roomService,
+        public ReservableRoomController(IReservableRoomService roomService,
 
                IApplicationUserService applicationUserService)
         {
