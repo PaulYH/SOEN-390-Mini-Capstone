@@ -16,7 +16,7 @@ namespace CMS.Api.RequestSystem.Entities
         public string Description { get; set; } = String.Empty;
 
         public StatusType Status { get; set; }
-        public CategoryType CategoryType { get; set; }
+        public CategoryType Category { get; set; }
 
         public ApplicationUser CreatedBy { get; set; } = null!;
         public ApplicationUser AssignedTo { get; set; } = null!;
