@@ -15,6 +15,8 @@ import KeyAssignment from './containers/KeyAssignment/KeyAssignment.jsx'
 import CondoManagement from './containers/CondoManagement/CondoManagement.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import UserFinancialSystem from './containers/FinancialSystem/UserFinancialSystem.js'
+import CompanyFinancialSystem from './containers/FinancialSystem/CompanyFinancialSystem.js'
 
 const queryClient = new QueryClient()
 
@@ -36,6 +38,8 @@ function App() {
           <Route path='/keyassignment' element={<KeyAssignment />} />
           <Route path='/condomanagement' element={<CondoManagement />} />
           <Route path='/home' element={<MainDashboard />} />
+          <Route path='/UserFinancialSystem' element={<UserFinancialSystem />} />
+          <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />
