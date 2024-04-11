@@ -151,7 +151,7 @@ namespace CMS.Tests.Services
             _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), newUserRequest.Password)).ReturnsAsync(IdentityResult.Success);
 
             // Act
-            var identityResult = _userService.RegisterUser(newUserRequest);
+            var identityResult = _userService.RegisterUser(newUserRequest, "Public");
 
             // Assert
             identityResult.IsCompletedSuccessfully.Should().BeTrue();
@@ -177,7 +177,7 @@ namespace CMS.Tests.Services
             _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), newUserRequest.Password)).ReturnsAsync(IdentityResult.Failed(new IdentityError()));
 
             // Act
-            var identityResult = _userService.RegisterUser(newUserRequest);
+            var identityResult = _userService.RegisterUser(newUserRequest, "Public");
 
             // Assert
             identityResult.Result.Succeeded.Should().BeFalse();
