@@ -119,6 +119,9 @@ namespace CMS.Api.UserSystem.Services
                 return IdentityResult.Failed(errors.ToArray());
             }
 
+            var registeredUser = await _userManager.FindByEmailAsync(registerRequest.Email);
+            await _userManager.AddToRoleAsync(registeredUser, "Public");
+
             return result;
         }
 
