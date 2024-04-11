@@ -35,13 +35,16 @@ const EmployeeSignup = () => {
 
   const signupMutation = useMutation(
     async ({ firstName, lastName, email, password }) => {
-      const response = await fetch('http://localhost:5127/api/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-      })
+      const response = await fetch(
+        'http://localhost:5127/api/users/employee-signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ firstName, lastName, email, password }),
+        }
+      )
 
       if (!response.ok) {
         const data = await response.json()
@@ -112,7 +115,7 @@ const EmployeeSignup = () => {
         className='logo'
         onClick={() => navigate('/')}
       />
-      <h1>Take Control of Your Condo with SoftCondo. Get Started Today!</h1>
+      <h1>Create an Employee Account</h1>
       <label>First Name</label>
       <input
         type='text'
@@ -155,7 +158,7 @@ const EmployeeSignup = () => {
         Signup
       </Button>
       <p>
-        Already a user?{' '}
+        Already have an employee account?{' '}
         <span className='link' onClick={() => navigate('/login')}>
           Login
         </span>

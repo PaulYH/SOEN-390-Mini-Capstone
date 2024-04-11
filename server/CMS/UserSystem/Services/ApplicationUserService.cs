@@ -96,7 +96,7 @@ namespace CMS.Api.UserSystem.Services
             return updatedUser;
         }
 
-        public async Task<IdentityResult> RegisterUser(RegisterRequest registerRequest)
+        public async Task<IdentityResult> RegisterUser(RegisterRequest registerRequest, string type)
         {
             var user = new ApplicationUser
             {
@@ -120,7 +120,12 @@ namespace CMS.Api.UserSystem.Services
             }
 
             var registeredUser = await _userManager.FindByEmailAsync(registerRequest.Email);
-            await _userManager.AddToRoleAsync(registeredUser, "Public");
+
+            if (type == "Public")
+                await _userManager.AddToRoleAsync(registeredUser, "Public");
+
+            if (type == "Employee")
+                await _userManager.AddToRoleAsync(registeredUser, "Employee");
 
             return result;
         }

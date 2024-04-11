@@ -14,7 +14,7 @@ namespace CMS.Api.UserSystem.Services
         Task<ActionResult<ApplicationUser>> GetUserByEmail(string email);
         Task<ActionResult<ApplicationUser>> GetUserById(string id);
         Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser);
-        Task<IdentityResult> RegisterUser(RegisterRequest registerRequest);
+        Task<IdentityResult> RegisterUser(RegisterRequest registerRequest, string type);
         Task<ProfilePicture> UploadProfilePicture(byte[] imageData, ImageType imageType);
         Task<(bool Succeeded, IEnumerable<string> Errors, ApplicationUser User)> UpdateUserProfile(string email, string phoneNumber, ProfilePicture profilePicture);
         Task<ActionResult<ApplicationUser>> GetUserByEmailIncludingProfilePicture(string email);
