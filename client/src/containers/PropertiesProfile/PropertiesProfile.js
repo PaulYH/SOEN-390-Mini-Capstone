@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@nextui-org/react'
 import './PropertiesProfile.css' // Import CSS file
+import { useQuery } from '@tanstack/react-query'
 
 import downIcon from '../../assets/downloadIcon.png'
 
@@ -23,39 +24,42 @@ const PropertiesProfile = () => {
   })
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchUserProperty().then((userProperty) => {
-      if (userProperty) {
-        setProperty({
-          propertyName: userProperty.propertyName || '',
-          companyName: userProperty.companyName || '',
-          address: userProperty.address || '',
-          city: userProperty.city || '',
-        })
-        setMode('view')
+  const fetchUserPropertyData = async () => {
+    const response = await fetch(
+      'http://localhost:5127/api/users/authenticated',
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
       }
-    })
-  }, [])
+    );
+    if (!response.ok) throw new Error('Failed to fetch user data');
+    return response.json();
+  };
 
-  const fetchUserProperty = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:5127/api/users/authenticated',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        }
-      )
-      if (!response.ok) throw new Error('Failed to fetch user data')
-      const data = await response.json()
-      setPropertyId(data.value.property?.id || '')
-      return data.value.property || null
-    } catch (error) {
-      console.error(error)
-      setError('Failed to fetch property')
+  const { data: userProperty, error: queryError } = useQuery(['userProperty'], fetchUserPropertyData);
+
+  useEffect(() => {
+    if (userProperty) {
+      const propertyData = userProperty.value.property || null;
+      if (propertyData) {
+        setProperty({
+          propertyName: propertyData.propertyName || '',
+          companyName: propertyData.companyName || '',
+          address: propertyData.address || '',
+          city: propertyData.city || '',
+        });
+        setMode('view');
+      }
     }
-  }
+  }, [userProperty]);
+
+  useEffect(() => {
+    if (queryError) {
+      console.error(queryError);
+      setError('Failed to fetch property');
+    }
+  }, [queryError]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
