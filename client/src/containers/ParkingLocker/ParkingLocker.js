@@ -180,7 +180,6 @@ const ParkingLocker = () => {
     <div className='parkingLockerContainer'>
       <Button
         className='back-button'
-        color='primary'
         onClick={() => navigate('/propertiesprofile')}
       >
         Back
@@ -203,7 +202,7 @@ const ParkingLocker = () => {
       </div>
       {selectedPropertyDetails && (
         <>
-          <div>
+          <div className='table_Css'>
             <h3>Parking Spots</h3>
             <table>
               <thead>
@@ -224,7 +223,7 @@ const ParkingLocker = () => {
               </tbody>
             </table>
           </div>
-          <div>
+          <div className='table_Css'>
             <h3>Lockers</h3>
             <table>
               <thead>
@@ -247,7 +246,9 @@ const ParkingLocker = () => {
           </div>
         </>
       )}
-      <form onSubmit={addParkingSpot} className='form'>
+      <form onSubmit={addParkingSpot} >
+        
+        <div className='form'>
         <h2>Add Parking Spot</h2>
         <input
           type='text'
@@ -270,9 +271,16 @@ const ParkingLocker = () => {
           value={newParkingSpot.ownerId}
           onChange={handleParkingSpotChange}
         />
-        <button type='submit'>Add Parking Spot</button>
+        <Button 
+        style={{ backgroundColor: '#C7BFFF'}} 
+        fullWidth = 'true'
+        type='submit'>
+          Add Parking Spot</Button>
+        </div>
+        
       </form>
-      <form onSubmit={addLocker} className='form'>
+      <form onSubmit={addLocker} >
+        <div className='form'>
         <h2>Add Locker</h2>
         <input
           type='text'
@@ -295,7 +303,13 @@ const ParkingLocker = () => {
           value={newLocker.ownerId}
           onChange={handleLockerChange}
         />
-        <button type='submit'>Add Locker</button>
+        
+        <Button 
+        style={{ backgroundColor: '#C7BFFF'}} 
+        fullWidth = 'true'
+        type='submit'>
+          Add Locker</Button>
+        </div>
       </form>
     </div>
   )

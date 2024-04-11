@@ -28,6 +28,9 @@ namespace CMS.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
@@ -219,6 +222,9 @@ namespace CMS.Api.Migrations
                     b.Property<string>("AssignedToId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -237,6 +243,9 @@ namespace CMS.Api.Migrations
 
                     b.Property<DateTime?>("ResolutionDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -264,7 +273,10 @@ namespace CMS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ReplyToId")
+                    b.Property<int>("ExternalPostId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ReplyToId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("RequestTicketId")
@@ -291,6 +303,9 @@ namespace CMS.Api.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<double?>("Balance")
+                        .HasColumnType("float");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -628,9 +643,7 @@ namespace CMS.Api.Migrations
 
                     b.HasOne("CMS.Api.RequestSystem.Entities.TicketPost", "ReplyTo")
                         .WithMany()
-                        .HasForeignKey("ReplyToId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("ReplyToId");
 
                     b.HasOne("CMS.Api.RequestSystem.Entities.RequestTicket", null)
                         .WithMany("TicketPosts")

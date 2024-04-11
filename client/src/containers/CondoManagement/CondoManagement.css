@@ -5,8 +5,9 @@
   padding: 1rem;
   height: 100vh;
   font-family: Arial, sans-serif;
-  margin: auto;
-  justify-content: center;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-top:100px;
   align-items: center;
   font-size: 20px;
 }

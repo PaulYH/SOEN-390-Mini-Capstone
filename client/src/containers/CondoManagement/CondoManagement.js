@@ -160,7 +160,7 @@ const CondoManagement = () => {
     <div className='app-container'>
       <Button
         className='back-button'
-        color='primary'
+        style={{ alignSelf:'start' }}
         onClick={() => navigate('/propertiesprofile')}
       >
         Back

@@ -60,9 +60,20 @@ td {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 5px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .form h2 {
   margin-top: 0;
   color: #000000;
+}
+
+.table_Css{
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

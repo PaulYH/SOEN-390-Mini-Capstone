@@ -264,14 +264,17 @@ export default function Profile() {
   return (
     <div className='profile'>
       <Button
+        style={{ alignSelf:'start' }}
         className='back-button'
-        color='primary'
         onClick={() => navigate('/home')}
       >
         Back
       </Button>
-      <button onClick={handlePropetiesProfileClick}>Properties Profile</button>
-      <button onClick={handleSignOut}>Sign Out</button>
+      
+
+      <Button style={{ marginBottom: '5px', backgroundColor: '#C7BFFF' }} onClick={handlePropetiesProfileClick}>Properties Profile</Button>
+      <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSignOut}>Sign Out</Button>
+
       {user && (
         <>
           <img
@@ -287,6 +290,7 @@ export default function Profile() {
             style={{ display: 'none' }}
             ref={fileInputRef}
           />
+          
           <h1>{`${user.firstName} ${user.lastName}'s User Profile`}</h1>
           <h2>Account Details</h2>
           <label>Name</label>
@@ -295,6 +299,7 @@ export default function Profile() {
             value={`${user.firstName} ${user.lastName}`}
             readOnly
           />
+
           <label>Email</label>
           <input type='email' value={user.email} readOnly />
           <label>Phone Number</label>
@@ -367,7 +372,7 @@ export default function Profile() {
             </p>
           )}
 
-          <button onClick={handleSave}>Save</button>
+          <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSave}>Save</Button>
           {message && <div className={`message ${messageType}`}>{message}</div>}
         </>
       )}

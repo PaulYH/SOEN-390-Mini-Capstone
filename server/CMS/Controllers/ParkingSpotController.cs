@@ -27,7 +27,7 @@ namespace CMS.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ParkingSpot>> CreateParkingSpot(ParkingSpot request)
         {
-            if (request is null) { return NotFound(); }
+            if (request is null || request.Owner is null) { return NotFound(); }
             var owner = await _applicationUserService.GetUserById(request.Owner.Id);
             if (owner != null) { request.Owner = owner.Value; }
             var createdParkingSpot = await _parkingSpotService.CreateParkingSpot(request);
@@ -35,19 +35,16 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Locker>> UpdateParkingSpot(ParkingSpot request)
+        public async Task<ActionResult<ParkingSpot>> UpdateParkingSpot(ParkingSpot request)
         {
-            if (request is null) { return NotFound(); }
+            if (request is null || request.Owner is null) { return NotFound(); }
             var owner = await _applicationUserService.GetUserById(request.Owner.Id);
             if (owner == null) { return NotFound(); }
             else { request.Owner = owner.Value; }
 
-            var locker = await _parkingSpotService.UpdateParkingSpot(request);
-            if (locker is null) { return NotFound(); }
-            return Ok(locker);
+            var parkingSpot = await _parkingSpotService.UpdateParkingSpot(request);
+            if (parkingSpot is null) { return NotFound(); }
+            return Ok(parkingSpot);
         }
-
-
-        
     }
 }

@@ -12,3 +12,6 @@
 | Nour Hassoun | 40233077 | @NourHadieHassoun |
 | Etienne Paquet | 40208596 | @etiennepaquet1 |
 | Christa Abou Arraj | 40226631 | @christa-ux |
+
+# Guides
+[Writing unit tests for the back-end](https://soen390-cms.atlassian.net/wiki/x/AYBU)

@@ -43,7 +43,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet("occupant/{id}")]
-        public async Task<ActionResult<List<CondoUnit>>> GetOccupantCondoUnitsByUser(string id)
+        public async Task<ActionResult<List<CondoUnit>>> GetOccupantCondoUnitByUser(string id)
         {
             var condo = await _condoUnitService.GetOccupantCondoUnitByUser(id);
             if (condo == null) return NotFound();
