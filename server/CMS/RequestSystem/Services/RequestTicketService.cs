@@ -53,5 +53,13 @@ namespace CMS.Api.RequestSystem.Services
             await _context.SaveChangesAsync();
             return ticket;
         }
+
+        public async Task<ActionResult<RequestTicket>> GetRequestTicketWithPosts(string ticketId)
+        {
+            RequestTicket? ticket = await _context.RequestTickets.FindAsync(ticketId);
+
+            if (ticket is null) { return null; }
+            return ticket;
+        }
     }
 }
