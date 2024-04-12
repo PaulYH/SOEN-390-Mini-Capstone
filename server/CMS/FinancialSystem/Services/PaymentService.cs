@@ -22,7 +22,9 @@ namespace CMS.Api.FinancialSystem.Services
         // Gets All Payment Objects in the database
         public async Task<ActionResult<List<Payment>>> GetAllPayments()
         {
-            var payments = await _context.Payments.ToListAsync();
+            var payments = await _context.Payments
+                .Include(p => p.User) // Include the User navigation property
+                .ToListAsync();
             return payments;
         }
         // Create a new Payment Object and associate it simultaneously
@@ -42,6 +44,7 @@ namespace CMS.Api.FinancialSystem.Services
         public async Task<ActionResult<List<Payment>>> GetPaymentsOfUser(string userId)
         {
             var payments = await _context.Payments
+                .Include(p => p.User)  // Include the User navigation property
                 .Where(x => x.User.Id == userId)
                 .ToListAsync();
             return payments;
