@@ -14,14 +14,14 @@ const UserRequestBoard = () => {
 
     return (
         <>
-
+        <div className='page_container'>
         <Button
         style={{ alignSelf:'start' }}
         className='back-button'
         onClick={() => navigate('/home')}
         >
         Back
-        </Button>
+        </Button >
 
             <div className="header-container">
                 <h2>{userName}'s Request Board</h2>
@@ -56,12 +56,12 @@ const UserRequestBoard = () => {
                 </div>
                 
             </div>
-
+            <div className='button_container'>
             <Button color="primary" onClick={handleEditClick}>
                 Create Ticket
             </Button>
-
-
+            </div>
+            </div>
         </>
     )
 }

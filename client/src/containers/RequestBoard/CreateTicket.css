@@ -27,3 +27,15 @@
     max-height: 200px; /* Adjust based on your preference */
     overflow-y: auto; /* Enables vertical scrolling */
   }
+
+
+  .pageContainer{
+    margin: 20px;
+  }
+
+  .button_css{
+    margin-top: 20px;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+  }
