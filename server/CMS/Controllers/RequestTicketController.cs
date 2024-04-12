@@ -37,5 +37,14 @@ namespace CMS.Api.Controllers
             var updatedTicket = await _requestTicketService.UpdateRequestTicket(request);
             return Ok(updatedTicket);
         }
+
+        [HttpGet] // Authorize Employees only
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetAll()
+        {
+            return await _requestTicketService.GetAll();
+        }
+
+
+
     }
 }

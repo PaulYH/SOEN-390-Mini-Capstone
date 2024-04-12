@@ -53,9 +53,5 @@ namespace CMS.Api.RequestSystem.Services
             await _context.SaveChangesAsync();
             return ticket;
         }
-
-
-
-
     }
 }
