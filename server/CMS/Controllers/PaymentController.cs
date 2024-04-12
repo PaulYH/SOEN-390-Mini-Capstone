@@ -36,7 +36,7 @@ namespace CMS.Api.Controllers
             var payments = await _paymentService.GetAllPayments();
             return Ok(payments);
         }
-        [HttpPost]//get back and change the timing
+        [HttpPost("{userId}")]//get back and change the timing
         public async Task<ActionResult<Payment>> CreatePayment(Payment request, string userId)
         {
             Payment payment = new Payment();

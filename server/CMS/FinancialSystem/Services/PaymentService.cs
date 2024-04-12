@@ -5,16 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text;
 
+
 namespace CMS.Api.FinancialSystem.Services
 {
     public class PaymentService : IPaymentService
     {
         private readonly CMSDbContext _context;
+        private readonly ISystemTime _systemTime;
         // include different services if needed later HERE
 
-        public PaymentService(CMSDbContext context)
+        public PaymentService(CMSDbContext context, ISystemTime systemTime)
         {
             _context = context;
+            _systemTime = systemTime;
         }
         // Gets All Payment Objects in the database
         public async Task<ActionResult<List<Payment>>> GetAllPayments()
@@ -27,6 +30,8 @@ namespace CMS.Api.FinancialSystem.Services
         {
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Id == userId);
+            payment.TransactionDate = _systemTime.GetCurrentTime();
+
             if (user == null) { return null; }
             payment.User = user;
             _context.Payments.Add(payment);
