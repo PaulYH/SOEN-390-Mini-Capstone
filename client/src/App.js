@@ -13,6 +13,11 @@ import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js'
 import KeyAssignment from './containers/KeyAssignment/KeyAssignment.jsx'
 import CondoManagement from './containers/CondoManagement/CondoManagement.js'
+import UserRequestBoard from './containers/RequestBoard/UserRequestBoard.js'
+import EmployeeRequestBoard from './containers/RequestBoard/EmployeeRequestBoard.js'
+import CreateTicket from './containers/RequestBoard/CreateTicket.js'
+import EditTicket from './containers/RequestBoard/EditTicket.js'
+import ViewTicket from './containers/RequestBoard/ViewTicket.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -36,6 +41,13 @@ function App() {
           <Route path='/keyassignment' element={<KeyAssignment />} />
           <Route path='/condomanagement' element={<CondoManagement />} />
           <Route path='/home' element={<MainDashboard />} />
+          <Route path='/UserRequestBoard' element={<UserRequestBoard />} />
+          <Route path='/EmployeeRequestBoard' element={<EmployeeRequestBoard />} />
+          <Route path='/CreateTicket' element={<CreateTicket />} />
+          <Route path='/EditTicket' element={<EditTicket />} />
+          <Route path='/ViewTicket' element={<ViewTicket />} />
+
+
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />

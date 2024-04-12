@@ -1,0 +1,29 @@
+.table-container {
+    margin-top: 20px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-summary {
+    display: flex;
+    justify-content: center; /* Adjusts to center the contents */
+    padding: 10px; /* Reduced padding for less space around */
+    margin-top: 20px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    gap: 200px; /* Adjusts space between the two div elements */
+}
+
+.Report_Button{
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.dropdown-menu-scrollable {
+    max-height: 200px; /* Adjust based on your preference */
+    overflow-y: auto; /* Enables vertical scrolling */
+  }
