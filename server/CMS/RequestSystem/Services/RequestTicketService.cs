@@ -10,33 +10,44 @@ namespace CMS.Api.RequestSystem.Services
     public class RequestTicketService : IRequestTicketService
     {
         private readonly CMSDbContext _context;
-        public RequestTicketService(CMSDbContext context) 
-        { _context = context;}
+        public RequestTicketService(CMSDbContext context)
+        { _context = context; }
 
-        public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket requestTicket)
+        public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket request)
         {
-            RequestTicket requestToAdd = new RequestTicket();
+            RequestTicket ticket = new RequestTicket();
 
-            ApplicationUser? createdBy = _context.Users.Find(requestTicket.CreatedBy.Id);
+            ApplicationUser? createdBy = _context.Users.Find(request.CreatedBy.Id);
             if (createdBy is null) { return null; }
 
-            requestToAdd.ExternalTicketId = _context.RequestTickets.Count() > 0 ? 
-                _context.RequestTickets.Last().ExternalTicketId + 1 : 
+            ticket.ExternalTicketId = _context.RequestTickets.Count() > 0 ?
+                _context.RequestTickets.Last().ExternalTicketId + 1 :
                 1;
-            requestToAdd.CreationDate = DateTime.Now;
-            requestToAdd.IsMuted = requestTicket.IsMuted;
-            requestToAdd.Title = requestTicket.Title;
-            requestToAdd.Description = requestTicket.Description;
-            requestToAdd.Status = StatusType.Pending;
-            requestToAdd.Category = requestTicket.Category;
-            requestToAdd.CreatedBy = createdBy;
-            requestToAdd.AssignedTo = _context.Users.OrderBy(u => Guid.NewGuid()).First();
+            ticket.CreationDate = DateTime.Now;
+            ticket.IsMuted = request.IsMuted;
+            ticket.Title = request.Title;
+            ticket.Description = request.Description;
+            ticket.Status = StatusType.Pending;
+            ticket.Category = request.Category;
+            ticket.CreatedBy = createdBy;
+            ticket.AssignedTo = _context.Users.OrderBy(u => Guid.NewGuid()).First();
 
-            _context.RequestTickets.Add(requestToAdd);
+            _context.RequestTickets.Add(ticket);
             await _context.SaveChangesAsync();
-            return requestToAdd;
+            return ticket;
         }
 
+
+        public async Task<ActionResult<RequestTicket>> UpdateRequestTicket(RequestTicket request)
+        {
+            RequestTicket? ticket = _context.RequestTickets.Find(request.Id);
+            if (ticket is null) { return null; }
+            ticket.Status = request.Status;
+
+            _context.RequestTickets.Add(ticket);
+            await _context.SaveChangesAsync();
+            return ticket;
+        }
 
     }
 }
