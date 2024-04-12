@@ -44,7 +44,10 @@ namespace CMS.Api.Controllers
             return await _requestTicketService.GetAll();
         }
 
-
-
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RequestTicket>> GetTicketWithPosts(string id)
+        {
+            return await _requestTicketService.GetRequestTicketWithPosts(id);
+        }
     }
 }

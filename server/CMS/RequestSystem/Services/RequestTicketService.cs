@@ -23,12 +23,11 @@ namespace CMS.Api.RequestSystem.Services
         {
             RequestTicket ticket = new RequestTicket();
 
-            ApplicationUser? createdBy = _context.Users.Find(request.CreatedBy.Id);
+            ApplicationUser? createdBy = await _context.Users.FindAsync(request.CreatedBy.Id);
             if (createdBy is null) { return null; }
 
             ticket.ExternalTicketId = _context.RequestTickets.Count() > 0 ?
-                _context.RequestTickets.Last().ExternalTicketId + 1 :
-                1;
+                _context.RequestTickets.OrderBy(r => r.ExternalTicketId).First().ExternalTicketId + 1 : 1;
             ticket.CreationDate = DateTime.Now;
             ticket.IsMuted = request.IsMuted;
             ticket.Title = request.Title;
@@ -49,14 +48,20 @@ namespace CMS.Api.RequestSystem.Services
             if (ticket is null) { return null; }
             ticket.Status = request.Status;
 
-            _context.RequestTickets.Add(ticket);
+            if (ticket.Status == StatusType.Resolved) { ticket.ResolutionDate = DateTime.Now; }
+
             await _context.SaveChangesAsync();
             return ticket;
         }
 
         public async Task<ActionResult<RequestTicket>> GetRequestTicketWithPosts(string ticketId)
         {
-            RequestTicket? ticket = await _context.RequestTickets.FindAsync(ticketId);
+            RequestTicket? ticket = await _context.RequestTickets
+                .Include(t => t.CreatedBy)
+                .Include(t => t.AssignedTo)
+                .Include(t => t.TicketPosts)
+
+                .FirstOrDefaultAsync(x => x.Id == Guid.Parse(ticketId));
 
             if (ticket is null) { return null; }
             return ticket;

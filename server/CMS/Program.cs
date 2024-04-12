@@ -1,5 +1,6 @@
 using CMS.Api.Data;
 using CMS.Api.PropertySystem.Services;
+using CMS.Api.RequestSystem.Services;
 using CMS.Api.UserSystem.Entities;
 using CMS.Api.PropertySystem.Entities;
 using CMS.Api.UserSystem.Services;
@@ -44,6 +45,9 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<ICondoUnitService, CondoUnitService>();
 builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
+builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
+builder.Services.AddScoped<ITicketPostService, TicketPostService>();
+
 
 
 builder.Services.AddAuthorization();
