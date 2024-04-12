@@ -29,8 +29,8 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<ReservableRoom>> CreateRoom(ReservableRoom room)
         {
             ReservableRoom reservable = new ReservableRoom();
-            room.ExternalRoomId = room.ExternalRoomId;
-            room.Name = room.Name;
+            reservable.ExternalRoomId = room.ExternalRoomId;
+            reservable.Name = room.Name;
 
             var createdReservation = await _roomService.CreateRoom(reservable);
             return Ok(createdReservation);

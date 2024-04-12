@@ -44,6 +44,8 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<ICondoUnitService, CondoUnitService>();
 builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
+builder.Services.AddScoped<IReservableRoomService, ReservableRoomService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 
 builder.Services.AddAuthorization();
