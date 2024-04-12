@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using CMS.Api.UserSystem.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace CMS.Tests.Services
 {
@@ -15,13 +16,17 @@ namespace CMS.Tests.Services
     {
         private readonly Mock<IApplicationUserService> _applicationUserService;
         private readonly Mock<IPropertyService> _propertyService;
+        private readonly Mock<UserManager<ApplicationUser>> _userManager;
         private readonly CondoUnitService _condoUnitService;
 
         public CondoUnitServiceTests()
         {
+            var store = new Mock<IUserStore<ApplicationUser>>();
+
             _applicationUserService = new Mock<IApplicationUserService>();  
             _propertyService = new Mock<IPropertyService>();    
-            _condoUnitService = new CondoUnitService(_context);
+            _userManager = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
+            _condoUnitService = new CondoUnitService(_context, _userManager.Object);
         }
 
         [Fact]

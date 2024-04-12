@@ -2,10 +2,15 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@nextui-org/react'
 import './PropertiesProfile.css' // Import CSS file
+import {
+  useQuery,
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from '@tanstack/react-query'
+import axios from 'axios'
 
 import downIcon from '../../assets/downloadIcon.png'
-
-
 
 const PropertiesProfile = () => {
   const navigate = useNavigate()
@@ -23,39 +28,49 @@ const PropertiesProfile = () => {
   })
   const [error, setError] = useState('')
 
+  const queryClient = useQueryClient()
+  const accessToken = localStorage.getItem('accessToken')
+  const expiresAt = localStorage.getItem('expiresAt')
+
+  const authorizationConfig = {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  }
+  const fetchUserPropertyData = () => {
+    const response = axios.get(
+      'http://localhost:5127/api/users/authenticated',
+      authorizationConfig
+    )
+    console.log('THIS IS THE RESPONSE YOU WANT:')
+    console.log(response)
+    return response
+  }
+
+  const { data: userProperty, error: queryError } = useQuery(
+    ['userProperty'],
+    fetchUserPropertyData
+  )
+
   useEffect(() => {
-    fetchUserProperty().then((userProperty) => {
-      if (userProperty) {
+    if (userProperty) {
+      const propertyData = userProperty.data.value.property || null
+      if (propertyData) {
         setProperty({
-          propertyName: userProperty.propertyName || '',
-          companyName: userProperty.companyName || '',
-          address: userProperty.address || '',
-          city: userProperty.city || '',
+          propertyName: propertyData.propertyName || '',
+          companyName: propertyData.companyName || '',
+          address: propertyData.address || '',
+          city: propertyData.city || '',
         })
         setMode('view')
       }
-    })
-  }, [])
+    }
+  }, [userProperty])
 
-  const fetchUserProperty = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:5127/api/users/authenticated',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        }
-      )
-      if (!response.ok) throw new Error('Failed to fetch user data')
-      const data = await response.json()
-      setPropertyId(data.value.property?.id || '')
-      return data.value.property || null
-    } catch (error) {
-      console.error(error)
+  useEffect(() => {
+    if (queryError) {
+      console.error(queryError)
       setError('Failed to fetch property')
     }
-  }
+  }, [queryError])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -279,7 +294,7 @@ const PropertiesProfile = () => {
     <div className='signup'>
       <Button
         className='back-button'
-        style={{ alignSelf:'start' }}
+        style={{ alignSelf: 'start' }}
         onClick={() => navigate('/profile')}
       >
         Back
