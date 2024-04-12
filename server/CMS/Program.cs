@@ -1,5 +1,6 @@
 using CMS.Api.Data;
 using CMS.Api.PropertySystem.Services;
+using CMS.Api.RequestSystem.Services;
 using CMS.Api.UserSystem.Entities;
 using CMS.Api.PropertySystem.Entities;
 using CMS.Api.UserSystem.Services;
@@ -44,11 +45,15 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<ICondoUnitService, CondoUnitService>();
 builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
+builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
+builder.Services.AddScoped<ITicketPostService, TicketPostService>();
+
 
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CMSDbContext>();
 
 
@@ -70,5 +75,35 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new[] { "Public", "Owner", "Renter", "Employee" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    var users = await userManager.Users.ToListAsync();
+
+    foreach (var user in users)
+    {
+        var userRoles = await userManager.GetRolesAsync(user);
+
+        if (userRoles.Count == 0)
+        {
+            await userManager.AddToRoleAsync(user, "Public");
+        }
+    }    
+}
 
 app.Run();

@@ -121,7 +121,6 @@ namespace CMS.Api.Controllers
             return Ok(user);
         }
 
-
         [HttpPut]
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {
@@ -141,7 +140,49 @@ namespace CMS.Api.Controllers
                 Password = signUpRequest.Password
             };
 
-            var registrationResult = await _userService.RegisterUser(registerRequest);
+            var registrationResult = await _userService.RegisterUser(registerRequest, "Public");
+
+            if (!registrationResult.Succeeded)
+            {
+                var errorDetails = registrationResult.Errors.Select(error => new
+                {
+                    Code = error.Code,
+                    Description = error.Description
+                });
+
+                // Return detailed error information
+                return BadRequest(new { Errors = errorDetails });
+            }
+
+            // Step 2: Call GET /api/users/{email} to get user data, including id
+            var userEmail = signUpRequest.Email;
+            var user = await _userService.GetUserByEmail(userEmail);
+            if (user.Value is null) return NotFound();
+
+            // Step 3: Call PUT /api/users to update user with first name and last name
+            var updatedUser = new ApplicationUser
+            {
+                Id = user.Value.Id,
+                FirstName = signUpRequest.FirstName,
+                LastName = signUpRequest.LastName,
+            };
+            var updatedUserResult = await _userService.UpdateUser(updatedUser);
+            if (updatedUserResult is null) return BadRequest("Failed to update user details.");
+
+            return Ok(updatedUserResult);
+        }
+
+        [HttpPost("employee-signup")]
+        public async Task<ActionResult<ApplicationUser>> EmployeeSignUp([FromBody] SignUpRequest signUpRequest)
+        {
+            // Step 1: Call POST /register to create user and save to db
+            var registerRequest = new RegisterRequest
+            {
+                Email = signUpRequest.Email,
+                Password = signUpRequest.Password
+            };
+
+            var registrationResult = await _userService.RegisterUser(registerRequest, "Employee");
 
             if (!registrationResult.Succeeded)
             {
