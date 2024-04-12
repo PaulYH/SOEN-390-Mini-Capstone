@@ -1,4 +1,6 @@
+//User reserves room
 import React, { useState, useEffect } from 'react';
+import {ListboxWrapper} from "./ListboxWrapper";
 
 import {Button} from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
@@ -11,13 +13,16 @@ import "react-datepicker/dist/react-datepicker.css";
 const RoomReservation = () => {
     let navigate = useNavigate();
     const [startDate, setStartDate] = useState(new Date());
-    const handleClick = () => {
+   
+   /*Submit */
+    const handleClick = () => { /*Api call to save user choice*/ 
         navigate('/amenities'); 
     };
 
     return ( 
+   
         <>
-            <button type="button" onClick={handleClick} style={{borderRadius: '20px',margin: '20px'}}>Back</button>
+        <button type="button" onClick={handleClick} style={{borderRadius: '20px',margin: '20px'}}>Back</button>
            <div style= {{display:'flex', justifyContent:'center'}}>
             <div className="card" style={{width:'70%', fontSize:'20px', borderRadius:'20px', display:'flex', justifyContent:'center'}}>
             <div className="form-check">
@@ -62,26 +67,24 @@ const RoomReservation = () => {
                     Restaurant
                 </label>
             </div>
-            
 
-<div style={{display:'flex', justifyContent:'center'}}>
-            <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        inline
-                    />
-            </div>
+             {/* <select className='form-select' value={NReservations} onChange={(evt)=>setProduct({...product,productCategory:evt.target.value})}>
+            <option value="Kids pool">Kids Pool</option>
+            <option value="Adult Pool">Adult Pool</option>
+            <option value="Spa">Spa</option>
+            <option value="Outdoor Playground">Mobile</option>
+            <option value="Basketball Court">Basketball Court</option>
+            <option value="Sky Lounge">Sky Lounge</option>
+            <option value="Restaurant">Restaurant</option>
+            </select> */}
+
             <Button color="primary" onClick={handleClick}>
       Submit
     </Button>
+    
             </div>
-           
             </div>
-           
-
-         
-
-        </>
+    </>      
     
     );
 };

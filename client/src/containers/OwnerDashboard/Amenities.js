@@ -1,5 +1,4 @@
 /* this page is common to owners and rental users*/
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Amenities.module.css'; 

@@ -1,4 +1,5 @@
 //table for employees
+
 import React, { useState, useEffect } from 'react'
 
 import { useQuery, useMutation } from '@tanstack/react-query'
@@ -12,6 +13,7 @@ import {columns, users} from "./data";
 
 
   export default function Roombooking() {
+
     const themeMode = 'light' // for the components that are not set to a specific theme mode despite the global theme mode setting in index.js
     const navigate = useNavigate()
     // const { isOpen, onOpen, onOpenChange } = useDisclosure() // used to open/close Modal component
@@ -23,28 +25,64 @@ import {columns, users} from "./data";
         // the columns used by Table component
        
         { name: 'ROOM', uid: 'room' },
-        { name: 'TIME SLOT', uid: 'time' },
-        { name: 'EDIT', uid: 'edit' }
+        { name: 'ExternalRoomID ', uid: 'id' },
+        { name: 'EDIT', uid: 'actions' } 
         
       ]
-      const statusColorMap = {
-        active: "success",
-        paused: "danger"
-      };
-      
+
+
+const [addRoom, setRoom] = useState({
+    externalUnitID: '',
+    nameRoom:''
+  })
+
+
+  const fetchRooms = async () => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch('http://localhost:5127/api/room', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch rooms');
+    }
+    return response.json();
+  };
+  
+  const { data: userProfile, error: userProfileError } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: fetchRooms,
+    onSuccess: (data) => {
+      // Assuming data is an array of rooms
+      setRoom(data); // Assuming setRoom updates state with the fetched rooms
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+  
       const renderCell = React.useCallback((user, columnKey) => {
         const cellValue = user[columnKey];
     
         switch (columnKey) {
           
-          case "role":
+          case "id":
             return (
               <div className="flex flex-col">
-                <p className="text-bold text-sm capitalize">{cellValue}</p>
-                <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
+                <p className="text-bold text-sm capitalize"></p>
+                <p className="text-bold text-sm capitalize text-default-400"></p>
               </div>
             );
-          
+            case "room":
+                return (
+                  <div className="flex flex-col">
+                    <p className="text-bold text-sm capitalize"></p>
+                    <p className="text-bold text-sm capitalize text-default-400"></p>
+                  </div>
+                );
           case "actions":
             return (
               <div className="relative flex items-center gap-2">
@@ -111,9 +149,6 @@ import {columns, users} from "./data";
       
 }
 
+//GET API call 
 
 
-// export default function App() {
-  
-//   );
-// }
