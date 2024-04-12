@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Modal, Button} from '@nextui-org/react';
-import './UserFinancialSystem.css' // Import CSS file
-
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Modal, Button } from '@nextui-org/react';
+import './UserFinancialSystem.css'; // Import CSS file
 
 const UserFinancialSystem = () => {
     const [payments, setPayments] = useState([]);
@@ -10,15 +9,12 @@ const UserFinancialSystem = () => {
     const [paymentAmount, setPaymentAmount] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [userId, setUserId] = useState(null); // Manage userId as state
-    const [payment, setPayment] = useState({
-      amount: '',
-      userId: '',
-    })
+    const [userId, setUserId] = useState(''); // Assume this will be set after fetching user info
+
     useEffect(() => {
-      // Simulate fetching transactions with status
       fetchUserInfo();
     }, []);
+
     useEffect(() => {
       if (userId) {
         fetchUserPayments(userId);
@@ -37,15 +33,12 @@ const UserFinancialSystem = () => {
         setFirstName(userData.value.firstName);
         setLastName(userData.value.lastName);
         setUserId(userData.value.id);
-        
       } catch (error) {
         console.error(error);
-    
       }
     };
-    const fetchUserPayments = async () => {
-    
-     
+
+    const fetchUserPayments = async (userId) => {
       try {
         const response = await fetch(`http://localhost:5127/api/payments/${userId}`, {
           headers: {
@@ -53,15 +46,36 @@ const UserFinancialSystem = () => {
           },
         });
         if (!response.ok) throw new Error('Failed to fetch user payments');
-        const userPayments = await response.json();
+        const data = await response.json();
+        const paymentsFromServer = data.value.$values;
 
-        setPayments(userPayments);
-        console.log("hooon "+userPayments);
+        // Resolve the user references
+        const usersById = {};
+        const resolvedPayments = paymentsFromServer.map(payment => {
+          if (payment.user && !payment.user.$ref) {
+            usersById[payment.user.$id] = payment.user;
+          }
+          return {
+            ...payment,
+            user: payment.user?.$ref ? usersById[payment.user.$ref] : payment.user
+          };
+        });
+
+        setPayments(resolvedPayments.map(payment => ({
+          date: payment.transactionDate.split('T')[0],
+          user: `${payment.user.firstName} ${payment.user.lastName}`,
+          amount: payment.amount,
+          status: payment.amount > 0 ? 'Unpaid' : 'Paid' // Adjust status logic as needed
+        })));
+
+        // Update balance
+        const totalBalance = resolvedPayments.reduce((acc, payment) => acc + payment.amount, 0);
+        setBalance(totalBalance);
+
       } catch (error) {
         console.error(error);
       }
     };
-    
     const handlePaymentCreation = async () => {
       try {
           // Ensure you're using backticks (`) to enable expression embedding
@@ -72,7 +86,7 @@ const UserFinancialSystem = () => {
                   Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
               },
               body: JSON.stringify({
-                  "amount": 500,
+                  "amount": 400,
                   "user": {
                       "id": userId  // Optionally pass userId inside the body if needed
                   }
@@ -115,63 +129,66 @@ const UserFinancialSystem = () => {
 
 
 
-  return (
-    <>
-      <div className="header-container">
-        <h2>{firstName} {lastName}'s Financial Transactions</h2>
-      </div>
-
-      <div className="table-container">
-        <Table aria-label="User's Financial Transactions">
-          <TableHeader>
+    return (
+      <>
+        <div className="header-container">
+          <h2>{firstName} {lastName}'s Financial Transactions</h2>
+        </div>
+    
+        <div className="table-container">
+          <Table aria-label="User's Financial Transactions">
+            <TableHeader>
               <TableColumn>Date</TableColumn>
               <TableColumn>Amount</TableColumn>
               <TableColumn>Status</TableColumn>
-          </TableHeader>
-
-          <TableBody>
-            {/* {payments.map((transaction, index) => (
-              <TableRow key={index}>
+            </TableHeader>
+            <TableBody>
+              {payments.map((transaction, index) => (
+                <TableRow key={index}>
                   <TableCell>{transaction.date}</TableCell>
-                  <TableCell>${transaction.amount}</TableCell>
+                  <TableCell>${transaction.amount.toFixed(2)}</TableCell>
                   <TableCell>{transaction.status}</TableCell>
-               </TableRow>
-            ))} */}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="table-container">
-        <Table isStriped aria-label="Financial Summary">
-          <TableHeader>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+    
+        <div className="table-container">
+          <Table isStriped aria-label="Financial Summary">
+            <TableHeader>
               <TableColumn>Current Balance</TableColumn>
-              {/* <TableColumn>Due Date</TableColumn> */}
-          </TableHeader>
-
-          <TableBody>
-            <TableRow>
-                <TableCell>${balance}</TableCell>
-                {/* <TableCell>{dueDate}</TableCell> */}
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-      <div className="payment-container">
-                {/* <Input clearable bordered placeholder="Enter payment amount" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} /> */}
-                <Button onClick={handlePaymentCreation}>Pay now</Button>
-            </div>
-
-            {/* Modal for Payment */}
-            <Modal open={isModalVisible} onClose={() => setIsModalVisible(false)}>
-                <div className="modal-content">
-                    <h3>Confirm Payment</h3>
-                    <p>You are about to pay ${parseFloat(paymentAmount).toFixed(2)}. Please confirm your payment.</p>
-                    <Button onClick={handleConfirmPayment} color="success">Confirm Payment</Button>
-                    <Button flat auto onClick={() => setIsModalVisible(false)}>Cancel</Button>
-                </div>
-            </Modal>
-        </>
-  );
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>${balance.toFixed(2)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+    
+        <div className="payment-container">
+          <input
+            type="number"
+            placeholder="Enter payment amount"
+            value={paymentAmount}
+            onChange={(e) => setPaymentAmount(e.target.value)}
+          />
+          <Button onClick={handlePayNow}>Pay now</Button>
+        </div>
+    
+        {/* Modal for Payment */}
+        <Modal open={isModalVisible} onClose={() => setIsModalVisible(false)}>
+          <div className="modal-content">
+            <h3>Confirm Payment</h3>
+            <p>You are about to pay ${parseFloat(paymentAmount).toFixed(2)}. Please confirm your payment.</p>
+            <Button onClick={handleConfirmPayment} color="success">Confirm Payment</Button>
+            <Button flat auto onClick={() => setIsModalVisible(false)}>Cancel</Button>
+          </div>
+        </Modal>
+      </>
+    );
+    
 }
 
 export default UserFinancialSystem

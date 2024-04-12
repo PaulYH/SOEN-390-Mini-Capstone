@@ -6,67 +6,69 @@ const CompanyFinancialSystem = () => {
     const [transactions, setTransactions] = useState([]);
     const [totalUnpaidBalance, setTotalUnpaidBalance] = useState(0);
     const [operationalBudget, setOperationalBudget] = useState(0);
-    
-    // Use a state hook to store the selected year. Initialize with the current year.
-    const [selectedYear, setSelectedYear] = React.useState(`${new Date().getFullYear()}`);
-
-    // Generate a list of years from 2000 to the current year.
+    const [selectedYear, setSelectedYear] = useState(`${new Date().getFullYear()}`);
     const years = Array.from({ length: new Date().getFullYear() - 1999 }, (v, k) => `${2000 + k}`);
 
     useEffect(() => {
-        // Simulate fetching transactions for all users
-        const fetchedTransactions = [
-            { date: '2024-03-01', user: 'John Doe', amount: 100, status: 'Unpaid' },
-            { date: '2024-03-15', user: 'Jane Smith', amount: 150, status: 'Paid' },
-            { date: '2024-04-01', user: 'John Doe', amount: 200, status: 'Unpaid' },
-            { date: '2024-04-01', user: 'Justin Doe', amount: 400, status: 'paid' },
-            { date: '2024-04-01', user: 'Smith jaden', amount: 270, status: 'paid' },
-            { date: '2024-04-01', user: 'Smith jaden', amount: 270, status: 'paid' },
-            { date: '2024-04-01', user: 'John Doe', amount: 200, status: 'Unpaid' },
-
-        ];
-        setTransactions(fetchedTransactions);
-
-        // Calculate total unpaid balance and operational budget, making the status comparison case-insensitive
-        const totalUnpaid = fetchedTransactions.reduce((acc, transaction) => transaction.status.toLowerCase() === 'unpaid' ? acc + transaction.amount : acc, 0);
-        const totalBudget = fetchedTransactions.reduce((acc, transaction) => transaction.status.toLowerCase() === 'paid' ? acc + transaction.amount : acc, 0);
-
-        setTotalUnpaidBalance(totalUnpaid);
-        setOperationalBudget(totalBudget);
+        fetchUserPayments();
     }, []);
 
-    /*
-        useEffect(() => {
-            fetchTransactionsForYear(selectedYear); // Fetch transactions when the component mounts or when the selectedYear changes
-        }, [selectedYear]); // Include selectedYear in the dependency array to refetch when it changes
-
-        const fetchTransactionsForYear = async (year) => {
-            // TODO: Replace with your API call to fetch transactions
-            // The API endpoint should accept a year as a parameter and return transactions for that year
-            const response = await fetch(`/api/transactions?year=${year}`);
+    const fetchUserPayments = async () => {
+        try {
+            const response = await fetch(`http://localhost:5127/api/payments/`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch user payments');
             const data = await response.json();
-            setTransactions(data);
-
-            const totalUnpaid = data.reduce((acc, transaction) => transaction.status.toLowerCase() === 'unpaid' ? acc + transaction.amount : acc, 0);
-            const totalBudget = data.reduce((acc, transaction) => transaction.status.toLowerCase() === 'paid' ? acc + transaction.amount : acc, 0);
-
+            const paymentsFromServer = data.value.$values;
+    
+            // Create a map to keep track of users that we have already seen
+            const usersById = {};
+    
+            const newTransactions = paymentsFromServer.map(payment => {
+                // Check if user reference exists, and if so, use the existing user object
+                let user;
+                if (payment.user?.$ref) {
+                    user = usersById[payment.user.$ref];
+                } else if (payment.user) {
+                    user = payment.user;
+                    usersById[payment.user.$id] = user; // Store the user object for future reference
+                }
+    
+                return {
+                    date: payment.transactionDate.split('T')[0],
+                    user: user ? `${user.firstName} ${user.lastName}`.trim() : 'N/A',
+                    amount: payment.amount,
+                    status: 'Unpaid' // Replace with your logic to determine the status
+                };
+            });
+    
+            setTransactions(newTransactions);
+    
+            // Calculate and update the financial summaries
+            const totalUnpaid = newTransactions.reduce((acc, transaction) => transaction.status.toLowerCase() === 'unpaid' ? acc + transaction.amount : acc, 0);
+            const totalBudget = newTransactions.reduce((acc, transaction) => transaction.status.toLowerCase() === 'paid' ? acc + transaction.amount : acc, 0);
+    
             setTotalUnpaidBalance(totalUnpaid);
             setOperationalBudget(totalBudget);
-        };
-    */
-   
-    const handleGenerateReport = async () => {
+    
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    
+
+    const handleGenerateReport = () => {
         alert(`Generating Annual Report for ${selectedYear}...`);
-        // TODO: Replace with your API call to generate/download the annual report
-        // This might involve calling an API endpoint that generates a report and returns a URL to download it
+        // Implement the actual report generation logic here
     };
 
-    // When a year is selected, update the state.
     const handleSelectionChange = (keys) => {
         setSelectedYear(Array.from(keys)[0]);
-        // Since we're updating selectedYear here, useEffect will trigger fetching of new transactions
+        // Trigger data fetching based on the selected year, if required
     };
-
 
     return (
         <>
@@ -101,11 +103,9 @@ const CompanyFinancialSystem = () => {
             </div>
 
             <div className="Report_Button">
-
                 <Button auto flat onClick={handleGenerateReport}>
                     Generate Annual Report
                 </Button>
-
                 <Dropdown>
                     <DropdownTrigger>
                         <Button variant="bordered" className="capitalize">
@@ -120,13 +120,12 @@ const CompanyFinancialSystem = () => {
                         selectedKeys={new Set([selectedYear])}
                         onSelectionChange={handleSelectionChange}
                         className="dropdown-menu-scrollable"
-                        >
+                    >
                         {years.map(year => (
                             <DropdownItem key={year}>{year}</DropdownItem>
                         ))}
                     </DropdownMenu>
                 </Dropdown>
-
             </div>
         </>
     );
