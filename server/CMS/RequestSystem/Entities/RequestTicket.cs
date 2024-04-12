@@ -19,6 +19,6 @@ namespace CMS.Api.RequestSystem.Entities
         public CategoryType Category { get; set; }
         public ApplicationUser? CreatedBy { get; set; } = null!;
         public ApplicationUser? AssignedTo { get; set; } = null!;
-        public ICollection<TicketPost>? TicketPosts { get; set; } = null!;
+        public ICollection<TicketPost>? TicketPosts { get; set; } = new List<TicketPost>();
     }
 }

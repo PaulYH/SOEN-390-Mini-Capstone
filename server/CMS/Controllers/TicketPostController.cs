@@ -9,7 +9,7 @@ using CMS.Api.RequestSystem.Entities;
 
 namespace CMS.Api.Controllers
 {
-    [Route("api/tickets")]
+    [Route("api/posts")]
     [ApiController]
     public class TicketPostController : ControllerBase
     {
@@ -20,11 +20,14 @@ namespace CMS.Api.Controllers
             _ticketPostService = ticketPostService;
         }
 
+        [HttpPost]
         public async Task<ActionResult<TicketPost>> CreateTicketPost(TicketPost request, string requestTicketId)
         {
             if (request is null || request.CreatedBy is null) { return BadRequest(); }
             var createdPost = await _ticketPostService.CreateTicketPost(request, requestTicketId);
             return Ok(createdPost);
         }
+
+
     }
 }

@@ -21,23 +21,30 @@ namespace CMS.Api.RequestSystem.Services
 
         public async Task<ActionResult<TicketPost>> CreateTicketPost(TicketPost request, string requestTicketId)
         {
-            ApplicationUser? createdBy = _context.Users.Find(request.CreatedBy.Id);
+            ApplicationUser? createdBy = await _context.Users
+                //.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == request.CreatedBy.Id);   //.Find(request.CreatedBy.Id);
+
             if (createdBy is null) { return null; }
 
             TicketPost post = new TicketPost();
+
+            var r = _context.RequestTickets.OrderBy(r => r.ExternalTicketId);
+            var t = _context.RequestTickets.ToList();
+
             post.ExternalPostId = _context.TicketPosts.Count() > 0 ?
-                _context.RequestTickets.Last().ExternalTicketId + 1 :
-                1;
+                _context.RequestTickets.OrderBy(r => r.ExternalTicketId).Last().ExternalTicketId + 1 : 1;
             post.Viewed = false;
             post.Description = request.Description;
-            post.CreatedBy = request.CreatedBy;
+            post.CreatedBy = createdBy;
             post.ReplyTo = request.ReplyTo;
 
             // add post to database
             _context.TicketPosts.Add(post);
+            await _context.SaveChangesAsync();
 
             // create association with request ticket
-            RequestTicket? requestTicket = _context.RequestTickets.Find(requestTicketId);
+            RequestTicket? requestTicket = _context.RequestTickets.Find(Guid.Parse(requestTicketId));
             if (requestTicket is null) { return null; }
             requestTicket.TicketPosts.Add(post);
 

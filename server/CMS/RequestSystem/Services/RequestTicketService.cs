@@ -27,7 +27,7 @@ namespace CMS.Api.RequestSystem.Services
             if (createdBy is null) { return null; }
 
             ticket.ExternalTicketId = _context.RequestTickets.Count() > 0 ?
-                _context.RequestTickets.OrderBy(r => r.ExternalTicketId).First().ExternalTicketId + 1 : 1;
+                _context.RequestTickets.OrderBy(r => r.ExternalTicketId).Last().ExternalTicketId + 1 : 1;
             ticket.CreationDate = DateTime.Now;
             ticket.IsMuted = request.IsMuted;
             ticket.Title = request.Title;
