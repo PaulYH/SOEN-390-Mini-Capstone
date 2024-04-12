@@ -48,9 +48,6 @@ const CreateTicket = () => {
         >
         Back
         </Button >
-    {/* <div className="header-container">
-      <h2>Create Ticket</h2>
-    </div> */}
 
 
     <form >
@@ -64,13 +61,12 @@ const CreateTicket = () => {
           //value={}
           //onChange={}
         />
-        <input
-          type='text'
-          name='category'
-          placeholder='Category'
-          //value={}
-          //onChange={}
-        />
+        <label for='category'>Category:</label>
+      <select name='category' id='category'>
+          <option value='repair'>Repair</option>
+          <option value='question'>Question</option>
+          <option value='other'>Other</option>
+       </select>
         <input
           type='text'
           name='description'
