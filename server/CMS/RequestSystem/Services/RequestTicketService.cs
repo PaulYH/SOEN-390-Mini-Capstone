@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CMS.Api.RequestSystem.Enums;
 using CMS.Api.RequestSystem.Entities;
 using CMS.Api.UserSystem.Entities;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace CMS.Api.RequestSystem.Services
@@ -12,6 +13,11 @@ namespace CMS.Api.RequestSystem.Services
         private readonly CMSDbContext _context;
         public RequestTicketService(CMSDbContext context)
         { _context = context; }
+
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetAll()
+        {
+            return await _context.RequestTickets.ToListAsync();
+        }
 
         public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket request)
         {
@@ -30,17 +36,16 @@ namespace CMS.Api.RequestSystem.Services
             ticket.Status = StatusType.Pending;
             ticket.Category = request.Category;
             ticket.CreatedBy = createdBy;
-            ticket.AssignedTo = _context.Users.OrderBy(u => Guid.NewGuid()).First();
+            ticket.AssignedTo = await _context.Users.OrderBy(u => Guid.NewGuid()).FirstAsync();
 
             _context.RequestTickets.Add(ticket);
             await _context.SaveChangesAsync();
             return ticket;
         }
 
-
         public async Task<ActionResult<RequestTicket>> UpdateRequestTicket(RequestTicket request)
         {
-            RequestTicket? ticket = _context.RequestTickets.Find(request.Id);
+            RequestTicket? ticket = await _context.RequestTickets.FindAsync(request.Id);
             if (ticket is null) { return null; }
             ticket.Status = request.Status;
 
@@ -48,6 +53,9 @@ namespace CMS.Api.RequestSystem.Services
             await _context.SaveChangesAsync();
             return ticket;
         }
+
+
+
 
     }
 }
