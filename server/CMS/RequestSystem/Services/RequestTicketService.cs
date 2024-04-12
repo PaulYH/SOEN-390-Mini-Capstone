@@ -46,8 +46,11 @@ namespace CMS.Api.RequestSystem.Services
         {
             RequestTicket? ticket = await _context.RequestTickets.FindAsync(request.Id);
             if (ticket is null) { return null; }
-            ticket.Status = request.Status;
 
+            ticket.Title = request.Title;
+            ticket.Description = request.Description;
+            ticket.Category = request.Category;
+            ticket.Status = request.Status;
             if (ticket.Status == StatusType.Resolved) { ticket.ResolutionDate = DateTime.Now; }
 
             await _context.SaveChangesAsync();
