@@ -1,6 +1,7 @@
 ﻿using CMS.Api.Data;
 using CMS.Api.UserSystem.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Timers;
 namespace CMS.Api
 
@@ -33,21 +34,28 @@ namespace CMS.Api
             // so you can call it only one a month @ 2:00am
             TimeSpan time = new TimeSpan(2, 0, 0);
             // if the first of the month update balance
-            // CurrentTime.Day == 1 && CurrentTime.TimeOfDay == time
-            if (!hasRun)
+            if (CurrentTime.Day == 1 && CurrentTime.TimeOfDay == time)
             {
                 UpdateBalance();
             }
         }
         private async void UpdateBalance()
         {
+            hasRun = true;
             using(var scope = _scopeFactory.CreateScope())
             {
                 var _context = scope.ServiceProvider.GetRequiredService<CMSDbContext>();
                 var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
                 // Update balance would go over every user add up fees.  
-                foreach (var user in _context.Users)
+                var users = _context.Users
+                    .Include(x => x.OwnedCondoUnits)
+                    .Include(x => x.RentedCondoUnits)
+                    .Include(x => x.ParkingSpots)
+                    .Include(x => x.Lockers)
+                    .ToList();
+
+                foreach (var user in users)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
                     if (roles == null || roles.Count == 0)
@@ -60,16 +68,17 @@ namespace CMS.Api
                     var condoUnit = (role == "Owner") ? user.OwnedCondoUnits.First() : user.RentedCondoUnits.First();
                     var condoFee = condoUnit.FeePerSquareFoot * condoUnit.Size;
 
-                    var parkingSpot = user.ParkingSpots.First();
-                    var parkingFee = (parkingSpot == null) ? 0 : parkingSpot.SpotFee;
+                    var parkingSpots = user.ParkingSpots;
+                    var parkingFee = (parkingSpots == null || parkingSpots.Count == 0) ? 0 : parkingSpots.First().SpotFee;
 
-                    var locker = user.Lockers.First();
-                    var lockerFee = (locker == null) ? 0 : locker.LockerFee;
+                    var lockers = user.Lockers;
+                    var lockerFee = (lockers == null || lockers.Count == 0) ? 0 : lockers.First().LockerFee;
 
                     var monthlyFee = decimal.ToDouble(condoFee + parkingFee + lockerFee);
 
                     user.Balance += monthlyFee;
                 }
+
                 _context.SaveChanges();
             }
         }
