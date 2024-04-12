@@ -8,5 +8,8 @@ namespace CMS.Api.RequestSystem.Services
     {
         Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket requestTicket); // accessible by owner and renter
         Task<ActionResult<RequestTicket>> UpdateRequestTicket(RequestTicket requestTicket); // accesible only by Employee
+        Task<ActionResult<IEnumerable<RequestTicket>>> GetAll();
+
+
     }
 }
