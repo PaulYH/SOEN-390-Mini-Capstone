@@ -27,3 +27,8 @@
     max-height: 200px; /* Adjust based on your preference */
     overflow-y: auto; /* Enables vertical scrolling */
   }
+
+
+.page_container{
+    margin: 20px;
+}

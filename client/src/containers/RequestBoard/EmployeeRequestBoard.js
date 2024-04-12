@@ -19,7 +19,9 @@ const EmployeeRequestBoard = () => {
 
     return (
         <>
+        <div className='page_container'>
 
+        
         <Button
         style={{ alignSelf:'start' }}
         className='back-button'
@@ -66,6 +68,8 @@ const EmployeeRequestBoard = () => {
                         </TableBody>
                     </Table>
                 </div>
+            </div>
+
             </div>
         </>
 
