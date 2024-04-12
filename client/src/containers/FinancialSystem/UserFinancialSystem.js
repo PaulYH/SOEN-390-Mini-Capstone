@@ -25,7 +25,21 @@ const UserFinancialSystem = () => {
       setBalance(initialBalance);
     }, []);
   
+/*
+    useEffect(() => {
+          fetchTransactions(); // Call function to fetch transactions from the backend
+        }, []);
 
+        const fetchTransactions = async () => {
+        // TODO: Replace with your API call to fetch transactions
+        const response = await fetch('/api/transactions');
+        const data = await response.json();
+        setTransactions(data);
+
+        const initialBalance = data.reduce((acc, transaction) => transaction.status === 'Unpaid' ? acc + transaction.amount : acc, 0);
+        setBalance(initialBalance);
+    };
+*/
     const handlePayNow = () => {
       setIsModalVisible(true);
     };
@@ -43,10 +57,36 @@ const UserFinancialSystem = () => {
       setPaymentAmount('');
     };
 
+/*
+    const handleConfirmPayment = async () => {
+      // Prepare new transaction object
+      const newTransaction = {
+        date: new Date().toISOString().split('T')[0],
+        amount: -parseFloat(paymentAmount),
+        status: 'Paid'
+      };
+
+      // TODO: Replace with your API call to update transactions in the backend
+      await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTransaction),
+      });
+
+      // After updating the backend, fetch updated transactions
+      fetchTransactions();
+
+      setIsModalVisible(false);
+      setPaymentAmount('');
+    };
+*/
+
   return (
     <>
       <div className="header-container">
-            <h2>{userName}'s Financial Transactions</h2>
+        <h2>{userName}'s Financial Transactions</h2>
       </div>
 
       <div className="table-container">
