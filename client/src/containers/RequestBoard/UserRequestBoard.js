@@ -5,9 +5,32 @@ import './UserRequestBoard.css'; // Import CSS file
 
 const UserRequestBoard = () => {
 
-    const [userName, setUserName] = useState('John Doe');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [userId, setUserId] = useState(''); 
     const navigate = useNavigate();  
 
+    useEffect(() => {
+        fetchUserInfo();
+      }, []);
+  
+    const fetchUserInfo = async () => {
+        try {
+          const response = await fetch('http://localhost:5127/api/users/authenticated', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          if (!response.ok) throw new Error('Failed to fetch user data');
+          const userData = await response.json();
+          setFirstName(userData.value.firstName);
+          setLastName(userData.value.lastName);
+          setUserId(userData.value.id);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
     const handleEditClick = () => {
         navigate('/CreateTicket');  
     };
@@ -24,7 +47,7 @@ const UserRequestBoard = () => {
         </Button >
 
             <div className="header-container">
-                <h2>{userName}'s Request Board</h2>
+                <h2>{firstName} {lastName}'s Request Board</h2>
             </div>
 
             <div className='d-flex justify-content-center'>
