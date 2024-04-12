@@ -41,7 +41,7 @@ namespace CMS.Api.FinancialSystem.Services
                 .ToListAsync();
             return payments;
         }
-        // Update balance of cuurent user
+        // Update balance of cuurent user 
         public async Task<ActionResult<ApplicationUser>> UpdateUserBalance(string userId, double updatedBalance)
         {
             var user = await _context.Users.FindAsync(userId);

@@ -10,6 +10,6 @@ namespace CMS.Api.FinancialSystem.Services
         Task<ActionResult<List<Payment>>> GetPaymentsOfUser(string userId);
         Task<ActionResult<ApplicationUser>> UpdateUserBalance(string userId, double updatedBalance);
         Task<ActionResult<double>> GetUserBalance(string userId);
-        Task<ActionResult<string>> GenerateAndDownloadAnnualReport(int year);
+        Task<ActionResult<string>> GenerateAndDownloadAnnualReport(int year); 
     }
 }

@@ -40,7 +40,7 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<Payment>> CreatePayment(Payment request, string userId)
         {
             Payment payment = new Payment();
-            payment.Amount = request.Amount;
+            payment.Amount = request.Amount; 
             ActionResult<ApplicationUser> result = await _applicationUserService.GetUserById(userId);
                 if (result.Value == null) return NotFound("User Not Found!");
             payment.User = result.Value;

@@ -11,7 +11,7 @@ namespace CMS.Api
         private int timerInterval = 1000;
         public int TimeSpeed = 1;
         private readonly CMSDbContext _context;
-        private SystemTimeSingleton() {}
+        private SystemTimeSingleton() {} 
        
         public static SystemTimeSingleton GetInstance()
         {
