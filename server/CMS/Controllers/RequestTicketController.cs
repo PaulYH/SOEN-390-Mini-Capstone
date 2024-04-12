@@ -8,6 +8,7 @@ using CMS.Api.RequestSystem.Enums;
 
 using CMS.Api.RequestSystem.Services;
 using CMS.Api.PropertySystem.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CMS.Api.Controllers
 {
@@ -25,7 +26,7 @@ namespace CMS.Api.Controllers
         [HttpPost] // Authorize owners/renters only
         public async Task<ActionResult<Locker>> CreateRequestTicket(RequestTicket request)
         {
-            if (request is null || request.CreatedBy is null) { return NotFound(); }
+            if (request is null || request.CreatedBy is null) { return BadRequest(); }
             var createdTicket = await _requestTicketService.CreateRequestTicket(request);
             return Ok(createdTicket);
         }
