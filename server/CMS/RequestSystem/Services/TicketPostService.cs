@@ -29,11 +29,8 @@ namespace CMS.Api.RequestSystem.Services
 
             TicketPost post = new TicketPost();
 
-            var r = _context.RequestTickets.OrderBy(r => r.ExternalTicketId);
-            var t = _context.RequestTickets.ToList();
-
             post.ExternalPostId = _context.TicketPosts.Count() > 0 ?
-                _context.RequestTickets.OrderBy(r => r.ExternalTicketId).Last().ExternalTicketId + 1 : 1;
+                _context.TicketPosts.OrderBy(r => r.ExternalPostId).Last().ExternalPostId + 1 : 1;
             post.Viewed = false;
             post.Description = request.Description;
             post.CreatedBy = createdBy;
