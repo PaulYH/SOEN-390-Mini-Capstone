@@ -60,15 +60,32 @@ const CompanyFinancialSystem = () => {
     };
     
 
-    const handleGenerateReport = () => {
+    const handleGenerateReport = async () => {
         alert(`Generating Annual Report for ${selectedYear}...`);
-        // Implement the actual report generation logic here
+        
+        try {
+            const response = await fetch(`http://localhost:5127/report/${selectedYear}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch annual report');
+            }
+            const data = await response.json();
+            console.log(data); 
+        } catch (error) {
+            console.error(error);
+        }
     };
-
+    
+    
     const handleSelectionChange = (keys) => {
-        setSelectedYear(Array.from(keys)[0]);
-        // Trigger data fetching based on the selected year, if required
+        const newSelectedYear = Array.from(keys)[0];
+        setSelectedYear(newSelectedYear);
+        // You can also fetch new data based on the selected year if needed here
     };
+    
 
     return (
         <>
@@ -77,8 +94,8 @@ const CompanyFinancialSystem = () => {
             </div>
 
             <div className="financial-summary">
-                <div>Total Unpaid Balance: ${totalUnpaidBalance}</div>
-                <div>Operational Budget for the Year: ${operationalBudget}</div>
+                <div>TotalBalance: ${totalUnpaidBalance}</div>
+               
             </div>
 
             <div className="table-container">
@@ -87,7 +104,7 @@ const CompanyFinancialSystem = () => {
                         <TableColumn>Date</TableColumn>
                         <TableColumn>User</TableColumn>
                         <TableColumn>Amount</TableColumn>
-                        <TableColumn>Status</TableColumn>
+                    
                     </TableHeader>
                     <TableBody>
                         {transactions.map((transaction, index) => (
@@ -95,7 +112,7 @@ const CompanyFinancialSystem = () => {
                                 <TableCell>{transaction.date}</TableCell>
                                 <TableCell>{transaction.user}</TableCell>
                                 <TableCell>${transaction.amount}</TableCell>
-                                <TableCell>{transaction.status}</TableCell>
+                                
                             </TableRow>
                         ))}
                     </TableBody>
