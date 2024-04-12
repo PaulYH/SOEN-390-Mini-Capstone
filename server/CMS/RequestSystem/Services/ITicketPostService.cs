@@ -7,7 +7,7 @@ namespace CMS.Api.RequestSystem.Services
     public interface ITicketPostService
     {
         Task<ActionResult<TicketPost>> CreateTicketPost(TicketPost ticketPost, string requestTicketId ); // accessible by owner and renter
-        Task<ActionResult<TicketPost>> ViewRequestTicket(RequestTicket request);
+        Task<ActionResult<TicketPost>> ViewTicketPost(string postId);
         Task<ActionResult<IEnumerable<TicketPost>>> GetAll();
 
 

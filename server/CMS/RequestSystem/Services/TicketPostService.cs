@@ -49,15 +49,14 @@ namespace CMS.Api.RequestSystem.Services
             return post;
         }
 
-        public async Task<ActionResult<TicketPost>> ViewRequestTicket(RequestTicket request)
+        public async Task<ActionResult<TicketPost>> ViewTicketPost(string postId)
         {
-            TicketPost? ticket = await _context.TicketPosts.FindAsync(request.Id);
-            if (ticket is null) { return null; }
-            ticket.Viewed = true;
+            TicketPost? post = await _context.TicketPosts.FindAsync(Guid.Parse(postId));
+            if (post is null) { return null; }
+            post.Viewed = true;
 
-            _context.TicketPosts.Add(ticket);
             await _context.SaveChangesAsync();
-            return ticket;
+            return post;
         }
     }
 }

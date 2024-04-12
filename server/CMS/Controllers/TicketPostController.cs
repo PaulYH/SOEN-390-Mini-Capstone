@@ -28,6 +28,13 @@ namespace CMS.Api.Controllers
             return Ok(createdPost);
         }
 
+        [HttpPut("{postId}")]
+        public async Task<ActionResult<TicketPost>> ViewTicketPost(string postId)
+        {
+            var updatedPost = await _ticketPostService.ViewTicketPost(postId);
+            return Ok(updatedPost);
+        }
+
 
     }
 }
