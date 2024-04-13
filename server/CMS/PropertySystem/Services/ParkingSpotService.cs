@@ -25,17 +25,13 @@ namespace CMS.Api.PropertySystem.Services
             return parkingSpot;
         }
 
-
         public async Task<ActionResult<ParkingSpot>> UpdateParkingSpot(ParkingSpot updatedParkingSpot)
         {
             var parkingSpot = await _context.ParkingSpots.FindAsync(updatedParkingSpot.Id);
             if (parkingSpot == null) { return null; }
-            parkingSpot.SpotFee = updatedParkingSpot.SpotFee.Equals(null) ?
-                parkingSpot.SpotFee : updatedParkingSpot.SpotFee;
-            parkingSpot.ExternalSpotId = updatedParkingSpot.ExternalSpotId.Equals(null) ?
-                parkingSpot.ExternalSpotId : updatedParkingSpot.ExternalSpotId;
-            parkingSpot.Owner = updatedParkingSpot.Owner.Equals(null) ?
-                parkingSpot.Owner : updatedParkingSpot.Owner;
+            parkingSpot.SpotFee = updatedParkingSpot.SpotFee;
+            parkingSpot.ExternalSpotId = updatedParkingSpot.ExternalSpotId;
+            parkingSpot.Owner = updatedParkingSpot.Owner;
             await _context.SaveChangesAsync();
             return parkingSpot;
         }

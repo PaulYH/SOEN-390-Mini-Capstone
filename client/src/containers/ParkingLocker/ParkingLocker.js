@@ -1,218 +1,191 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@nextui-org/react'
-import './ParkingLocker.css'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@nextui-org/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import './ParkingLocker.css';
 
 const ParkingLocker = () => {
-  const navigate = useNavigate()
-  const [properties, setProperties] = useState([])
-  const [selectedPropertyId, setSelectedPropertyId] = useState('')
-  const [selectedPropertyDetails, setSelectedPropertyDetails] = useState(null)
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [selectedPropertyId, setSelectedPropertyId] = useState('');
+  const [selectedPropertyDetails, setSelectedPropertyDetails] = useState(null);
   const [newParkingSpot, setNewParkingSpot] = useState({
     externalSpotId: '',
     spotFee: '',
     ownerId: '',
-  })
+  });
   const [newLocker, setNewLocker] = useState({
     externalLockerId: '',
     lockerFee: '',
     ownerId: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  });
+  const [error, setError] = useState('');
 
   const fetchAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     'Content-Type': 'application/json',
-  })
+  });
 
-  const fetchProperties = async () => {
-    setLoading(true)
-    try {
-      const headers = fetchAuthHeaders()
-      const response = await fetch('http://localhost:5127/api/properties', {
-        method: 'GET',
-        headers,
-      })
-      if (!response.ok) throw new Error('Failed to fetch properties')
-      const data = await response.json()
-      setProperties(data.value.$values)
-      if (data.value.$values.length > 0) {
-        setSelectedPropertyId(data.value.$values[0].id)
+  // Fetch Properties
+  const { data: properties, isLoading: propertiesLoading, error: propertiesError } = useQuery(['properties'], async () => {
+    const headers = fetchAuthHeaders();
+    const response = await fetch('http://localhost:5127/api/properties', {
+      method: 'GET',
+      headers,
+    });
+    if (!response.ok) throw new Error('Failed to fetch properties');
+    const data = await response.json();
+    return data.value.$values;
+  }, {
+    onSuccess: (data) => {
+      if (data.length > 0) {
+        setSelectedPropertyId(data[0].id);
       }
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    onError: (err) => setError(err.message),
+  });
 
+  // Fetch User Email By ID
   const fetchUserEmailById = async (id) => {
-    try {
-      const headers = fetchAuthHeaders()
-      const response = await fetch(`http://localhost:5127/api/users/id/${id}`, {
-        method: 'GET',
-        headers,
-      })
-      if (!response.ok) throw new Error('User email fetch failed')
-      const { value } = await response.json()
-      return value.email
-    } catch (err) {
-      console.error('Error fetching user email:', err)
-      return 'Unknown'
-    }
-  }
+    const headers = fetchAuthHeaders();
+    const response = await fetch(`http://localhost:5127/api/users/id/${id}`, {
+      method: 'GET',
+      headers,
+    });
+    if (!response.ok) throw new Error('User email fetch failed');
+    const { value } = await response.json();
+    return value.email;
+  };
 
+  // Enrich Property Details With User Emails
   const enrichPropertyDetailsWithUserEmails = async (propertyDetails) => {
     const parkingSpotsWithOwnerEmail = await Promise.all(
       propertyDetails.parkingSpots.map(async (spot) => {
-        const ownerEmail = await fetchUserEmailById(spot.ownerId)
-        return { ...spot, ownerEmail }
+        const ownerEmail = await fetchUserEmailById(spot.ownerId);
+        return { ...spot, ownerEmail };
       })
-    )
+    );
 
     const lockersWithOwnerEmail = await Promise.all(
       propertyDetails.lockers.map(async (locker) => {
-        const ownerEmail = await fetchUserEmailById(locker.ownerId)
-        return { ...locker, ownerEmail }
+        const ownerEmail = await fetchUserEmailById(locker.ownerId);
+        return { ...locker, ownerEmail };
       })
-    )
+    );
 
     return {
       ...propertyDetails,
       parkingSpots: parkingSpotsWithOwnerEmail,
       lockers: lockersWithOwnerEmail,
-    }
-  }
+    };
+  };
 
-  const fetchPropertyDetails = async (propertyId) => {
-    setLoading(true)
-    try {
-      const headers = fetchAuthHeaders()
-      const response = await fetch(
-        `http://localhost:5127/api/properties/${propertyId}`,
-        { method: 'GET', headers }
-      )
-      if (!response.ok) throw new Error('Failed to fetch property details')
-      const data = await response.json()
-      data.value.parkingSpots = data.value.parkingSpots?.$values || []
-      data.value.lockers = data.value.lockers?.$values || []
-      const enrichedPropertyDetails = await enrichPropertyDetailsWithUserEmails(
-        data.value
-      )
-      setSelectedPropertyDetails(enrichedPropertyDetails)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // Fetch Property Details Custom Hook
   useEffect(() => {
-    fetchProperties()
-  }, [])
+    const fetchPropertyDetails = async () => {
+      if (!selectedPropertyId) return;
+      const headers = fetchAuthHeaders();
+      const response = await fetch(`http://localhost:5127/api/properties/${selectedPropertyId}`, { method: 'GET', headers });
+      if (!response.ok) throw new Error('Failed to fetch property details');
+      const data = await response.json();
+      data.value.parkingSpots = data.value.parkingSpots?.$values || [];
+      data.value.lockers = data.value.lockers?.$values || [];
+      const enrichedPropertyDetails = await enrichPropertyDetailsWithUserEmails(data.value);
+      setSelectedPropertyDetails(enrichedPropertyDetails);
+    };
+    fetchPropertyDetails();
+  }, [selectedPropertyId, queryClient]);
 
-  useEffect(() => {
-    if (selectedPropertyId) {
-      fetchPropertyDetails(selectedPropertyId)
-    }
-  }, [selectedPropertyId])
-
-  const handleParkingSpotChange = (e) => {
-    setNewParkingSpot({ ...newParkingSpot, [e.target.name]: e.target.value })
-  }
-
-  const handleLockerChange = (e) => {
-    setNewLocker({ ...newLocker, [e.target.name]: e.target.value })
-  }
-
+  // Fetch User ID By Email
   const fetchUserIdByEmail = async (email) => {
-    try {
-      const headers = fetchAuthHeaders()
-      const response = await fetch(`http://localhost:5127/api/users/${email}`, {
-        method: 'GET',
-        headers,
-      })
-      if (!response.ok) throw new Error('User not found')
-      const data = await response.json()
-      return data.value.id
-    } catch (err) {
-      throw err
+    const headers = fetchAuthHeaders();
+    const response = await fetch(`http://localhost:5127/api/users/${email}`, {
+      method: 'GET',
+      headers,
+    });
+    if (!response.ok) throw new Error('User not found');
+    const data = await response.json();
+    return data.value.id;
+  };
+
+  // Update Property Custom Hook
+  const updatePropertyMutation = useMutation(async ({ type, newData }) => {
+    const payload = {
+      id: selectedPropertyDetails.id,
+      [type === 'parkingSpot' ? 'parkingSpots' : 'lockers']: [newData],
+    };
+    const response = await fetch(`http://localhost:5127/api/properties`, {
+      method: 'PUT',
+      headers: fetchAuthHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to update property: ${errorData.detail}`);
     }
-  }
-
-  const updateProperty = async (type, newData) => {
-    setLoading(true)
-    try {
-      const payload = {
-        id: selectedPropertyDetails.id,
-        [type === 'parkingSpot' ? 'parkingSpots' : 'lockers']: [newData],
-      }
-
-      console.log(JSON.stringify(payload))
-      const response = await fetch(`http://localhost:5127/api/properties`, {
-        method: 'PUT',
-        headers: fetchAuthHeaders(),
-        body: JSON.stringify(payload),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(`Failed to update property: ${errorData.detail}`)
-      }
-      fetchPropertyDetails(selectedPropertyId)
-    } catch (err) {
-      setError(`Error updating: ${err.message}`)
-    } finally {
-      setLoading(false)
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['propertyDetails']);
+    },
+    onError: (err) => {
+      setError(`Error updating: ${err.message}`);
     }
-  }
+  });
 
+  // Handle Add Parking Spot
   const addParkingSpot = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const ownerId = await fetchUserIdByEmail(newParkingSpot.ownerId)
+      const ownerId = await fetchUserIdByEmail(newParkingSpot.ownerId);
       const parkingSpotWithOwner = {
         ...newParkingSpot,
         ownerId: ownerId,
         propertyId: selectedPropertyId,
-      }
+      };
 
-      updateProperty('parkingSpot', parkingSpotWithOwner)
-      setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' })
+      updatePropertyMutation.mutate({ type: 'parkingSpot', newData: parkingSpotWithOwner });
+      setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' });
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     }
-  }
+  };
 
+  // Handle Add Locker
   const addLocker = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const ownerId = await fetchUserIdByEmail(newLocker.ownerId)
+      const ownerId = await fetchUserIdByEmail(newLocker.ownerId);
       const lockerWithOwner = {
         ...newLocker,
         ownerId: ownerId,
         propertyId: selectedPropertyId,
-      }
+      };
 
-      updateProperty('locker', lockerWithOwner)
-      setNewLocker({ externalLockerId: '', lockerFee: '', ownerId: '' })
+      updatePropertyMutation.mutate({ type: 'locker', newData: lockerWithOwner });
+      setNewLocker({ externalLockerId: '', lockerFee: '', ownerId: '' });
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     }
-  }
+  };
+
+  const handleParkingSpotChange = (e) => {
+    setNewParkingSpot({ ...newParkingSpot, [e.target.name]: e.target.value });
+  };
+
+  const handleLockerChange = (e) => {
+    setNewLocker({ ...newLocker, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className='parkingLockerContainer'>
       <Button
         className='back-button'
-        color='primary'
         onClick={() => navigate('/propertiesprofile')}
       >
         Back
       </Button>
       {error && <p className='error'>{error}</p>}
-      {loading && <p>Loading...</p>}
+      {propertiesLoading && <p>Loading...</p>}
       <div className='propertySelector'>
         <label htmlFor='propertySelector'>Select Property:</label>
         <select
@@ -220,7 +193,7 @@ const ParkingLocker = () => {
           value={selectedPropertyId}
           onChange={(e) => setSelectedPropertyId(e.target.value)}
         >
-          {properties.map((property) => (
+          {properties?.map((property) => (
             <option key={property.id} value={property.id}>
               {property.propertyName}
             </option>
@@ -229,7 +202,7 @@ const ParkingLocker = () => {
       </div>
       {selectedPropertyDetails && (
         <>
-          <div>
+          <div className='table_Css'>
             <h3>Parking Spots</h3>
             <table>
               <thead>
@@ -250,7 +223,7 @@ const ParkingLocker = () => {
               </tbody>
             </table>
           </div>
-          <div>
+          <div className='table_Css'>
             <h3>Lockers</h3>
             <table>
               <thead>
@@ -273,7 +246,9 @@ const ParkingLocker = () => {
           </div>
         </>
       )}
-      <form onSubmit={addParkingSpot} className='form'>
+      <form onSubmit={addParkingSpot} >
+        
+        <div className='form'>
         <h2>Add Parking Spot</h2>
         <input
           type='text'
@@ -296,9 +271,16 @@ const ParkingLocker = () => {
           value={newParkingSpot.ownerId}
           onChange={handleParkingSpotChange}
         />
-        <button type='submit'>Add Parking Spot</button>
+        <Button 
+        style={{ backgroundColor: '#C7BFFF'}} 
+        fullWidth = 'true'
+        type='submit'>
+          Add Parking Spot</Button>
+        </div>
+        
       </form>
-      <form onSubmit={addLocker} className='form'>
+      <form onSubmit={addLocker} >
+        <div className='form'>
         <h2>Add Locker</h2>
         <input
           type='text'
@@ -321,7 +303,13 @@ const ParkingLocker = () => {
           value={newLocker.ownerId}
           onChange={handleLockerChange}
         />
-        <button type='submit'>Add Locker</button>
+        
+        <Button 
+        style={{ backgroundColor: '#C7BFFF'}} 
+        fullWidth = 'true'
+        type='submit'>
+          Add Locker</Button>
+        </div>
       </form>
     </div>
   )

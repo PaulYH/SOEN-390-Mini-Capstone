@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/js/bootstrap';
 
-
+import { Button } from '@nextui-org/react'
 
 const userData = {
     
@@ -53,7 +53,7 @@ const SubmittedRequests = () => {
 
 return (
   <>
-<button type="button" className={styles.button} onClick={handleClick}>Back</button> 
+<Button type="button"  style={{   margin: '20px' }} onClick={handleClick}>Back</Button> 
  <div className="d-flex justify-content-center my-4" style={{marginLeft:'40px'}}>
      
     

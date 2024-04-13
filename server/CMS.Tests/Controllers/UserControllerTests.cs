@@ -1,10 +1,10 @@
 ﻿using CMS.Api.Controllers;
 using CMS.Api.UserSystem.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using Moq;
-using System;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace CMS.Tests.Controllers
 {
@@ -25,6 +25,13 @@ namespace CMS.Tests.Controllers
 
 
             _userController = new UserController(_userService.Object);
+        }
+
+        public Mock<UserManager<ApplicationUser>> GetMockUserManager()
+        {
+            var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
+            return new Mock<UserManager<ApplicationUser>>(
+                userStoreMock.Object, null, null, null, null, null, null, null, null);
         }
 
         [Fact]
@@ -105,15 +112,40 @@ namespace CMS.Tests.Controllers
             _userService.Verify(x => x.GetAllUsersWaitingForKey(id), Times.Once());
         }
 
-        /*  These tests fail because of the User.Identity.Name call in their controller methods, need to find a solution to this
-         *  In addition to the affected method below, UpdateUserProfile also has this issue.
+
         [Fact]
         public async Task GetAuthenticatedUser_ShouldReturnOkResponse_WhenDataFound()
         {
             // Arrange
-            var usersMock = _fixture.Create<ApplicationUser>();
-            string email = "admin@testmail.com";
-            _userService.Setup(x => x.GetUserByEmailIncludingProfilePicture(email)).ReturnsAsync(usersMock);
+            var userMock = _fixture.Create<ApplicationUser>();
+            userMock.UserName = "adminName";
+            userMock.Email = "admin@testmail.com";
+            var email = userMock.Email;
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, userMock.UserName),
+                new Claim(ClaimTypes.NameIdentifier, userMock.Id),
+                new Claim("name", userMock.UserName),
+            };
+            var identity = new ClaimsIdentity(claims, "Test");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var mockPrincipal = new Mock<IPrincipal>();
+            mockPrincipal.Setup(x => x.Identity).Returns(identity);
+            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(m => m.User).Returns(claimsPrincipal);
+
+            var context = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
+            _userService.Setup(x => x.GetUserByEmailIncludingProfilePicture(It.IsAny<string>())).ReturnsAsync(new ActionResult<ApplicationUser>(userMock)); ;
+
+            _userController.ControllerContext = context;
 
             // Act
             var result = await _userController.GetAuthenticatedUser();
@@ -125,26 +157,51 @@ namespace CMS.Tests.Controllers
             result.Result.As<OkObjectResult>().Value
                 .Should()
                 .NotBeNull();
-            _userService.Verify(x => x.GetUserByEmailIncludingProfilePicture(email), Times.Once());
+            _userService.Verify(x => x.GetUserByEmailIncludingProfilePicture(It.IsAny<string>()), Times.Once());
         }
 
         [Fact]
         public async Task GetAuthenticatedUser_ShouldReturnNotFound_WhenDataNotFound()
         {
             // Arrange
-            ApplicationUser response = null;
-            string email = "admin@testmail.com";
-            _userService.Setup(x => x.GetUserByEmailIncludingProfilePicture(email)).ReturnsAsync(response);
+            var userMock = _fixture.Create<ApplicationUser>();
+            userMock.UserName = "adminName";
+            userMock.Email = "admin@testmail.com";
+            var email = userMock.Email;
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, userMock.UserName),
+                new Claim(ClaimTypes.NameIdentifier, userMock.Id),
+                new Claim("name", userMock.UserName),
+            };
+            var identity = new ClaimsIdentity(claims, "Test");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var mockPrincipal = new Mock<IPrincipal>();
+            mockPrincipal.Setup(x => x.Identity).Returns(identity);
+            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(m => m.User).Returns(claimsPrincipal);
+
+            var context = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
+
+            _userController.ControllerContext = context;
+
+            _userService.Setup(x => x.GetUserByEmailIncludingProfilePicture(It.IsAny<string>())).ReturnsAsync(new NotFoundResult());
 
             // Act
             var result = await _userController.GetAuthenticatedUser();
 
             // Assert
             result.Should().NotBeNull();
-            result.Result.Should().BeAssignableTo<NotFoundResult>();
-            _userService.Verify(x => x.GetUserByEmailIncludingProfilePicture(email), Times.Once());
+            result.Result.Should().BeAssignableTo<NotFoundObjectResult>();
+            _userService.Verify(x => x.GetUserByEmailIncludingProfilePicture(It.IsAny<string>()), Times.Once());
         }
-        */
 
         [Fact]
         public async Task GetUserByEmail_ShouldReturnOkResponse_WhenDataFound()
@@ -281,4 +338,3 @@ namespace CMS.Tests.Controllers
     }
 }
 
-        
