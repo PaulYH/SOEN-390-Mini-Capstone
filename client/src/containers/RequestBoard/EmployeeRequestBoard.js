@@ -48,17 +48,17 @@ const EmployeeRequestBoard = () => {
                         </TableHeader>
                         <TableBody>
                             <TableRow >
-                                <TableCell>hi</TableCell>
-                                <TableCell>hi</TableCell>
-                                <TableCell>hi</TableCell>
-                                <TableCell>hi</TableCell>
-                                <TableCell>hi</TableCell>
+                                <TableCell>123</TableCell>
+                                <TableCell>Lost item</TableCell>
+                                <TableCell>04/10/2024</TableCell>
+                                <TableCell>04/11/2024</TableCell>
+                                <TableCell>email.com</TableCell>
                                 <TableCell>
                                     <Chip color="success">Success</Chip>
                                 </TableCell>
-                                <TableCell>hi</TableCell>
+                                <TableCell>Other</TableCell>
                                 <TableCell>
-                                    <Tooltip content="Edit user">
+                                    <Tooltip content="Edit Status">
                                     <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={handleEditClick}>
                                     <EditIcon />
                                     </span>

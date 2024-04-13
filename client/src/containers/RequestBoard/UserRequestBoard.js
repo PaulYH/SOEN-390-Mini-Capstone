@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Chip,Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
-import './UserRequestBoard.css'; // Import CSS file
+import './UserRequestBoard.css'; 
 
 const UserRequestBoard = () => {
 
