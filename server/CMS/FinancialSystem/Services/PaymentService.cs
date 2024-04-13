@@ -61,16 +61,7 @@ namespace CMS.Api.FinancialSystem.Services
             await _context.SaveChangesAsync();
             return user;
         }
-        // Get balance of current user
-        public async Task<ActionResult<double>> GetUserBalance(string userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return null;
-            }
-            return user.Balance ?? 0;
-        }
+     
         // Generate an Annual Report CSV file for all payments of a company in a year
         public async Task<ActionResult<string>> GenerateAndDownloadAnnualReport(int year)
         {

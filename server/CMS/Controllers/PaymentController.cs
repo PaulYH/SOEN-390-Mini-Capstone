@@ -54,20 +54,14 @@ namespace CMS.Api.Controllers
             if (payments.Value == null) return NotFound();
             return Ok(payments);
         }
-        [HttpPut]
-        public async Task<ActionResult<ApplicationUser>> UpdateUserBalance(string userId, double updatedBalance)
+        [HttpPut("{userId}/{newBalance}")]
+        public async Task<ActionResult<ApplicationUser>> UpdateUserBalance(string userId, double newBalance)
         {
-            var user = await _paymentService.UpdateUserBalance(userId, updatedBalance);
+            var user = await _paymentService.UpdateUserBalance(userId, newBalance);
             if (user.Value == null) return NotFound();
             return Ok(user);
         }
-        [HttpGet("/balance/{userId}")]
-        public async Task<ActionResult<double>> GetUserBalance(string userId)
-        {
-            var balance = await _paymentService.GetUserBalance(userId);
-            if (balance.Value == 0) return NotFound();
-            return Ok(balance);
-        }
+
         [HttpGet("/report/{year}")]
         public async Task<ActionResult<string>> GenerateAndDownloadAnnualReport(int year)
         {
