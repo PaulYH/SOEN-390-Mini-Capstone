@@ -3,7 +3,7 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
-import "react-datepicker/dist/react-datepicker.css";
+//import "react-datepicker/dist/react-datepicker.css";
 import { timeSlot } from "./data";
 
 
