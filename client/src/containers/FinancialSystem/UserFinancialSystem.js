@@ -33,7 +33,10 @@ const UserFinancialSystem = () => {
         setFirstName(userData.value.firstName);
         setLastName(userData.value.lastName);
         setUserId(userData.value.id);
-        setBalance(userData.value.balance);
+        if (userData.value.balance !== null) {
+          setBalance(userData.value.balance);
+      }
+      
       } catch (error) {
         console.error(error);
       }
@@ -69,48 +72,70 @@ const UserFinancialSystem = () => {
           status: payment.amount > 0 ? 'Unpaid' : 'Paid' // Adjust status logic as needed
         })));
 
-        // Update balance
-        const totalBalance = resolvedPayments.reduce((acc, payment) => acc + payment.amount, 0);
-        setBalance(totalBalance);
+        //get an api call to get the balance of the user
+        
 
       } catch (error) {
         console.error(error);
       }
     };
     const handlePaymentCreation = async () => {
-      if (!paymentAmount) {
-        alert('Please enter a payment amount');
+      const amountNumber = Number(paymentAmount);
+      if (!amountNumber) {
+        alert('Please enter a valid amount.');
         return;
       }
+      if (balance - amountNumber < 0) {
+        alert('You can not overpay. Please enter a smaller amount.');
+        return;
+      }
+    
       try {
-        const response = await fetch(`http://localhost:5127/api/payments/${userId}`, {
+        const paymentResponse = await fetch(`http://localhost:5127/api/payments/${userId}`, {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
           body: JSON.stringify({
-              "amount": Number(paymentAmount),
-              "user": {
-                  "id": userId
-              }
+            "amount": amountNumber,
+            "user": {
+              "id": userId
+            }
           }),
         });
-        if (!response.ok) throw new Error('Failed to process payment');
-        const newPayment = await response.json();
-        
-        // Instead of pushing the new payment directly,
-        // fetch all payments again to sync with the server
-        await fetchUserPayments(userId);
+        if (!paymentResponse.ok) throw new Error('Failed to process payment');
     
-        // Optionally, show a success message
-        alert('Payment processed successfully!');
+        // Calculate new balance
+        const newBalance = balance - amountNumber;
     
-        // Clear the payment amount
+        // Update balance on server
+        const updateResponse = await fetch(`http://localhost:5127/api/payments/${userId}/${newBalance}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify({
+            balance: newBalance
+          }),
+        });
+        if (!updateResponse.ok) throw new Error('Failed to update balance');
+    
+        // Update local state if the server update was successful
+        setPayments(prevPayments => [
+          ...prevPayments,
+          {
+            date: new Date().toISOString().split('T')[0],
+            amount: amountNumber,
+          }
+        ]);
+        setBalance(newBalance);
         setPaymentAmount('');
+        alert('Payment processed successfully!');
       } catch (error) {
-          console.error('Error making a payment:', error);
-          alert('Payment failed: ' + error.message);
+        console.error('Error in payment processing:', error);
+        alert('Payment failed: ' + error.message);
       }
     };
     
