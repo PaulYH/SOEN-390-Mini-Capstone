@@ -22,7 +22,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPost] // Authorize owners/renters only
-        public async Task<ActionResult<Locker>> CreateRequestTicket(RequestTicket request)
+        public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket request)
         {
             if (request is null || request.CreatedBy is null) { return BadRequest(); }
             var createdTicket = await _requestTicketService.CreateRequestTicket(request);
