@@ -14,21 +14,13 @@ namespace CMS.Api.Controllers
     {
         private readonly IPaymentService _paymentService;
         private readonly IApplicationUserService _applicationUserService;
-        private readonly IPropertyService _propertyService;
-        private readonly ICondoUnitService _condoUnitService;
-        private readonly IParkingSpotService _parkingSpotService;
-        private readonly ILockerService _lockerService;
+     
 
-        public PaymentController(IPaymentService paymentService, IApplicationUserService applicationUserService,
-                       IPropertyService propertyService, ICondoUnitService condoUnitService, IParkingSpotService parkingSpotService,
-                                  ILockerService lockerService)
+        public PaymentController(IPaymentService paymentService, IApplicationUserService applicationUserService)
         {
             _paymentService = paymentService;
             _applicationUserService = applicationUserService;
-            _propertyService = propertyService;
-            _condoUnitService = condoUnitService;
-            _parkingSpotService = parkingSpotService;
-            _lockerService = lockerService;
+         
         }
         [HttpGet]
         public async Task<ActionResult<List<Payment>>> GetAllPayments()
