@@ -39,16 +39,27 @@ const RoomBooking = () => {
                 externalRoomId: parseInt(newRoom.externalRoomId, 10),
                 reservations: []
             });
-            setRoomData([...roomData, response.data]);
-            setNewRoom({ name: "", externalRoomId: "" }); // Reset input fields
+
+            const addedRoom = response.data.value;
+            if (addedRoom && addedRoom.id) {
+                setRoomData(prevRooms => [...prevRooms, addedRoom]);
+                setNewRoom({ name: "", externalRoomId: "" });
+            } else {
+                console.error('Unexpected response structure:', response.data);
+            }
         } catch (error) {
             console.error('Failed to add room:', error);
         }
     };
 
     const handleDelete = async (roomId) => {
+        const payload = {
+            id: roomId,
+            Reservations: []
+        };
+
         try {
-            await axios.delete(`http://localhost:5127/api/room`, { data: { id: roomId } });
+            await axios.delete('http://localhost:5127/api/room', { data: payload });
             setRoomData(roomData.filter(room => room.id !== roomId));
         } catch (error) {
             console.error('Failed to delete room:', error);
