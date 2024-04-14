@@ -2,15 +2,10 @@
 using CMS.Api.UserSystem.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CMS.Tests.Services
+namespace CMS.Tests.Services.TestBases
 {
-    public abstract class ServiceTestsBase : IDisposable
+    public abstract class ApplicationUserServiceTestsBase : IDisposable
     {
         private static PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
 
@@ -20,7 +15,7 @@ namespace CMS.Tests.Services
 
         public CMSDbContext _context;
 
-        protected ServiceTestsBase()
+        protected ApplicationUserServiceTestsBase()
         {
             // Do "global" initialization here; Called before every test method.
 
@@ -61,7 +56,7 @@ namespace CMS.Tests.Services
                     FirstName = "User1First",
                     LastName = "User1Last",
                     Email = "user1@test.com",
-                    ProfilePicture = null,
+                    ProfilePicture = new ProfilePicture(),
                     Property = property,
                     hasRequestedOccupantKey = false,
                     hasRequestedOwnerKey = false,
@@ -75,11 +70,11 @@ namespace CMS.Tests.Services
                     Id = Guid.NewGuid().ToString(),
                     FirstName = "User2First",
                     LastName = "User2Last",
-                    Email = "user1@test.com",
+                    Email = "user2@test.com",
                     ProfilePicture = null,
                     Property = property,
                     hasRequestedOccupantKey = false,
-                    hasRequestedOwnerKey = false,
+                    hasRequestedOwnerKey = true,
                     ParkingSpots = null,
                     Lockers = null,
                     OwnedCondoUnits = null,
@@ -90,7 +85,7 @@ namespace CMS.Tests.Services
                     Id = Guid.NewGuid().ToString(),
                     FirstName = "User3First",
                     LastName = "User3Last",
-                    Email = "user1@test.com",
+                    Email = "user3@test.com",
                     ProfilePicture = null,
                     Property = property,
                     hasRequestedOccupantKey = false,

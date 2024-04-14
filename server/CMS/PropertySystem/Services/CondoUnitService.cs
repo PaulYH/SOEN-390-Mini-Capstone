@@ -20,10 +20,12 @@ namespace CMS.Api.PropertySystem.Services
     public class CondoUnitService : ICondoUnitService
     {
         private readonly CMSDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CondoUnitService(CMSDbContext context)
+        public CondoUnitService(CMSDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<ActionResult<CondoUnit>> CreateCondoUnit(CondoUnit condoUnit)
@@ -72,6 +74,9 @@ namespace CMS.Api.PropertySystem.Services
 
             await _context.SaveChangesAsync();
 
+            await _userManager.RemoveFromRoleAsync(user, "Public");
+            await _userManager.AddToRoleAsync(user, "Owner");
+
             return condoUnit;
         }
 
@@ -88,6 +93,12 @@ namespace CMS.Api.PropertySystem.Services
             condoUnit.Occupant = user;
 
             await _context.SaveChangesAsync();
+
+            if (!await _userManager.IsInRoleAsync(user, "Owner"))
+            {
+                await _userManager.RemoveFromRoleAsync(user, "Public");
+                await _userManager.AddToRoleAsync(user, "Renter");
+            }
 
             return condoUnit;
         }

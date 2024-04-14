@@ -50,7 +50,7 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
         {
             var condoUnits = await _propertyService.GetAllCondoUnits(id);
-            if (condoUnits == null) return NotFound();
+            if (condoUnits.Value == null) return NotFound();
             return Ok(condoUnits);
         }
         [HttpPost]
@@ -68,7 +68,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Property>> UpdatePropertyProfile(Property updatedProperty)
+        public async Task<ActionResult<Property>> UpdateProperty(Property updatedProperty)
         {
             var returnedProperty = await _propertyService.GetPropertyById(updatedProperty.Id);
 
@@ -82,7 +82,7 @@ namespace CMS.Api.Controllers
 
             if (updatedProperty.Lockers != null)
             {
-                foreach (Locker l in updatedProperty.Lockers)
+                foreach (Locker l in updatedProperty.Lockers.ToList())
                 {
                     l.Property = null;
                     l.Owner = null;
@@ -97,7 +97,7 @@ namespace CMS.Api.Controllers
 
             if (updatedProperty.ParkingSpots != null)
             {
-                foreach (ParkingSpot p in updatedProperty.ParkingSpots)
+                foreach (ParkingSpot p in updatedProperty.ParkingSpots.ToList())
                 {
                     p.Property = null;
                     p.Owner = null;
@@ -119,7 +119,7 @@ namespace CMS.Api.Controllers
         public async Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId)
         {
             var unit = await _propertyService.AssociateCondoUnitWithProperty(propertyId, condoId);
-            if (unit is null) return NotFound();
+            if (unit.Value is null) return NotFound();
             return Ok(unit);
         }
 
@@ -161,9 +161,9 @@ namespace CMS.Api.Controllers
         {
             var fileNames = await _propertyService.GetAllFileNames(id);
 
-            if (fileNames == null)
+            if (fileNames.Value == null)
                 return NotFound("The requested file does not exist");
-            
+
             return Ok(fileNames);
         }
     }

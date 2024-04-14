@@ -30,13 +30,9 @@ namespace CMS.Api.PropertySystem.Services
             var locker = await _context.Lockers.FindAsync(updatedLocker.Id);
             if (locker == null) { return null; }
 
-            locker.LockerFee = updatedLocker.LockerFee.Equals(null) ?
-                locker.LockerFee : updatedLocker.LockerFee;
-            locker.ExternalLockerId = updatedLocker.ExternalLockerId.Equals(null) ?
-                locker.ExternalLockerId : updatedLocker.ExternalLockerId;
-
-            locker.Owner = updatedLocker.Owner.Equals(null) ?
-                locker.Owner : updatedLocker.Owner;
+            locker.LockerFee = updatedLocker.LockerFee;
+            locker.ExternalLockerId = updatedLocker.ExternalLockerId;
+            locker.Owner = updatedLocker.Owner;
             await _context.SaveChangesAsync();
             return locker;
         }

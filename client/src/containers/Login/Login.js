@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './Login.css'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import './Login.css';
+import { Button } from '@nextui-org/react'
+
 
 const Login = () => {
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     // Check if the user is authenticated and the token is not expired
-    const accessToken = localStorage.getItem('accessToken')
-    const expiresAt = localStorage.getItem('expiresAt')
+    const accessToken = localStorage.getItem('accessToken');
+    const expiresAt = localStorage.getItem('expiresAt');
 
     if (accessToken && expiresAt) {
-      const isTokenValid = new Date(parseInt(expiresAt)) > new Date()
-
+      const isTokenValid = new Date(parseInt(expiresAt, 10)) > new Date();
       if (isTokenValid) {
-        // If authenticated and token is not expired, redirect to /profile
-        navigate('/home')
+        navigate('/home');
       }
     }
-  }, [navigate])
+  }, [navigate]);
 
-  const handleLogin = async () => {
-    try {
-      // Login request
-      const loginResponse = await fetch('http://localhost:5127/login', {
+  const loginMutation = useMutation(
+    async () => {
+      const response = await fetch('http://localhost:5127/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,37 +36,36 @@ const Login = () => {
           email,
           password,
         }),
-      })
-
-      if (!loginResponse.ok) {
-        // Handle login error response
-        const errorData = await loginResponse.json()
-        setError(errorData.message || 'Login failed')
-        return
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
-
-      const tokenData = await loginResponse.json()
-
-      // Calculate expiresAt based on current time plus expiresIn duration
-      const expiresAt = new Date(Date.now() + tokenData.expiresIn * 1000) // Convert to milliseconds
-
-      // Store the authentication token and expiresAt in localStorage
-      localStorage.setItem('accessToken', tokenData.accessToken)
-      localStorage.setItem('expiresAt', expiresAt.getTime().toString())
-
-      // If the login was successful, navigate to the home
-      navigate('/home')
-    } catch (error) {
-      // Handle network error or other exceptions
-      setError('An error occurred while processing your request')
+      return response.json();
+    },
+    {
+      onSuccess: (tokenData) => {
+        const expiresAt = new Date(Date.now() + tokenData.expiresIn * 1000); // Convert to milliseconds
+        localStorage.setItem('accessToken', tokenData.accessToken);
+        localStorage.setItem('expiresAt', expiresAt.getTime().toString());
+        navigate('/home');
+        queryClient.invalidateQueries(['userProfile']);
+      },
+      onError: (error) => {
+        setError(error.message);
+      },
     }
-  }
+  );
+
+  const handleLogin = () => {
+    loginMutation.mutate();
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      handleLogin()
+      handleLogin();
     }
-  }
+  };
 
   return (
     <div className='login'>
@@ -91,7 +91,7 @@ const Login = () => {
         onKeyPress={handleKeyPress}
       />
       {error && <p className='error'>{error}</p>}
-      <button onClick={handleLogin}>Login</button>
+      <Button style={{ backgroundColor: '#C7BFFF', alignSelf:'center', marginBottom:'5px'}} onClick={handleLogin}>Login</Button>
       <p>
         Don't have an account?{' '}
         <span className='link' onClick={() => navigate('/signup')}>
@@ -99,7 +99,7 @@ const Login = () => {
         </span>
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

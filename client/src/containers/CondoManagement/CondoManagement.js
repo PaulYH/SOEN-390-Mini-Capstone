@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid'
 import { Button, Spinner } from '@nextui-org/react'
 import './CondoManagement.css'
+import { useQuery } from '@tanstack/react-query'
 
 const CondoManagement = () => {
   const navigate = useNavigate()
@@ -18,9 +19,34 @@ const CondoManagement = () => {
   })
 
   useEffect(() => {
-    fetchUserProfile()
     fetchUserPropertyId()
   }, [])
+
+  const fetchUserProfileQuery = () => {
+    const token = localStorage.getItem('accessToken');
+    return fetch('http://localhost:5127/manage/info', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(async (response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user profile');
+      }
+      return response.json();
+    });
+  };
+
+  const { data: userProfile, error: userProfileError } = useQuery(['userProfile'], fetchUserProfileQuery, {
+    onSuccess: (data) => {
+      console.log(data.email);
+      fetchCondoUnitsByEmail(data.email);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const handleAddUnitsChange = (event) => {
     event.preventDefault()
@@ -29,30 +55,6 @@ const CondoManagement = () => {
     const newUnit = { ...addUnits }
     newUnit[fieldName] = fieldValue
     setAddUnits(newUnit)
-  }
-
-  const fetchUserProfile = async () => {
-    //to get the user email
-    const token = localStorage.getItem('accessToken')
-    try {
-      const response = await fetch('http://localhost:5127/manage/info', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user profile')
-      }
-
-      const { email } = await response.json()
-      console.log(email)
-      fetchCondoUnitsByEmail(email)
-    } catch (error) {
-      console.error(error)
-    }
   }
 
   const fetchCondoUnitsByEmail = async (email) => {
@@ -158,7 +160,7 @@ const CondoManagement = () => {
     <div className='app-container'>
       <Button
         className='back-button'
-        color='primary'
+        style={{ alignSelf:'start' }}
         onClick={() => navigate('/propertiesprofile')}
       >
         Back
