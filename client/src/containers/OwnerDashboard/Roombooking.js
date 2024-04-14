@@ -4,24 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { Table, TableHeader, TableColumn, TableBody, Button, TableRow, TableCell, Tooltip, Input } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
 import { DeleteIcon } from "./DeleteIcon";
+import { CheckIcon } from "./CheckIcon";
 
 const RoomBooking = () => {
     const navigate = useNavigate();
     const [roomData, setRoomData] = useState([]);
     const [newRoom, setNewRoom] = useState({ name: "", externalRoomId: "" });
+    const [editState, setEditState] = useState({});
 
     useEffect(() => {
         const fetchRooms = async () => {
-            try {
-                const response = await axios.get('http://localhost:5127/api/room');
-                if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
-                    setRoomData(response.data.value.$values);
-                } else {
-                    setRoomData([]); // Handle case where no rooms are available
-                }
-            } catch (error) {
-                console.error('Failed to fetch rooms:', error);
-                setRoomData([]);
+            const response = await axios.get('http://localhost:5127/api/room');
+            if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
+                setRoomData(response.data.value.$values);
             }
         };
 
@@ -33,23 +28,54 @@ const RoomBooking = () => {
             alert("Please fill all fields before adding a room.");
             return;
         }
-        try {
-            const response = await axios.post('http://localhost:5127/api/room', {
-                name: newRoom.name,
-                externalRoomId: parseInt(newRoom.externalRoomId, 10),
-                reservations: []
-            });
+        const response = await axios.post('http://localhost:5127/api/room', {
+            name: newRoom.name,
+            externalRoomId: parseInt(newRoom.externalRoomId, 10),
+            reservations: []
+        });
+        const addedRoom = response.data.value;
+        setRoomData(prevRooms => [...prevRooms, addedRoom]);
+        setNewRoom({ name: "", externalRoomId: "" });
+    };
 
-            const addedRoom = response.data.value;
-            if (addedRoom && addedRoom.id) {
-                setRoomData(prevRooms => [...prevRooms, addedRoom]);
-                setNewRoom({ name: "", externalRoomId: "" });
+    const handleEdit = (room) => {
+        setEditState({ [room.id]: room });
+    };
+
+    const handleSave = async (roomId) => {
+        const roomToSave = editState[roomId];
+        try {
+            const payload = {
+                id: roomId,
+                externalRoomId: roomToSave.externalRoomId,
+                name: roomToSave.name,
+                reservations: []
+            };
+    
+            const response = await axios.put('http://localhost:5127/api/room', payload);
+    
+            if (response.data && response.data.value.id) {
+                setRoomData(prevRooms => prevRooms.map(room => room.id === roomId ? response.data.value : room));
+                setEditState({});
+                console.log('hi');
             } else {
                 console.error('Unexpected response structure:', response.data);
             }
         } catch (error) {
-            console.error('Failed to add room:', error);
+            console.error('Failed to save edits:', error);
         }
+    };    
+
+    const handleCancel = () => {
+        setEditState({});
+    };
+
+    const handleChange = (e, roomId) => {
+        const { name, value } = e.target;
+        setEditState(prevState => ({
+            ...prevState,
+            [roomId]: { ...prevState[roomId], [name]: name === 'externalRoomId' ? parseInt(value, 10) : value }
+        }));
     };
 
     const handleDelete = async (roomId) => {
@@ -68,68 +94,80 @@ const RoomBooking = () => {
 
     return (
         <div className='mainTable'>
-            <Button className='back-button' onClick={() => navigate('/amenities')}>
-                Back
-            </Button>
-            <img src={require('../../assets/logo.png')} alt='logo' className='logo' onClick={() => navigate('/')} />
+            <Button onClick={() => navigate('/amenities')}>Back</Button>
+            <img src={require('../../assets/logo.png')} alt='logo' onClick={() => navigate('/')} />
             <h1>Room Reservation</h1>
-            <Table aria-label="Room Booking Table">
+            <Table>
                 <TableHeader>
                     <TableColumn>Name</TableColumn>
                     <TableColumn>External Room ID</TableColumn>
-                    <TableColumn align="center">Actions</TableColumn>
+                    <TableColumn>Actions</TableColumn>
                 </TableHeader>
                 <TableBody>
                     {roomData.map(room => (
                         <TableRow key={room.id}>
-                            <TableCell>{room.name}</TableCell>
-                            <TableCell>{room.externalRoomId}</TableCell>
                             <TableCell>
-                                <div className="flex items-center gap-2">
-                                    <Tooltip content="Edit Room">
-                                        <span className="cursor-pointer">
-                                            <EditIcon />
-                                        </span>
-                                    </Tooltip>
-                                    <Tooltip content="Delete Room">
-                                        <span className="cursor-pointer" onClick={() => handleDelete(room.id)}>
-                                            <DeleteIcon />
-                                        </span>
-                                    </Tooltip>
-                                </div>
+                                {editState[room.id] ? (
+                                    <Input
+                                        name="name"
+                                        value={editState[room.id].name}
+                                        onChange={(e) => handleChange(e, room.id)}
+                                    />
+                                ) : (
+                                    room.name
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {editState[room.id] ? (
+                                    <Input
+                                        name="externalRoomId"
+                                        value={editState[room.id].externalRoomId}
+                                        onChange={(e) => handleChange(e, room.id)}
+                                        type="number"
+                                    />
+                                ) : (
+                                    room.externalRoomId
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {editState[room.id] ? (
+                                    <div style={{ display: 'flex', gap: '8px' }}> {/* Added styling here */}
+                                        <Button auto size="small" onClick={() => handleSave(room.id)}><CheckIcon /></Button>
+                                        <Button auto size="small" onClick={handleCancel}>Cancel</Button>
+                                    </div>
+                                ) : (
+                                    <div style={{ display: 'flex', gap: '8px' }}> {/* Added styling here */}
+                                        <Tooltip content="Edit Room">
+                                            <Button auto size="small" onClick={() => handleEdit(room)}><EditIcon /></Button>
+                                        </Tooltip>
+                                        <Tooltip content="Delete Room">
+                                            <Button auto size="small" onClick={() => handleDelete(room.id)}><DeleteIcon /></Button>
+                                        </Tooltip>
+                                    </div>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}
                     <TableRow>
                         <TableCell>
                             <Input
-                                clearable
-                                bordered
-                                fullWidth
-                                color="primary"
-                                size="lg"
-                                placeholder="Room Name"
+                                name="name"
                                 value={newRoom.name}
-                                onChange={(e) => setNewRoom(prev => ({ ...prev, name: e.target.value }))}
+                                onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+                                placeholder="Room Name"
                             />
                         </TableCell>
                         <TableCell>
                             <Input
-                                clearable
-                                bordered
-                                fullWidth
-                                color="primary"
-                                size="lg"
-                                type="number"
-                                placeholder="External Room ID"
+                                name="externalRoomId"
                                 value={newRoom.externalRoomId}
-                                onChange={(e) => setNewRoom(prev => ({ ...prev, externalRoomId: e.target.value }))}
+                                onChange={(e) => setNewRoom({ ...newRoom, externalRoomId: e.target.value })}
+                                placeholder="External Room ID"
+                                type="number"
                             />
                         </TableCell>
                         <TableCell>
-                            <Button auto flat color="success" onClick={handleAddRoom}>
-                                Add Room
-                            </Button>
+                            <Button onClick={handleAddRoom}>Add Room</Button>
                         </TableCell>
                     </TableRow>
                 </TableBody>
