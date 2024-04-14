@@ -50,10 +50,11 @@ namespace CMS.Tests.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<Locker>>();
+            result.Should().BeAssignableTo<ActionResult<RequestTicket>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>();
             _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
         }
+
         [Fact]
         public async Task CreateRequestTicket_ShouldReturnBadRequest_WhenBadRequest()
         {
@@ -63,10 +64,12 @@ namespace CMS.Tests.Controllers
             var response = _fixture.Create<RequestTicket>();
 
             // Act
-            var result = await _requestTicketController.CreateRequestTicket(null);
+            var result = await _requestTicketController.CreateRequestTicket(request);
 
             // Assert
-            result.Should().BeNull();
+            result.Should().BeAssignableTo<ActionResult<RequestTicket>>();
+            result.Result.Should().BeAssignableTo<BadRequestResult>();
+
             _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
         }
 
@@ -84,7 +87,7 @@ namespace CMS.Tests.Controllers
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<Locker>>();
+            result.Should().BeAssignableTo<ActionResult<RequestTicket>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>();
             _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
         }
@@ -98,9 +101,7 @@ namespace CMS.Tests.Controllers
             var result = await _requestTicketController.GetAll();
 
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<Locker>>();
-
-            _requestTicketService.Verify(x => x.GetAll(), Times.Never());
+            result.Should().BeAssignableTo<ActionResult<IEnumerable<RequestTicket>>>();
         }
 
 
