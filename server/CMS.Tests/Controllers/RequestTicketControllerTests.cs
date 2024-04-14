@@ -12,6 +12,8 @@ using CMS.Api.UserSystem.Entities;
 using CMS.Api.RequestSystem.Entities;
 using CMS.Api.RequestSystem.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Azure.Core;
+using Azure;
 
 namespace CMS.Tests.Controllers
 {
@@ -41,7 +43,6 @@ namespace CMS.Tests.Controllers
             var request = _fixture.Create<RequestTicket>();
             var response = _fixture.Create<RequestTicket>();
 
-            string userId = _fixture.Create<string>();
             _requestTicketService.Setup(x => x.CreateRequestTicket(request)).ReturnsAsync(response);
 
             // Act
@@ -52,6 +53,70 @@ namespace CMS.Tests.Controllers
             result.Should().BeAssignableTo<ActionResult<Locker>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>();
             _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
+        }
+        [Fact]
+        public async Task CreateRequestTicket_ShouldReturnBadRequest_WhenBadRequest()
+        {
+            // Arrange
+            var request = _fixture.Create<RequestTicket>();
+            request.CreatedBy = null;
+            var response = _fixture.Create<RequestTicket>();
+
+            // Act
+            var result = await _requestTicketController.CreateRequestTicket(null);
+
+            // Assert
+            result.Should().BeNull();
+            _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
+        }
+
+        [Fact]
+        public async Task UpdateRequestTicket_ShouldReturnOkResponse_WhenValidRequest()
+        {
+            // Arrange
+            var request = _fixture.Create<RequestTicket>();
+            var response = _fixture.Create<RequestTicket>();
+
+            _requestTicketService.Setup(x => x.CreateRequestTicket(request)).ReturnsAsync(response);
+
+            // Act
+            var result = await _requestTicketController.UpdateRequestTicket(request).ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<Locker>>();
+            result.Result.Should().BeAssignableTo<OkObjectResult>();
+            _requestTicketService.Verify(x => x.CreateRequestTicket(response), Times.Never());
+        }
+
+        [Fact]
+        public async Task GetAll_ShouldReturnOkResponse()
+        {
+            var response = _fixture.Create<List<RequestTicket>>();
+            _requestTicketService.Setup(x => x.GetAll()).ReturnsAsync(response);
+
+            var result = await _requestTicketController.GetAll();
+
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<Locker>>();
+
+            _requestTicketService.Verify(x => x.GetAll(), Times.Never());
+        }
+
+
+        [Fact]
+        public async Task GetTicketWithPosts_ShouldReturnOkResponse()
+        {
+            var response = _fixture.Create<RequestTicket>();
+            var id = _fixture.Create<string>();
+            _requestTicketService.Setup(x => x.GetRequestTicketWithPosts(id)).ReturnsAsync(response);
+
+            var result = await _requestTicketController.GetTicketWithPosts(id);
+
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<RequestTicket>>();
+
+            _requestTicketService.Verify(x => x.GetAll(), Times.Never());
         }
     }
 }
