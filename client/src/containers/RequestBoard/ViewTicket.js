@@ -26,11 +26,14 @@ const ViewTicket = () => {
         });
         if (!response.ok) throw new Error('Failed to fetch ticket');
         const ticketData = await response.json();
+
+        const formattedDate = new Date(ticketData.creationDate).toISOString().split('T')[0]; //formating
+
         setTicket({
           title: ticketData.title,
           description: ticketData.description,
           category: ticketData.category,
-          creationDate: ticketData.creationDate,
+          creationDate: formattedDate,
           createdBy: ticketData.createdBy.email
         });
       } catch (error) {
