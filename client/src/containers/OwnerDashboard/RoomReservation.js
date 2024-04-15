@@ -32,8 +32,8 @@ const RoomReservation = () => {
         const fetchReservations = async () => {
             try {
                 const response = await axios.get('http://localhost:5127/api/reservations');
-                if (Array.isArray(response.data)) {
-                    setReservations(response.data);
+                if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
+                    setReservations(response.data.value.$values);
                 } else {
                     console.error('Expected an array of reservations, but received:', response.data);
                 }
@@ -41,9 +41,9 @@ const RoomReservation = () => {
                 console.error('Failed to fetch reservations:', error);
             }
         };
-
+    
         fetchReservations();
-    }, []);
+    }, []);    
 
     const handleRoomSelection = (room) => {
         setSelectedRoom(room);
