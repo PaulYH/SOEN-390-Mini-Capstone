@@ -61,11 +61,11 @@ const OwnerFinanceDashboard = () => {
         Finances
       </h1>
       <div className={styles.dashboardHeader}>
-        <div className='row'>
-          <div className='col-lg-12 col-md-12 ms-4 me-4 d-flex justify-content-center'>
+        <div className='row' >
+          <div className='col-lg-12 col-md-12 ms-4 me-4 d-flex justify-content-center'  style={{ flexDirection: 'column', alignContent: 'center', gap: '10px' }}>
             <div
               className='card d-flex justify-content-center'
-              style={{ width: '70%' }}
+              style={{ width: '70%', alignSelf: 'center', marginTop: '40px'}}
             >
               <div className='progress m-3'>
                 <div

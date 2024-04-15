@@ -44,7 +44,6 @@ namespace CMS.Api.UserSystem.Services
                 .Where(x => x.Property != null && x.Property.Id == propertyId && (
                 x.hasRequestedOccupantKey == true ||
                 x.hasRequestedOwnerKey == true)).ToListAsync();
-
             return users;
         }
 
