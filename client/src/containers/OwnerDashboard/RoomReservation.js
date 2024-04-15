@@ -58,18 +58,39 @@ const RoomReservation = () => {
             alert("Please select a room and a time slot.");
             return;
         }
-
+    
         try {
-            await axios.post('http://localhost:5127/api/reservations', {
-                room: selectedRoom,
-                startTime: selectedDate,
-                endTime: selectedDate, // Assuming endTime is calculated based on startTime + duration of reservation
-                reservedBy: "Current User", // This should be replaced with actual user identification
+            const userResponse = await fetch('http://localhost:5127/api/users/authenticated', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
             });
-            alert("Reservation successful!");
-            navigate('/amenities');
+    
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch user details');
+            }
+    
+            const userData = await userResponse.json();
+            if (!userData || !userData.value || !userData.value.id) {
+                throw new Error('User data is incomplete or missing');
+            }
+    
+            const reservationResponse = await axios.post('http://localhost:5127/api/reservations', {
+                room: selectedRoom,
+                startTime: selectedDate.toISOString(),
+                endTime: selectedDate.toISOString(),
+                reservedBy: userData.value,
+            });
+    
+            if (reservationResponse.status === 200) {
+                alert("Reservation successful!");
+                navigate('/amenities');
+            } else {
+                throw new Error('Failed to create reservation');
+            }
         } catch (error) {
             console.error('Failed to create reservation:', error);
+            alert('Error: ' + error.message);
         }
     };
 
