@@ -21,6 +21,8 @@ import EditTicket from './containers/RequestBoard/EditTicket.js'
 import ViewTicket from './containers/RequestBoard/ViewTicket.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import UserFinancialSystem from './containers/FinancialSystem/UserFinancialSystem.js'
+import CompanyFinancialSystem from './containers/FinancialSystem/CompanyFinancialSystem.js'
 
 const queryClient = new QueryClient()
 
@@ -48,8 +50,8 @@ function App() {
           <Route path='/CreateTicket' element={<CreateTicket />} />
           <Route path='/EditTicket' element={<EditTicket />} />
           <Route path='/ViewTicket' element={<ViewTicket />} />
-
-
+          <Route path='/UserFinancialSystem' element={<UserFinancialSystem />} />
+          <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />
