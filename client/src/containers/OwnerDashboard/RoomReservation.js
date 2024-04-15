@@ -9,9 +9,14 @@ const RoomReservation = () => {
     const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState("");
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [timeSlot, setTimeSlot] = useState("");
+    const [timeSlot, setTimeSlot] = useState(null);
     const [reservations, setReservations] = useState([]);
     const navigate = useNavigate();
+
+    const timeSlots = [
+        { label: "10am-12pm", startTime: [10, 0], endTime: [12, 0] },
+        { label: "1pm-3pm", startTime: [13, 0], endTime: [15, 0] }
+    ];
 
     useEffect(() => {
         const fetchRooms = async () => {
@@ -49,8 +54,8 @@ const RoomReservation = () => {
         setSelectedRoom(room);
     };
 
-    const handleTimeSlotSelection = (slot) => {
-        setTimeSlot(slot);
+    const handleTimeSlotSelection = (slotIndex) => {
+        setTimeSlot(timeSlots[slotIndex]);
     };
 
     const handleSubmit = async () => {
@@ -58,30 +63,35 @@ const RoomReservation = () => {
             alert("Please select a room and a time slot.");
             return;
         }
-    
+
         try {
             const userResponse = await fetch('http://localhost:5127/api/users/authenticated', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
                 },
             });
-    
+
             if (!userResponse.ok) {
                 throw new Error('Failed to fetch user details');
             }
-    
+
             const userData = await userResponse.json();
             if (!userData || !userData.value || !userData.value.id) {
                 throw new Error('User data is incomplete or missing');
             }
-    
+
+            const startTime = new Date(selectedDate);
+            const endTime = new Date(selectedDate);
+            startTime.setHours(timeSlot.startTime[0], timeSlot.startTime[1], 0, 0);
+            endTime.setHours(timeSlot.endTime[0], timeSlot.endTime[1], 0, 0);
+
             const reservationResponse = await axios.post('http://localhost:5127/api/reservations', {
                 room: selectedRoom,
-                startTime: selectedDate.toISOString(),
-                endTime: selectedDate.toISOString(),
+                startTime: startTime.toISOString(),
+                endTime: endTime.toISOString(),
                 reservedBy: userData.value,
             });
-    
+
             if (reservationResponse.status === 200) {
                 alert("Reservation successful!");
                 navigate('/amenities');
@@ -114,9 +124,9 @@ const RoomReservation = () => {
                                         placeholder="Select a time slot"
                                         onChange={(e) => handleTimeSlotSelection(e.target.value)}
                                     >
-                                        {/* Example time slots, should be fetched or calculated based on availability */}
-                                        <SelectItem value="10am-12pm">10am-12pm</SelectItem>
-                                        <SelectItem value="1pm-3pm">1pm-3pm</SelectItem>
+                                        {timeSlots.map((slot, index) => (
+                                            <SelectItem key={index} value={index}>{slot.label}</SelectItem>
+                                        ))}
                                     </Select>
                                 </>
                             )}
