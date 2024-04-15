@@ -39,6 +39,7 @@ export default function Profile() {
       'http://localhost:5127/api/users/authenticated',
       authorizationConfig
     )
+    console.log('THIS IS THE RESPONSE YOU WANT:')
     console.log(response)
     return response
   }
@@ -103,6 +104,28 @@ export default function Profile() {
   const retrievedOwnerUnits = ownerUnitsData?.data.value.$values
   const retrievedOccupantUnits = occupantUnitsData?.data.value
 
+  const fetchUserRole = () => {
+    const response = axios.get(
+      `http://localhost:5127/api/role/${retrievedUser.id}`
+    )
+    console.log('THIS IS THE OTHER RESPONSE:')
+    console.log(response)
+    console.log(response.data)
+    return response
+  }
+  const {
+    isLoading: userRoleLoading,
+    data: userRoleData,
+    isError: isUserRoleError,
+  } = useQuery({
+    queryKey: ['get-user-role'],
+    queryFn: fetchUserRole,
+    refetchOnWindowFocus: false,
+    enabled: !!retrievedUser,
+  })
+
+  const userRole = userRoleData?.data
+
   useEffect(() => {
     if (
       !(accessToken && expiresAt && new Date(parseInt(expiresAt)) > new Date())
@@ -134,6 +157,7 @@ export default function Profile() {
     navigate,
     userStatus,
     retrievedUser,
+    userRole,
     ownerUnitsStatus,
     occupantUnitsStatus,
   ])
@@ -251,7 +275,12 @@ export default function Profile() {
     })
   }
 
-  if (userLoading || ownerUnitsLoading || occupantUnitsLoading) {
+  if (
+    userLoading ||
+    userRoleLoading ||
+    ownerUnitsLoading ||
+    occupantUnitsLoading
+  ) {
     return (
       <div className='profile'>
         <p>Loading user profile</p>
@@ -264,16 +293,25 @@ export default function Profile() {
   return (
     <div className='profile'>
       <Button
-        style={{ alignSelf:'start' }}
+        style={{ alignSelf: 'start' }}
         className='back-button'
         onClick={() => navigate('/home')}
       >
         Back
       </Button>
-      
 
-      <Button style={{ marginBottom: '5px', backgroundColor: '#C7BFFF' }} onClick={handlePropetiesProfileClick}>Properties Profile</Button>
-      <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSignOut}>Sign Out</Button>
+      {userRole == 'Employee' ? (
+        <Button
+          style={{ marginBottom: '5px', backgroundColor: '#C7BFFF' }}
+          onClick={handlePropetiesProfileClick}
+        >
+          Properties Profile
+        </Button>
+      ) : null}
+
+      <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSignOut}>
+        Sign Out
+      </Button>
 
       {user && (
         <>
@@ -290,7 +328,7 @@ export default function Profile() {
             style={{ display: 'none' }}
             ref={fileInputRef}
           />
-          
+
           <h1>{`${user.firstName} ${user.lastName}'s User Profile`}</h1>
           <h2>Account Details</h2>
           <label>Name</label>
@@ -312,7 +350,8 @@ export default function Profile() {
           {!rentalRequest &&
             !ownerRequest &&
             !retrievedOccupantUnits &&
-            !retrievedOwnerUnits[0] && (
+            !retrievedOwnerUnits[0] &&
+            userRole != 'Employee' && (
               <p>
                 <label>Rented Condo Key</label>
                 <input type='text' value={rentalKey} readOnly />
@@ -372,7 +411,9 @@ export default function Profile() {
             </p>
           )}
 
-          <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSave}>Save</Button>
+          <Button style={{ backgroundColor: '#C7BFFF' }} onClick={handleSave}>
+            Save
+          </Button>
           {message && <div className={`message ${messageType}`}>{message}</div>}
         </>
       )}

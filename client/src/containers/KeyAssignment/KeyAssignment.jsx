@@ -224,7 +224,6 @@ export default function KeyAssignment() {
       <div className='mainTable'>
         <Button
           className='back-button'
-          
           onClick={() => navigate('/propertiesprofile')}
         >
           Back

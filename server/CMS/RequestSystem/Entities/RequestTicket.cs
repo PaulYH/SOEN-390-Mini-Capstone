@@ -1,4 +1,5 @@
-﻿using CMS.Api.UserSystem.Entities;
+﻿using CMS.Api.RequestSystem.Enums;
+using CMS.Api.UserSystem.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Api.RequestSystem.Entities
@@ -14,11 +15,10 @@ namespace CMS.Api.RequestSystem.Entities
         public string Title { get; set; } = String.Empty;
         public string Description { get; set; } = String.Empty;
 
-        // Add StatusType
-        // Add CategoryType
-
-        public ApplicationUser CreatedBy { get; set; } = null!; // TODO: add role verification
-        public ApplicationUser AssignedTo { get; set; } = null!; // TODO: add role verification
-        public ICollection<TicketPost> TicketPosts { get; set; } = null!;
+        public StatusType Status { get; set; } = StatusType.Pending;
+        public CategoryType Category { get; set; }
+        public ApplicationUser? CreatedBy { get; set; } = null!;
+        public ApplicationUser? AssignedTo { get; set; } = null!;
+        public ICollection<TicketPost>? TicketPosts { get; set; } = new List<TicketPost>();
     }
 }

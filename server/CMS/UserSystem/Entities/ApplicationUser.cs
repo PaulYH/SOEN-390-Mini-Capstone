@@ -14,6 +14,7 @@ namespace CMS.Api.UserSystem.Entities
 
         // Used by Owners & Renters
         public bool? hasRequestedOccupantKey { get; set; } = false;
+        public double? Balance { get; set; } = 0;
 
         [InverseProperty("Owner")]
         public ICollection<ParkingSpot>? ParkingSpots { get; set; }
