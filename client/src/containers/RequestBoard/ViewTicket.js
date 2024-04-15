@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const ViewTicket = ({ ticketId }) => {
+const ViewTicket = () => {
 
+  const { ticketId } = useParams();
   const navigate = useNavigate();
   
   const [ticket, setTicket] = useState({

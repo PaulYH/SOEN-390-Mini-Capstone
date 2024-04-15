@@ -12,7 +12,6 @@ const CreateTicket = () => {
   const [creationDate] = useState(new Date().toISOString().substring(0, 10));
   const [userEmail, setUserEmail] = useState('');
   const [userId, setUserId] = useState('');
-  const [ticketId, setTicketId] = useState('');
 
   useEffect(() => {
     fetchUserInfo();
@@ -57,9 +56,10 @@ const CreateTicket = () => {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
-      setTicketId(response.data.value.id);  // Assuming the server response includes the ID
       console.log('Ticket created with ID:', response.data.value.id);
-      navigate(`/viewTicket/`);
+      const ticketId = response.data.value.id; //set the ticket id to use in next page
+      console.log(ticketId);
+      navigate(`/tickets/${ticketId}`);
     } catch (error) {
       console.error('Error creating ticket:', error);
       alert('Failed to create ticket');
