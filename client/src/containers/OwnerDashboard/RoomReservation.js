@@ -136,7 +136,7 @@ const RoomReservation = () => {
                 <TableBody>
                     {Array.isArray(reservations) ? reservations.map((reservation) => (
                         <TableRow key={reservation.id}>
-                            <TableCell>{reservation.room}</TableCell>
+                            <TableCell>{reservation.id}</TableCell>
                             <TableCell>{new Date(reservation.startTime).toLocaleString()}</TableCell>
                             <TableCell>{new Date(reservation.endTime).toLocaleString()}</TableCell>
                         </TableRow>
