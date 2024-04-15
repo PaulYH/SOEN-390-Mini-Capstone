@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using CMS.Api;
+using CMS.Api.FinancialSystem.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +47,8 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<ICondoUnitService, CondoUnitService>();
 builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
-
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<ISystemTime, SystemTime>();
 
 builder.Services.AddAuthorization();
 
@@ -101,5 +105,7 @@ using (var scope = app.Services.CreateScope())
         }
     }    
 }
+
+app.Services.GetRequiredService<ISystemTime>();
 
 app.Run();
