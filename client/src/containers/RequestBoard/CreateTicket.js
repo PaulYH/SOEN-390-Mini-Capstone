@@ -10,14 +10,12 @@ const CreateTicket = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [creationDate] = useState(new Date().toISOString().substring(0, 10)); //todays date
-  //const [createdBy, setCreatedBy] = useState('');
   const [userEmail, setUserEmail] = useState('');
-
+  const [userId, setUserId]=useState('');
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDescriptionChange = (e) => setDescription(e.target.value);
   const handleCategoryChange = (e) => setCategory(e.target.value);
-  //const handleCreationDateChange = (e) => setCreationDate(e.target.value);
-  //const handleCreatedByChange = (e) => setCreatedBy(e.target.value);
+
 
   useEffect(() => {
     fetchUserInfo();
@@ -32,14 +30,14 @@ const CreateTicket = () => {
       });
       if (!response.ok) throw new Error('Failed to fetch user data');
       const userData = await response.json();
+      console.log(userData.value.id);
+      setUserId(userData.value.id);
       setUserEmail(userData.value.email);
     } catch (error) {
       console.error(error);
     }
 
   };
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +54,7 @@ const CreateTicket = () => {
       category: parseInt(category),
       creationDate: creationDate,
       createdBy: {
+        id: userId,
         email: userEmail
       }
     };
@@ -71,6 +70,8 @@ const CreateTicket = () => {
         body: JSON.stringify(ticketData),
       });
       if (response.ok) {
+        console.log(ticketData)
+        console.log(ticketData.createdBy.id)
         navigate('/ViewTicket');
       } else {
         throw new Error('Failed to create ticket');
@@ -135,9 +136,6 @@ const CreateTicket = () => {
           readOnly
         />
         </div>
-
-
-        
 
       <Button className='button_css' color="primary" type="submit">
           Submit New Ticket
