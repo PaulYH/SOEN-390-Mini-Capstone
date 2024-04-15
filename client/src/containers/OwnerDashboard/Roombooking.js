@@ -1,152 +1,179 @@
-//table for employees
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Table, TableHeader, TableColumn, TableBody, Button, TableRow, TableCell, Tooltip, Input } from "@nextui-org/react";
+import { EditIcon } from "./EditIcon";
+import { DeleteIcon } from "./DeleteIcon";
+import { CheckIcon } from "./CheckIcon";
 
-import React, { useState, useEffect,useRef } from 'react'
+const RoomBooking = () => {
+    const navigate = useNavigate();
+    const [roomData, setRoomData] = useState([]);
+    const [newRoom, setNewRoom] = useState({ name: "", externalRoomId: "" });
+    const [editState, setEditState] = useState({});
 
-import { useQuery, useMutation } from '@tanstack/react-query'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { Table, TableHeader, TableColumn, TableBody, Button, TableRow, TableCell, User, Chip, Tooltip } from "@nextui-org/react";
-
-import {EditIcon} from "./EditIcon";
-import {DeleteIcon} from "./DeleteIcon";
-import {columns, rooms} from "./dataEmployeeTable";
-
-
-  export default function Roombooking() {
-
-    const themeMode = 'light' // for the components that are not set to a specific theme mode despite the global theme mode setting in index.js
-    const navigate = useNavigate()
-    
-  
-  
     useEffect(() => {
-      fetchReservableRoomNames().then((room) => {
-        if (room) {
-          setRoomID({
-            roomName: room.roomName || '',
-            externalRoomId: room.externalRoomId || '',
-            
-          })
-          setMode('view')
+        const fetchRooms = async () => {
+            const response = await axios.get('http://localhost:5127/api/room');
+            if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
+                setRoomData(response.data.value.$values);
+            }
+        };
+
+        fetchRooms();
+    }, []);
+
+    const handleAddRoom = async () => {
+        if (!newRoom.name || !newRoom.externalRoomId) {
+            alert("Please fill all fields before adding a room.");
+            return;
         }
-      })
-    }, [])
+        const response = await axios.post('http://localhost:5127/api/room', {
+            name: newRoom.name,
+            externalRoomId: parseInt(newRoom.externalRoomId, 10),
+            reservations: []
+        });
+        const addedRoom = response.data.value;
+        setRoomData(prevRooms => [...prevRooms, addedRoom]);
+        setNewRoom({ name: "", externalRoomId: "" });
+    };
 
-    //fetch room names
-    const fetchUserProfile = async () => {
-     const response= axios.get('http://localhost:5127/api/room')
-      const token = localStorage.getItem('accessToken')
-      
-  
+    const handleEdit = (room) => {
+        setEditState({ [room.id]: room });
+    };
 
-//fetch rooms' external ID 
-    const fetchUserPropertyId = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:5127/api/users/authenticated',
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          }
-        )
-        if (!response.ok) throw new Error('Failed to fetch user data')
-        const data = await response.json()
-        setPropertyId(data?.value.property.id || ' ')
-        return data.value.property.id || null
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    }
+    const handleSave = async (roomId) => {
+        const roomToSave = editState[roomId];
+        try {
+            const payload = {
+                id: roomId,
+                externalRoomId: roomToSave.externalRoomId,
+                name: roomToSave.name,
+                reservations: []
+            };
+    
+            const response = await axios.put('http://localhost:5127/api/room', payload);
+    
+            if (response.data && response.data.value.id) {
+                setRoomData(prevRooms => prevRooms.map(room => room.id === roomId ? response.data.value : room));
+                setEditState({});
+                console.log('hi');
+            } else {
+                console.error('Unexpected response structure:', response.data);
+            }
+        } catch (error) {
+            console.error('Failed to save edits:', error);
+        }
+    };    
 
-//data
-//isLoading
+    const handleCancel = () => {
+        setEditState({});
+    };
 
+    const handleChange = (e, roomId) => {
+        const { name, value } = e.target;
+        setEditState(prevState => ({
+            ...prevState,
+            [roomId]: { ...prevState[roomId], [name]: name === 'externalRoomId' ? parseInt(value, 10) : value }
+        }));
+    };
 
+    const handleDelete = async (roomId) => {
+        const payload = {
+            id: roomId,
+            Reservations: []
+        };
 
-    //table 
-  const renderCell = React.useCallback((room, columnKey) => {
-    const cellValue = room[columnKey];
-  
-    switch (columnKey) {
-      case "externalRoomId":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-          </div>
-        );
-      case "name":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  })
-  
-      
-      return (
-      
+        try {
+            await axios.delete('http://localhost:5127/api/room', { data: payload });
+            setRoomData(roomData.filter(room => room.id !== roomId));
+        } catch (error) {
+            console.error('Failed to delete room:', error);
+        }
+    };
+
+    return (
         <div className='mainTable'>
-      <Button // back button redirects to property profile page
-        className='back-button'
-        color='primary'
-        onClick={() => navigate('/amenities')}
-      >
-        Back
-      </Button>
-      <img
-        src={require('../../assets/logo.png')}
-        alt='logo'
-        className='logo'
-        onClick={() => navigate('/')}
-      />
-       <h1>Room Reservation</h1>
-
-
-          <Table aria-label="Example table with custom cells">
-              <TableHeader columns={columns}>
-                {(column) => (
-                  <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
-                    {column.name}
-                  </TableColumn>
-                )}
-              </TableHeader>
-              <TableBody items={rooms}>
-                {(item) => (
-                  <TableRow key={item.externalRoomId}>
-                    {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                  </TableRow>
-                )}
-              </TableBody>
+            <Button onClick={() => navigate('/amenities')}>Back</Button>
+            <img src={require('../../assets/logo.png')} alt='logo' onClick={() => navigate('/')} />
+            <h1>Room Reservation</h1>
+            <Table>
+                <TableHeader>
+                    <TableColumn>Name</TableColumn>
+                    <TableColumn>External Room ID</TableColumn>
+                    <TableColumn>Actions</TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {roomData.map(room => (
+                        <TableRow key={room.id}>
+                            <TableCell>
+                                {editState[room.id] ? (
+                                    <Input
+                                        name="name"
+                                        value={editState[room.id].name}
+                                        onChange={(e) => handleChange(e, room.id)}
+                                    />
+                                ) : (
+                                    room.name
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {editState[room.id] ? (
+                                    <Input
+                                        name="externalRoomId"
+                                        value={editState[room.id].externalRoomId}
+                                        onChange={(e) => handleChange(e, room.id)}
+                                        type="number"
+                                    />
+                                ) : (
+                                    room.externalRoomId
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {editState[room.id] ? (
+                                    <div style={{ display: 'flex', gap: '8px' }}> {/* Added styling here */}
+                                        <Button auto size="small" onClick={() => handleSave(room.id)}><CheckIcon /></Button>
+                                        <Button auto size="small" onClick={handleCancel}>Cancel</Button>
+                                    </div>
+                                ) : (
+                                    <div style={{ display: 'flex', gap: '8px' }}> {/* Added styling here */}
+                                        <Tooltip content="Edit Room">
+                                            <Button auto size="small" onClick={() => handleEdit(room)}><EditIcon /></Button>
+                                        </Tooltip>
+                                        <Tooltip content="Delete Room">
+                                            <Button auto size="small" onClick={() => handleDelete(room.id)}><DeleteIcon /></Button>
+                                        </Tooltip>
+                                    </div>
+                                )}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    <TableRow>
+                        <TableCell>
+                            <Input
+                                name="name"
+                                value={newRoom.name}
+                                onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+                                placeholder="Room Name"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Input
+                                name="externalRoomId"
+                                value={newRoom.externalRoomId}
+                                onChange={(e) => setNewRoom({ ...newRoom, externalRoomId: e.target.value })}
+                                placeholder="External Room ID"
+                                type="number"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Button onClick={handleAddRoom}>Add Room</Button>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
             </Table>
-            
+        </div>
+    );
+};
 
-            <Button color="primary" style={{marginTop:'20px'}}> 
-                Add room
-            </Button>
-
-            </div>
-      );
-      
-}
-
-//GET API call 
+export default RoomBooking;
