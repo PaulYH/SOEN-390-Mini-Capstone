@@ -16,25 +16,29 @@ const ViewTicket = () => {
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [muteNotifications, setMuteNotifications] = useState(false);
+  const [ticketStatus, setTicketStatus] = useState('');
+
 
   useEffect(() => {
-    fetchUserInfo();
-  }, []);
+    const fetchUserInfo = async () => {
+        try {
+        const response = await axios.get('http://localhost:5127/api/users/authenticated', {
+            headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+        });
+        setUserId(response.data.value.id);  
+        console.log(userId);
+        console.log(userId);
 
-  //fetch user id
-  const fetchUserInfo = async () => {
-    try {
-      const response = await axios.get('http://localhost:5127/api/users/authenticated', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      setUserId(response.data.value.id);
-      console.log(userId);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+        } catch (error) {
+        console.error(error);
+        }
+    };
+    fetchUserInfo();
+  },)
+
 
   //fetching ticket
   useEffect(() => {
@@ -63,41 +67,61 @@ const ViewTicket = () => {
         console.error('Error fetching ticket:', error);
       }
     };
-
     fetchTicket();
   }, [ticketId]);
 
-  console.log("user id is", userId)
+  useEffect(() => { 
+    const fetchUserRole = async () => {
+        try {
+          const response = await fetch(`http://localhost:5127/api/role/${userId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            }
+          });
+
+          const roleText = await response.text();
+          console.log(roleText);
+          console.log("user role is", roleText);
+          setUserRole(roleText.trim());
+          console.log(roleText);
 
 
-    //fetching user role
-    useEffect(() => {
-        const fetchUserRole = async () => {
-          try {
-            const response = await fetch(`http://localhost:5127/api/role/${userId}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-              }
-            });
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+        }
+      };
+      fetchUserRole();
+    },)
 
-            const roleText = await response.text();
-            console.log(roleText);
-            console.log("user role is", roleText);
-            console.log(roleText);
-            console.log(roleText);
-            console.log(roleText);
-
-          } catch (error) {
-            console.error('Error fetching user role:', error);
-          }
-
-
-        };
-    
-        fetchUserRole();
-      }, []);
+    const handleMuteNotificationsChange = async (event) => {
+        const newMuteStatus = event.target.checked;
+        setMuteNotifications(newMuteStatus);
+        await axios.put('http://localhost:5127/api/tickets', {
+          ticketId,
+          isMuted: newMuteStatus,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        console.log("this is TICKET ID",ticketId)
+        console.log("the is Muted value: ", newMuteStatus)
+      };
+      
+      const handleStatusChange = async (event) => {
+        const newStatus = event.target.value;
+        setTicketStatus(newStatus);
+        // Make API call to update the ticket status in the database
+        await axios.post(`http://localhost:5127/api/tickets/${ticketId}/status`, {
+          status: newStatus,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+      };
 
   const categoryLabel = (category) => {
     switch (category) {
@@ -155,6 +179,35 @@ const ViewTicket = () => {
           />
         </div>
       </form>
+
+      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
+        <div>
+        <label>
+            <input
+            type='checkbox'
+            checked={muteNotifications}
+            onChange={handleMuteNotificationsChange}
+            />
+            Mute notifications
+        </label>
+        </div>
+        ) : null}
+
+        {userRole === 'Employee' ? (
+            <div>
+            <label>Status:</label>
+            <select
+                //value={ticketStatus}
+                //onChange={handleStatusChange}
+                >
+                <option value='Open'>Open</option>
+                <option value='In Progress'>In Progress</option>
+                <option value='Closed'>Closed</option>
+            </select>
+            </div>
+        ) : null}
+
+
     </div>
   );
 };
