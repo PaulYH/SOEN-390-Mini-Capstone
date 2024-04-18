@@ -19,6 +19,8 @@ const ViewTicket = () => {
   const [userRole, setUserRole] = useState('');
   const [ticketStatus, setTicketStatus] = useState('');
   const [muteNotifications, setMuteNotifications] = useState(false);
+  const [requests, setRequests] = useState([]);
+
 
 
   useEffect(() => {
@@ -99,9 +101,9 @@ const ViewTicket = () => {
     },)
 
     const handleMuteToggle = async () => {
-      const newMuteStatus = !muteNotifications;  // Correctly toggles the boolean state
-      console.log('Attempting to update isMuted to:', newMuteStatus);  // This will log true if currently false, and vice versa
-      const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; //formating
+      const newMuteStatus = !muteNotifications;  
+      console.log('Attempting to update isMuted to:', newMuteStatus);  
+      const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
 
 
       try {
@@ -143,10 +145,6 @@ const ViewTicket = () => {
         alert('Failed to update mute status: ' + error.message);
       }
     };
-    
-
-    
-    
     
       
       const handleStatusChange = async (event) => {

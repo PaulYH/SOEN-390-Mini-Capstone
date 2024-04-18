@@ -9,11 +9,76 @@ import './EmployeeRequestBoard.css'; // Import CSS file
 
 const EmployeeRequestBoard = () => {
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [userId, setUserId] = useState(''); 
+    const [requests, setRequests] = useState([]);
+
+
     const navigate = useNavigate();  
 
-    const handleEditClick = () => {
-        navigate('/EditTicket');  // Navigate to the edit page
+    useEffect(() => {
+        fetchUserInfo();
+      }, []);
+
+      useEffect(() => {
+        if (userId) { // Ensure userId is set before fetching tickets
+            fetchEmployeeRequests();
+        }
+    }, [userId]); // Depend on userId
+
+    const handleEditClick = (ticketId) => {
+        navigate(`/tickets/${ticketId}`); // Use the ticketId to navigate
     };
+    
+
+    const fetchUserInfo = async () => { //fetch employee name, id
+        try {
+          const response = await fetch('http://localhost:5127/api/users/authenticated', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          if (!response.ok) throw new Error('Failed to fetch user data');
+          const userData = await response.json();
+          setFirstName(userData.value.firstName);
+          setLastName(userData.value.lastName);
+          setUserId(userData.value.id);
+        } catch (error) {
+          console.error(error);
+        }
+
+      };
+
+      const fetchEmployeeRequests = async () => {
+        try {
+            const response = await fetch('http://localhost:5127/api/tickets', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch tickets');
+            const ticketsWrapper = await response.json();
+            console.log(ticketsWrapper);
+    
+            // Extract the actual array of tickets from the $values property
+            const tickets = ticketsWrapper.$values;
+            
+            if (Array.isArray(tickets)) {
+                console.log("the user is is", userId)
+                //const userTickets = tickets.filter(ticket => ticket.createdBy.userId === userId);
+                //setRequests(userTickets);
+                setRequests(tickets)
+            } else {
+                console.error("Expected an array of tickets, but received:", tickets);
+                // Optionally set an empty array or handle the error differently
+                setRequests([]);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    
 
 
 
@@ -31,7 +96,7 @@ const EmployeeRequestBoard = () => {
         </Button>
 
             <div className="header-container">
-                <h2>Employee's Request Board</h2>
+                <h2>{firstName} {lastName}'s Request Board</h2>
             </div>
             <div className='d-flex justify-content-center'>
                 <div className="table-container">
@@ -47,24 +112,28 @@ const EmployeeRequestBoard = () => {
                             <TableColumn>Edit</TableColumn>
                         </TableHeader>
                         <TableBody>
-                            <TableRow >
-                                <TableCell>123</TableCell>
-                                <TableCell>Lost item</TableCell>
-                                <TableCell>04/10/2024</TableCell>
-                                <TableCell>04/11/2024</TableCell>
-                                <TableCell>email.com</TableCell>
-                                <TableCell>
-                                    <Chip color="success">Success</Chip>
-                                </TableCell>
-                                <TableCell>Other</TableCell>
-                                <TableCell>
-                                    <Tooltip content="Edit Status">
-                                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={handleEditClick}>
-                                    <EditIcon />
-                                    </span>
-                                    </Tooltip>
-                                </TableCell>
-                            </TableRow>
+                        {requests.map((request) => (
+                                    <TableRow key={request.id}>
+                                        <TableCell>{request.id}</TableCell>
+                                        <TableCell>{request.title}</TableCell>
+                                        <TableCell>{request.createdOn}</TableCell>
+                                        <TableCell>{request.resolvedOn}</TableCell>
+                                        <TableCell>{request.createdBy}</TableCell>
+                                        <TableCell>
+                                            <Chip color={request.status === "Success" ? "success" : "default"}>
+                                                {request.status}
+                                            </Chip>
+                                        </TableCell>
+                                        <TableCell>{request.category}</TableCell>
+                                        <TableCell>
+                                            <Tooltip content="Edit Status">
+                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditClick(request.id)}>
+                                                    <EditIcon />
+                                                </span>
+                                            </Tooltip>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
                 </div>
