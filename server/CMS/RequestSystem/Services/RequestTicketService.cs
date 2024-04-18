@@ -50,6 +50,7 @@ namespace CMS.Api.RequestSystem.Services
             ticket.Title = request.Title;
             ticket.Description = request.Description;
             ticket.Category = request.Category;
+            ticket.IsMuted = request.IsMuted;
             ticket.Status = request.Status;
             if (ticket.Status == StatusType.Resolved) { ticket.ResolutionDate = DateTime.Now; }
 
