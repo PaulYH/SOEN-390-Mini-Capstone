@@ -12,12 +12,13 @@ const ViewTicket = () => {
     description: '',
     category: '',
     creationDate: '',
-    createdBy: ''
+    createdBy: '',
+    isMuted: false  // Initialize isMuted state here
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [muteNotifications, setMuteNotifications] = useState(false);
   const [ticketStatus, setTicketStatus] = useState('');
+  const [muteNotifications, setMuteNotifications] = useState(false);
 
 
   useEffect(() => {
@@ -61,7 +62,9 @@ const ViewTicket = () => {
           description: ticketData.description,
           category: ticketData.category,
           creationDate: formattedDate,
-          createdBy: ticketData.createdBy.email
+          createdBy: ticketData.createdBy.email,
+          isMuted: ticketData.isMuted  // Update state with fetched isMuted value
+
         });
       } catch (error) {
         console.error('Error fetching ticket:', error);
@@ -95,20 +98,56 @@ const ViewTicket = () => {
       fetchUserRole();
     },)
 
-    const handleMuteNotificationsChange = async (event) => {
-        const newMuteStatus = event.target.checked;
-        setMuteNotifications(newMuteStatus);
-        await axios.put('http://localhost:5127/api/tickets', {
-          ticketId,
-          isMuted: newMuteStatus,
-        }, {
+    const handleMuteToggle = async () => {
+      const newMuteStatus = !muteNotifications;  // Correctly toggles the boolean state
+      console.log('Attempting to update isMuted to:', newMuteStatus);  // This will log true if currently false, and vice versa
+      const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; //formating
+
+
+      try {
+        const muteResponse = await fetch('http://localhost:5127/api/tickets/', {
+          method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
+          
+          body: JSON.stringify({
+            id: ticketId,
+            title: ticket.title,
+            description: ticket.description,
+            category: ticket.category,
+            creationDate: formattedDate,
+            createdBy: ticket.createdBy.email,
+            isMuted: newMuteStatus
+          }),
         });
-        console.log("this is TICKET ID",ticketId)
-        console.log("the is Muted value: ", newMuteStatus)
-      };
+    
+        if (!muteResponse.ok) {
+          throw new Error(`Failed to update mute status, status code: ${muteResponse.status}`);
+        }
+    
+        const responseBody = await muteResponse.json();
+        console.log('Response body:', responseBody);
+  
+    
+        console.log("My ticket ID is:", ticketId);
+        console.log('Mute status updated successfully, response status:', responseBody);
+        console.log('Mute status newMuteStatus toggle thing:', newMuteStatus);
+    
+        // Update the muteNotifications state based on the actual response
+        setMuteNotifications(responseBody.isMuted);  // Use the response from the server to update the state
+        
+      } catch (error) {
+        console.error('Error in updating mute status:', error);
+        alert('Failed to update mute status: ' + error.message);
+      }
+    };
+    
+
+    
+    
+    
       
       const handleStatusChange = async (event) => {
         const newStatus = event.target.value;
@@ -186,7 +225,7 @@ const ViewTicket = () => {
             <input
             type='checkbox'
             checked={muteNotifications}
-            onChange={handleMuteNotificationsChange}
+            onChange={handleMuteToggle}
             />
             Mute notifications
         </label>
