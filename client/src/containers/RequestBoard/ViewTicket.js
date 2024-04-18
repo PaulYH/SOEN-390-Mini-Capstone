@@ -13,12 +13,13 @@ const ViewTicket = () => {
     category: '',
     creationDate: '',
     createdBy: '',
-    isMuted: false  // Initialize isMuted state here
+    isMuted: false,  // Initialize isMuted state here
+    myStatus: 0
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [ticketStatus, setTicketStatus] = useState('');
   const [muteNotifications, setMuteNotifications] = useState(false);
+  const [ticketStatus, setStatus] = useState(0);
   const [requests, setRequests] = useState([]);
 
 
@@ -146,19 +147,43 @@ const ViewTicket = () => {
       }
     };
     
-      
-      const handleStatusChange = async (event) => {
-        const newStatus = event.target.value;
-        setTicketStatus(newStatus);
-        // Make API call to update the ticket status in the database
-        await axios.post(`http://localhost:5127/api/tickets/${ticketId}/status`, {
-          status: newStatus,
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
-      };
+    const handleStatusChange = async (newStatus) => {
+      const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
+  
+      try {
+          const statusResponse = await fetch('http://localhost:5127/api/tickets/', {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              },
+              body: JSON.stringify({
+                  id: ticketId,
+                  title: ticket.title,
+                  description: ticket.description,
+                  category: ticket.category,
+                  creationDate: formattedDate,
+                  createdBy: ticket.createdBy.email,
+                  status: parseInt(newStatus) // Ensure the status is sent as a number if your API expects a number
+              }),
+          });
+  
+          if (!statusResponse.ok) {
+              throw new Error(`Failed to update status, status code: ${statusResponse.status}`);
+          }
+  
+          const responseBody = await statusResponse.json();
+          console.log('Response body:', responseBody);
+          console.log("Status updated successfully, response status:", responseBody);
+  
+          // Update the local state to reflect the new status
+          setStatus(parseInt(newStatus)); // Keep your local state in sync with the server
+      } catch (error) {
+          console.error('Error in updating status:', error);
+          alert('Failed to update status: ' + error.message);
+      }
+  };
+  
 
   const categoryLabel = (category) => {
     switch (category) {
@@ -168,6 +193,12 @@ const ViewTicket = () => {
       default: return '';
     }
   };
+
+  const updateTicketStatus = (newStatus) => {
+    setTicket(prev => ({ ...prev, myStatus: newStatus }));
+    handleStatusChange(newStatus);
+};
+
 
   return (
     <div className='pageContainer'>
@@ -234,17 +265,15 @@ const ViewTicket = () => {
             <div>
             <label>Status:</label>
             <select
-                //value={ticketStatus}
-                //onChange={handleStatusChange}
-                >
-                <option value='Open'>Open</option>
-                <option value='In Progress'>In Progress</option>
-                <option value='Closed'>Closed</option>
+                value={ticket.myStatus}
+                onChange={(e) => updateTicketStatus(e.target.value)}
+            >
+                <option value={0}>Open</option>
+                <option value={1}>In Progress</option>
+                <option value={2}>Closed</option>
             </select>
             </div>
         ) : null}
-
-
     </div>
   );
 };
