@@ -17,7 +17,7 @@ const UserRequestBoard = () => {
 
       useEffect(() => {
         if (userId) { 
-           // fetchUserTickets();
+            fetchUserTickets();
         }
     }, [userId]); 
 
@@ -39,6 +39,35 @@ const UserRequestBoard = () => {
         }
 
       };
+
+      const fetchUserTickets = async () => { //currently fetching empty array because of error in the endpoint
+        try {
+            console.log('Current User ID:', userId);  
+            const response = await fetch(`http://localhost:5127/api/tickets`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch tickets');
+            const ticketsData = await response.json();
+    
+            console.log('Tickets Data:', ticketsData.$values); 
+    
+            const filteredTickets = ticketsData.$values.filter(ticket => {
+              const createdByExists = ticket && ticket.createdBy;
+              if (createdByExists) {
+                  console.log(`Comparing IDs - Ticket ID: ${ticket.createdBy.id}, User ID: ${userId}`);
+              }
+              return createdByExists && ticket.createdBy.id === userId;
+          });
+          
+            setRequests(filteredTickets);
+            console.log('Filtered Tickets:', filteredTickets); 
+        } catch (error) {
+            console.error(error);
+            setRequests([]); 
+        }
+    };
     
 
     const formatDate = (dateString) => {
