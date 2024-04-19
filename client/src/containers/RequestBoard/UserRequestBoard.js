@@ -15,11 +15,12 @@ const UserRequestBoard = () => {
         fetchUserInfo();
       }, []);
 
-    useEffect(() => {
-        if (userId) {
-          fetchUserRequests(userId);
+      useEffect(() => {
+        if (userId) { 
+           // fetchUserTickets();
         }
-    }, [userId]);
+    }, [userId]); 
+
   
     const fetchUserInfo = async () => {
         try {
@@ -38,57 +39,36 @@ const UserRequestBoard = () => {
         }
 
       };
+    
 
-      const fetchUserRequests = async (userId) => {
-        try {
-          const response = await fetch(`http://localhost:5127/api/tickets/${userId}`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          });
-          if (!response.ok) throw new Error('Failed to fetch user requests');
-          
-        const contentType = response.headers.get('Content-Type');
-        if (!contentType || !contentType.includes('application/json')) {
-             console.log('No JSON content');
-             setRequests([]); 
-             return;
-        }
+    const formatDate = (dateString) => {
+      if (!dateString) {
+        return ''; 
+      }
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-CA'); 
+    };
 
-        const data = await response.json();
-        if (!data || !data.value || !data.value.$values) {
-          setRequests([]);
-          return;
-        }
-          
-          const requestsFromServer = data.value.$values;
-  
-          const usersById = {};
-          const resolvedRequests = requestsFromServer.map(request => {
-            if (request.user && !request.user.$ref) {
-              usersById[request.user.$id] = request.user;
-            }
-            return {
-              ...request,
-              user: request.user?.$ref ? usersById[request.user.$ref] : request.user
-            };
-          });
-  
-          setRequests(resolvedRequests.map(request => ({
-            id: request.externalTicketId,
-            title: request.title,
-            createdOn: request.creationDate,
-            resolvedOn: request.resolutionDate,
-            createdBy: request.createdBy.email,
-            status: request.status,
-            category:request.category
-          })));
+    const statusLabels = {
+      0: 'Pending',
+      1: 'InProgress',
+      2: 'Resolved',
+      3: 'Closed'
+  };
 
-  
-        } catch (error) {
-          console.error(error);
-        }
-      };
+  const statusColors = {
+      0: 'warning', 
+      1: 'primary', 
+      2: 'success', 
+      3: 'secondary' 
+  };
+
+  const categoryLabels = {
+    0: 'Repair',
+    1: 'Question',
+    2: 'Other'
+};
+    
   
     const handleEditClick = () => {
         navigate('/CreateTicket');  
@@ -117,22 +97,20 @@ const UserRequestBoard = () => {
                             <TableColumn>Title</TableColumn>
                             <TableColumn>Created On</TableColumn>
                             <TableColumn>Resolved On</TableColumn>
-                            <TableColumn>Created By</TableColumn>
                             <TableColumn>Status</TableColumn>
                             <TableColumn>Category</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {requests.map((ticket, index) => (
                             <TableRow key={index}>
-                                <TableCell>{ticket.index}</TableCell>
+                                <TableCell>{index}</TableCell>
                                 <TableCell>{ticket.title}</TableCell>
-                                <TableCell>{ticket.createdOn}</TableCell>
-                                <TableCell>{ticket.resolvedOn}</TableCell>
-                                <TableCell>{ticket.createdBy}</TableCell>
+                                <TableCell>{formatDate(ticket.creationDate)}</TableCell>
+                                <TableCell>{formatDate(ticket.resolutionDate)}</TableCell>
                                 <TableCell>
-                                    <Chip color="success">{ticket.status}</Chip>
+                                <Chip color={statusColors[ticket.status]}>{statusLabels[ticket.status]}</Chip>
                                 </TableCell>
-                                <TableCell>{ticket.category}</TableCell>
+                                <TableCell>{categoryLabels[ticket.category]}</TableCell>
                             </TableRow>
                             ))}
                         </TableBody>
