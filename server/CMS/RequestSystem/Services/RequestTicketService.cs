@@ -16,7 +16,7 @@ namespace CMS.Api.RequestSystem.Services
 
         public async Task<ActionResult<IEnumerable<RequestTicket>>> GetAll()
         {
-            return await _context.RequestTickets.ToListAsync();
+            return await _context.RequestTickets.Include(r => r.CreatedBy).ToListAsync();
         }
 
         public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket request)
