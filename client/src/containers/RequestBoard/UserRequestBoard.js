@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Chip,Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from '@nextui-org/react';
+import { Chip,Table, TableHeader, Tooltip, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from '@nextui-org/react';
+import {EyeIcon} from "./EyeIcon";
+
 import { useNavigate } from 'react-router-dom';
 import './UserRequestBoard.css'; 
 
@@ -94,6 +96,10 @@ const UserRequestBoard = () => {
         navigate('/CreateTicket');  
     };
 
+    const handleViewClick = (ticketId) => {
+      navigate(`/tickets/${ticketId}`); // Use the ticketId to navigate
+  };
+
     return (
         <>
         <div className='page_container'>
@@ -119,6 +125,7 @@ const UserRequestBoard = () => {
                             <TableColumn>Resolved On</TableColumn>
                             <TableColumn>Status</TableColumn>
                             <TableColumn>Category</TableColumn>
+                            <TableColumn>View Ticket</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {requests.map((ticket, index) => (
@@ -131,6 +138,14 @@ const UserRequestBoard = () => {
                                 <Chip color={statusColors[ticket.status]}>{statusLabels[ticket.status]}</Chip>
                                 </TableCell>
                                 <TableCell>{categoryLabels[ticket.category]}</TableCell>
+                                <TableCell>
+                                    <Tooltip content="View Ticket">
+                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleViewClick(ticket.id)}>
+                                        <EyeIcon />
+
+                                        </span>
+                                    </Tooltip>
+                                </TableCell>
                             </TableRow>
                             ))}
                         </TableBody>

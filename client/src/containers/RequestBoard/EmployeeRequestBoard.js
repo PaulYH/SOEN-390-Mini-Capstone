@@ -122,7 +122,6 @@ const EmployeeRequestBoard = () => {
                             <TableColumn>Title</TableColumn>
                             <TableColumn>Created On</TableColumn>
                             <TableColumn>Resolved On</TableColumn>
-                            <TableColumn>Created By</TableColumn>
                             <TableColumn>Status</TableColumn>
                             <TableColumn>Category</TableColumn>
                             <TableColumn>Edit</TableColumn>
@@ -134,7 +133,6 @@ const EmployeeRequestBoard = () => {
                                 <TableCell>{request.title}</TableCell>
                                 <TableCell>{formatDate(request.creationDate)}</TableCell>
                                 <TableCell>{formatDate(request.resolutionDate)}</TableCell>
-                                <TableCell>{request.createdBy.firstName} {request.createdBy.lastName}</TableCell>
                                 <TableCell>
                                 <Chip color={statusColors[request.status]}>{statusLabels[request.status]}</Chip>
                                 </TableCell>
