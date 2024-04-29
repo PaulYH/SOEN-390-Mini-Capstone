@@ -125,7 +125,7 @@ const UserRequestBoard = () => {
                             <TableColumn>Resolved On</TableColumn>
                             <TableColumn>Status</TableColumn>
                             <TableColumn>Category</TableColumn>
-                            <TableColumn>View Ticket</TableColumn>
+                            <TableColumn>View</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {requests.map((ticket, index) => (
@@ -141,8 +141,7 @@ const UserRequestBoard = () => {
                                 <TableCell>
                                     <Tooltip content="View Ticket">
                                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleViewClick(ticket.id)}>
-                                        <EyeIcon />
-
+                                          <EyeIcon/>
                                         </span>
                                     </Tooltip>
                                 </TableCell>

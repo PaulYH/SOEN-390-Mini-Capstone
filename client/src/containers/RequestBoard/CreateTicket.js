@@ -6,7 +6,7 @@ import './CreateTicket.css';
 
 const CreateTicket = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('0');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [creationDate] = useState(new Date().toISOString().substring(0, 10));
@@ -77,8 +77,8 @@ const CreateTicket = () => {
           Back
         </Button>
 
-        <form onSubmit={handleSubmit}>
-          <div className='form'>
+        <div className='form-container'>
+          <form onSubmit={handleSubmit} className='form'>
             <h2>Create Ticket</h2>
             <input type='text' name='requestName' placeholder='Title' value={title} onChange={(e) => setTitle(e.target.value)} />
             <label>Category:</label>
@@ -90,14 +90,16 @@ const CreateTicket = () => {
             <input type='text' name='description' placeholder='Description' value={description} onChange={(e) => setDescription(e.target.value)} />
             <input type='date' name='creationDate' placeholder='Created on' value={creationDate} readOnly />
             <input type='text' name='user' placeholder='Created by' value={userEmail} readOnly />
-          </div>
-          <Button className='button_css' color="primary" type="submit">
+          </form>
+          
+          <Button className='button_css' color="primary" type="submit" onClick={handleSubmit}>
             Submit New Ticket
           </Button>
-        </form>
+        </div>
       </div>
     </>
   );
+
 };
 
 export default CreateTicket;
