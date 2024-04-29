@@ -141,8 +141,7 @@ const MainDashboardOwner = () => {
               <div className="card-body text-center">
                 <img src={profileImageUrl ||require('../../assets/profile_default.png')} alt="avatar" className="rounded-circle img-fluid mt-3" style={{width: '70px', marginBottom:'5px'}}/>
                 <h4 style={{color:'black'}}>{`${userData.firstName} ${userData.lastName}`}</h4>
-                <p className="text-muted mb-1"><strong>Condo Owner: </strong>#1234</p>  
-                <p className="text-muted mb-4">{userData.property.companyName}</p>
+                <p className="text-muted mb-1"><strong>{userRole}</strong></p>  
                 <div className="d-flex justify-content-center mb-2">
                   <a href="profile" className="btn btn btn-outline-primary">Edit Profile</a>
                 </div>
