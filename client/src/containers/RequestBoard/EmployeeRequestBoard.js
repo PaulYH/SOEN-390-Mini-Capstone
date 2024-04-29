@@ -66,6 +66,35 @@ const EmployeeRequestBoard = () => {
           setRequests([]);
         }
       };
+
+
+      const formatDate = (dateString) => {
+        if (!dateString) {
+          return 'N/A'; 
+        }
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-CA'); 
+      };
+  
+      const statusLabels = {
+        0: 'Pending',
+        1: 'InProgress',
+        2: 'Resolved',
+        3: 'Closed'
+    };
+  
+    const statusColors = {
+        0: 'warning', 
+        1: 'primary', 
+        2: 'success', 
+        3: 'secondary' 
+    };
+  
+    const categoryLabels = {
+      0: 'Repair',
+      1: 'Question',
+      2: 'Other'
+  };
       
 
 
@@ -101,17 +130,15 @@ const EmployeeRequestBoard = () => {
                         <TableBody>
                         {requests.map((request) => (
                             <TableRow key={request.id}>
-                                <TableCell>{request.id}</TableCell>
+                                <TableCell>{request.externalTicketId}</TableCell>
                                 <TableCell>{request.title}</TableCell>
-                                <TableCell>{request.createdOn}</TableCell>
-                                <TableCell>{request.resolvedOn}</TableCell>
+                                <TableCell>{formatDate(request.creationDate)}</TableCell>
+                                <TableCell>{formatDate(request.resolutionDate)}</TableCell>
                                 <TableCell>{request.createdBy.firstName} {request.createdBy.lastName}</TableCell>
                                 <TableCell>
-                                    <Chip color={request.status === "Success" ? "success" : "default"}>
-                                        {request.status}
-                                    </Chip>
+                                <Chip color={statusColors[request.status]}>{statusLabels[request.status]}</Chip>
                                 </TableCell>
-                                <TableCell>{request.category}</TableCell>
+                                <TableCell>{categoryLabels[request.category]}</TableCell>
                                 <TableCell>
                                     <Tooltip content="Edit Status">
                                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditClick(request.id)}>

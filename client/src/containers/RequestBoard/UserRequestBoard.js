@@ -63,7 +63,7 @@ const UserRequestBoard = () => {
 
     const formatDate = (dateString) => {
       if (!dateString) {
-        return ''; 
+        return 'N/A'; 
       }
       const date = new Date(dateString);
       return date.toLocaleDateString('en-CA'); 
@@ -123,7 +123,7 @@ const UserRequestBoard = () => {
                         <TableBody>
                             {requests.map((ticket, index) => (
                             <TableRow key={index}>
-                                <TableCell>{index}</TableCell>
+                                <TableCell>{ticket.externalTicketId}</TableCell>
                                 <TableCell>{ticket.title}</TableCell>
                                 <TableCell>{formatDate(ticket.creationDate)}</TableCell>
                                 <TableCell>{formatDate(ticket.resolutionDate)}</TableCell>
