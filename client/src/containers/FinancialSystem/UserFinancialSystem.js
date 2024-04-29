@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Modal, Button,Input } from '@nextui-org/react';
 import './UserFinancialSystem.css'; // Import CSS file
-
+import { useNavigate } from 'react-router-dom'
 const UserFinancialSystem = () => {
     const [payments, setPayments] = useState([]);
     const [balance, setBalance] = useState(0);
@@ -10,7 +10,7 @@ const UserFinancialSystem = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [userId, setUserId] = useState(''); // Assume this will be set after fetching user info
-    
+    const navigate = useNavigate()
     useEffect(() => {
       fetchUserInfo();
     }, []);
@@ -154,6 +154,13 @@ const UserFinancialSystem = () => {
 
     return (
       <>
+          <div><Button
+        style={{ alignSelf: 'start' }}
+        className='back-button'
+        onClick={() => navigate('/home')}
+      >
+        Back
+      </Button></div>
           <div className="header-container">
               <h2>{firstName} {lastName}'s Financial Transactions</h2>
           </div>
