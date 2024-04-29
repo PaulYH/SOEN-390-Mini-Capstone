@@ -8,7 +8,6 @@ import Profile from './containers/Profile/Profile.js'
 import OwnerFinance from './containers/OwnerDashboard/OwnerFinance.js'
 import RenterFinance from './containers/OwnerDashboard/RenterFinance.js'
 import Amenities from './containers/OwnerDashboard/Amenities.js'
-import SubmittedRequests from './containers/OwnerDashboard/SubmittedRequests.js'
 import MainDashboard from './containers/OwnerDashboard/MainDashboardOwner.js'
 import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.js'
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js'
@@ -37,7 +36,6 @@ function App() {
           <Route path='/ownerFinance' element={<OwnerFinance />} />
           <Route path='/renterFinance' element={<RenterFinance />} />
           <Route path='/amenities' element={<Amenities />} />
-          <Route path='/submittedRequests' element={<SubmittedRequests />} />
           <Route path='/propertiesprofile' element={<PropertiesProfile />} />
           <Route path='/parkinglocker' element={<ParkingLocker />} />
           <Route path='/keyassignment' element={<KeyAssignment />} />
