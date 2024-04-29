@@ -49,6 +49,7 @@ const PropertiesProfile = () => {
           address: propertyData.address || '',
           city: propertyData.city || '',
         });
+        setPropertyId(propertyData.id);
         setMode('view');
       }
     }
