@@ -57,7 +57,7 @@ const [profileImageUrl, setProfileImageUrl] = useState('')
         },
       });
       setUserRole(response.data.trim());
-      setUserRole("Employee");
+     
     } catch (error) {
       console.error('Error fetching user role:', error);
     }
