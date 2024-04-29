@@ -48,5 +48,19 @@ namespace CMS.Api.Controllers
         {
             return await _requestTicketService.GetRequestTicketWithPosts(id);
         }
+
+
+        [HttpGet("createdby/{id}")]
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreatedBy(string id)
+        {
+            return await _requestTicketService.GetRequestTicketsByCreatedBy(id);
+        }
+
+        [HttpGet("assignedto/{id}")]
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByAssignedTo(string id)
+        {
+            return await _requestTicketService.GetRequestTicketsByAssignedTo(id);
+        }
+
     }
 }
