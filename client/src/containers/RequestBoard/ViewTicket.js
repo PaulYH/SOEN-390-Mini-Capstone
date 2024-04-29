@@ -248,7 +248,7 @@ const ViewTicket = () => {
         </div>
       </form>
 
-      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
+      {userRole === 'Owner' || userRole === 'Renter' ? (
         <div>
         <label>
             <input

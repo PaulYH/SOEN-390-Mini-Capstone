@@ -23,7 +23,7 @@ const EmployeeRequestBoard = () => {
 
       useEffect(() => {
         if (userId) { // Ensure userId is set before fetching tickets
-            fetchEmployeeRequests();
+           fetchEmployeeRequests();
         }
     }, [userId]); // Depend on userId
 
@@ -52,34 +52,50 @@ const EmployeeRequestBoard = () => {
 
       const fetchEmployeeRequests = async () => {
         try {
-            const response = await fetch('http://localhost:5127/api/tickets', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                },
-            });
-            if (!response.ok) throw new Error('Failed to fetch tickets');
-            const ticketsWrapper = await response.json();
-            console.log(ticketsWrapper);
-    
-            // Extract the actual array of tickets from the $values property
-            const tickets = ticketsWrapper.$values;
-            
-            if (Array.isArray(tickets)) {
-                console.log("the user is is", userId)
-                //const userTickets = tickets.filter(ticket => ticket.createdBy.userId === userId);
-                //setRequests(userTickets);
-                setRequests(tickets)
-            } else {
-                console.error("Expected an array of tickets, but received:", tickets);
-                // Optionally set an empty array or handle the error differently
-                setRequests([]);
-            }
+          const response = await fetch(`http://localhost:5127/api/tickets/assignedto/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          if (!response.ok) throw new Error('Failed to fetch tickets');
+          const requests = await response.json();
+          if (!requests.$values) throw new Error('Invalid tickets data format');
+          setRequests(requests.$values);
         } catch (error) {
-            console.error(error);
+          console.error(error);
+          setRequests([]);
         }
-    };
-    
+      };
 
+
+      const formatDate = (dateString) => {
+        if (!dateString) {
+          return 'N/A'; 
+        }
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-CA'); 
+      };
+  
+      const statusLabels = {
+        0: 'Pending',
+        1: 'InProgress',
+        2: 'Resolved',
+        3: 'Closed'
+    };
+  
+    const statusColors = {
+        0: 'warning', 
+        1: 'primary', 
+        2: 'success', 
+        3: 'secondary' 
+    };
+  
+    const categoryLabels = {
+      0: 'Repair',
+      1: 'Question',
+      2: 'Other'
+  };
+      
 
 
     return (
@@ -113,28 +129,27 @@ const EmployeeRequestBoard = () => {
                         </TableHeader>
                         <TableBody>
                         {requests.map((request) => (
-                                    <TableRow key={request.id}>
-                                        <TableCell>{request.id}</TableCell>
-                                        <TableCell>{request.title}</TableCell>
-                                        <TableCell>{request.createdOn}</TableCell>
-                                        <TableCell>{request.resolvedOn}</TableCell>
-                                        <TableCell>{request.createdBy}</TableCell>
-                                        <TableCell>
-                                            <Chip color={request.status === "Success" ? "success" : "default"}>
-                                                {request.status}
-                                            </Chip>
-                                        </TableCell>
-                                        <TableCell>{request.category}</TableCell>
-                                        <TableCell>
-                                            <Tooltip content="Edit Status">
-                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditClick(request.id)}>
-                                                    <EditIcon />
-                                                </span>
-                                            </Tooltip>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
+                            <TableRow key={request.id}>
+                                <TableCell>{request.externalTicketId}</TableCell>
+                                <TableCell>{request.title}</TableCell>
+                                <TableCell>{formatDate(request.creationDate)}</TableCell>
+                                <TableCell>{formatDate(request.resolutionDate)}</TableCell>
+                                <TableCell>{request.createdBy.firstName} {request.createdBy.lastName}</TableCell>
+                                <TableCell>
+                                <Chip color={statusColors[request.status]}>{statusLabels[request.status]}</Chip>
+                                </TableCell>
+                                <TableCell>{categoryLabels[request.category]}</TableCell>
+                                <TableCell>
+                                    <Tooltip content="Edit Status">
+                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditClick(request.id)}>
+                                            <EditIcon />
+                                        </span>
+                                    </Tooltip>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+
                     </Table>
                 </div>
             </div>

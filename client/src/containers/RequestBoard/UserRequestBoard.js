@@ -40,39 +40,30 @@ const UserRequestBoard = () => {
 
       };
 
-      const fetchUserTickets = async () => { //currently fetching empty array because of error in the endpoint
+
+      const fetchUserTickets = async () => {
         try {
-            console.log('Current User ID:', userId);  
-            const response = await fetch(`http://localhost:5127/api/tickets`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                },
-            });
-            if (!response.ok) throw new Error('Failed to fetch tickets');
-            const ticketsData = await response.json();
-    
-            console.log('Tickets Data:', ticketsData.$values); 
-    
-            const filteredTickets = ticketsData.$values.filter(ticket => {
-              const createdByExists = ticket && ticket.createdBy;
-              if (createdByExists) {
-                  console.log(`Comparing IDs - Ticket ID: ${ticket.createdBy.id}, User ID: ${userId}`);
-              }
-              return createdByExists && ticket.createdBy.id === userId;
+          const response = await fetch(`http://localhost:5127/api/tickets/createdby/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
           });
-          
-            setRequests(filteredTickets);
-            console.log('Filtered Tickets:', filteredTickets); 
+          if (!response.ok) throw new Error('Failed to fetch tickets');
+          const ticketsData = await response.json();
+          if (!ticketsData.$values) throw new Error('Invalid tickets data format');
+          setRequests(ticketsData.$values);
         } catch (error) {
-            console.error(error);
-            setRequests([]); 
+          console.error(error);
+          setRequests([]);
         }
-    };
+      };
+      
+    
     
 
     const formatDate = (dateString) => {
       if (!dateString) {
-        return ''; 
+        return 'N/A'; 
       }
       const date = new Date(dateString);
       return date.toLocaleDateString('en-CA'); 
@@ -132,7 +123,7 @@ const UserRequestBoard = () => {
                         <TableBody>
                             {requests.map((ticket, index) => (
                             <TableRow key={index}>
-                                <TableCell>{index}</TableCell>
+                                <TableCell>{ticket.externalTicketId}</TableCell>
                                 <TableCell>{ticket.title}</TableCell>
                                 <TableCell>{formatDate(ticket.creationDate)}</TableCell>
                                 <TableCell>{formatDate(ticket.resolutionDate)}</TableCell>
