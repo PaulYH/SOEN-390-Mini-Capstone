@@ -105,8 +105,7 @@ const ViewTicket = () => {
       const newMuteStatus = !muteNotifications;  
       console.log('Attempting to update isMuted to:', newMuteStatus);  
       const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
-
-
+    
       try {
         const muteResponse = await fetch('http://localhost:5127/api/tickets/', {
           method: 'PUT',
@@ -132,20 +131,20 @@ const ViewTicket = () => {
     
         const responseBody = await muteResponse.json();
         console.log('Response body:', responseBody);
-  
     
         console.log("My ticket ID is:", ticketId);
-        console.log('Mute status updated successfully, response status:', responseBody);
+        console.log(responseBody);
         console.log('Mute status newMuteStatus toggle thing:', newMuteStatus);
     
-        // Update the muteNotifications state based on the actual response
-        setMuteNotifications(responseBody.isMuted);  // Use the response from the server to update the state
-        
+        // Update the muteNotifications state directly
+        setMuteNotifications(newMuteStatus);
+    
       } catch (error) {
         console.error('Error in updating mute status:', error);
         alert('Failed to update mute status: ' + error.message);
       }
     };
+    
     
     const handleStatusChange = async (newStatus) => {
       const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
@@ -200,82 +199,84 @@ const ViewTicket = () => {
 };
 
 
-  return (
-    <div className='pageContainer'>
+return (
+  <div className='pageContainer'>
 
-      <form>
-        <div className='form'>
+    <form>
+      <div className='form'>
         <h2>View Ticket</h2>
-          <label>Title:</label>
-          <input
-            type='text'
-            name='title'
-            value={ticket.title}
-            readOnly
-          />
+        <label>Title:</label>
+        <input
+          type='text'
+          name='title'
+          value={ticket.title}
+          readOnly
+        />
 
-          <label>Category:</label>
-          <input
-            type='text'
-            name='category'
-            value={categoryLabel(ticket.category)}
-            readOnly
-          />
+        <label>Category:</label>
+        <input
+          type='text'
+          name='category'
+          value={categoryLabel(ticket.category)}
+          readOnly
+        />
 
-          <label>Description:</label>
-          <input
-            type='text'
-            name='description'
-            value={ticket.description}
-            readOnly
-          />
+        <label>Description:</label>
+        <input
+          type='text'
+          name='description'
+          value={ticket.description}
+          readOnly
+        />
 
-          <label>Created On:</label>
-          <input
-            type='date'
-            name='creationDate'
-            value={ticket.creationDate}
-            readOnly
-          />
+        <label>Created On:</label>
+        <input
+          type='date'
+          name='creationDate'
+          value={ticket.creationDate}
+          readOnly
+        />
 
-          <label>Created By:</label>
-          <input
-            type='text'
-            name='createdBy'
-            value={ticket.createdBy}
-            readOnly
-          />
-        </div>
-      </form>
+        <label>Created By:</label>
+        <input
+          type='text'
+          name='createdBy'
+          value={ticket.createdBy}
+          readOnly
+        />
+      </div>
+    </form>
 
-      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public'? (
+    <div className='centeredContent'>
+      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
         <div>
-        <label>
+          <label>
             <input
-            type='checkbox'
-            checked={muteNotifications}
-            onChange={handleMuteToggle}
+              type='checkbox'
+              checked={muteNotifications}
+              onChange={handleMuteToggle}
             />
             Mute notifications
-        </label>
+          </label>
         </div>
-        ) : null}
+      ) : null}
 
-        {userRole === 'Employee' ? (
-            <div>
-            <label>Status:</label>
-            <select
-                value={ticket.myStatus}
-                onChange={(e) => updateTicketStatus(e.target.value)}
-            >
-                <option value={0}>Open</option>
-                <option value={1}>In Progress</option>
-                <option value={2}>Closed</option>
-            </select>
-            </div>
-        ) : null}
+      {userRole === 'Employee' ? (
+        <div>
+          <label>Status:</label>
+          <select
+            value={ticket.myStatus}
+            onChange={(e) => updateTicketStatus(e.target.value)}
+          >
+            <option value={0}>Open</option>
+            <option value={1}>In Progress</option>
+            <option value={2}>Closed</option>
+          </select>
+        </div>
+      ) : null}
     </div>
-  );
+  </div>
+);
 };
 
 export default ViewTicket;
