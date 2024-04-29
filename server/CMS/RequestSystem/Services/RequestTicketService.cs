@@ -4,6 +4,7 @@ using CMS.Api.RequestSystem.Enums;
 using CMS.Api.RequestSystem.Entities;
 using CMS.Api.UserSystem.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace CMS.Api.RequestSystem.Services
@@ -11,8 +12,12 @@ namespace CMS.Api.RequestSystem.Services
     public class RequestTicketService : IRequestTicketService
     {
         private readonly CMSDbContext _context;
-        public RequestTicketService(CMSDbContext context)
-        { _context = context; }
+        private readonly UserManager<ApplicationUser> _userManager;
+        public RequestTicketService(CMSDbContext context, UserManager<ApplicationUser> userManager)
+        { 
+            _context = context;
+            _userManager = userManager;
+        }
 
         public async Task<ActionResult<IEnumerable<RequestTicket>>> GetAll()
         {
@@ -35,7 +40,10 @@ namespace CMS.Api.RequestSystem.Services
             ticket.Status = StatusType.Pending;
             ticket.Category = request.Category;
             ticket.CreatedBy = createdBy;
-            ticket.AssignedTo = await _context.Users.OrderBy(u => Guid.NewGuid()).FirstAsync();
+
+            ticket.AssignedTo = _userManager.GetUsersInRoleAsync("Employee").Result.OrderBy(u => Guid.NewGuid()).First();
+                
+            //var hh = _userManager.GetUsersInRoleAsync("Employee").Result.OrderBy(u => Guid.NewGuid()).First();
 
             _context.RequestTickets.Add(ticket);
             await _context.SaveChangesAsync();
@@ -70,6 +78,7 @@ namespace CMS.Api.RequestSystem.Services
             if (ticket is null) { return null; }
             return ticket;
         }
+
         public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreator(string createdby)
         {
             List<RequestTicket> tickets = await _context.RequestTickets
@@ -102,11 +111,5 @@ namespace CMS.Api.RequestSystem.Services
                 .ToListAsync();
             return tickets;
         }
-
-
     }
-
 }
-
-
-
