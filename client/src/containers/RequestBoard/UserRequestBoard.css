@@ -1,0 +1,30 @@
+.table-container {
+    margin-top: 20px; /* Adds spacing below each table */
+    margin-bottom: 20px;
+}
+  
+.create-ticket-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adds spacing above the button */
+}
+  
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20px;
+}
+
+h2{
+  margin-left: 20px;
+}
+
+.page_container{
+    margin: 20px;
+}
+
+.button_container{
+    display: flex;
+    justify-content: center;
+}

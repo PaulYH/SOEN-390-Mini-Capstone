@@ -2,11 +2,15 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@nextui-org/react'
 import './PropertiesProfile.css' // Import CSS file
-import { useQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from '@tanstack/react-query'
+import axios from 'axios'
 
 import downIcon from '../../assets/downloadIcon.png'
-
-
 
 const PropertiesProfile = () => {
   const navigate = useNavigate()
@@ -24,24 +28,31 @@ const PropertiesProfile = () => {
   })
   const [error, setError] = useState('')
 
-  const fetchUserPropertyData = async () => {
-    const response = await fetch(
-      'http://localhost:5127/api/users/authenticated',
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      }
-    );
-    if (!response.ok) throw new Error('Failed to fetch user data');
-    return response.json();
-  };
+  const queryClient = useQueryClient()
+  const accessToken = localStorage.getItem('accessToken')
+  const expiresAt = localStorage.getItem('expiresAt')
 
-  const { data: userProperty, error: queryError } = useQuery(['userProperty'], fetchUserPropertyData);
+  const authorizationConfig = {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  }
+  const fetchUserPropertyData = () => {
+    const response = axios.get(
+      'http://localhost:5127/api/users/authenticated',
+      authorizationConfig
+    )
+    console.log('THIS IS THE RESPONSE YOU WANT:')
+    console.log(response)
+    return response
+  }
+
+  const { data: userProperty, error: queryError } = useQuery(
+    ['userProperty'],
+    fetchUserPropertyData
+  )
 
   useEffect(() => {
     if (userProperty) {
-      const propertyData = userProperty.value.property || null;
+      const propertyData = userProperty.data.value.property || null
       if (propertyData) {
         setProperty({
           propertyName: propertyData.propertyName || '',
@@ -53,14 +64,14 @@ const PropertiesProfile = () => {
         setMode('view');
       }
     }
-  }, [userProperty]);
+  }, [userProperty])
 
   useEffect(() => {
     if (queryError) {
-      console.error(queryError);
-      setError('Failed to fetch property');
+      console.error(queryError)
+      setError('Failed to fetch property')
     }
-  }, [queryError]);
+  }, [queryError])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -284,7 +295,7 @@ const PropertiesProfile = () => {
     <div className='signup'>
       <Button
         className='back-button'
-        style={{ alignSelf:'start' }}
+        style={{ alignSelf: 'start' }}
         onClick={() => navigate('/profile')}
       >
         Back
