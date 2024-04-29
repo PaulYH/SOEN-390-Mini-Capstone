@@ -11,7 +11,7 @@ const MainDashboardOwner = () => {
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
-
+const [profileImageUrl, setProfileImageUrl] = useState('')
   const fetchUserInfo = async () => {
     const response = await axios.get('http://localhost:5127/api/users/authenticated', {
       headers: {
@@ -27,6 +27,21 @@ const MainDashboardOwner = () => {
   }, [userId]);
 
   const { data: userData, isLoading, isError } = useQuery(['userInfo'], fetchUserInfo);
+
+  useEffect(() => {
+    if (userData) {
+      const imageUrl = userData.profilePictureUrl || constructProfileImageUrl(userData.profilePicture);
+      setProfileImageUrl(imageUrl);
+    }
+    fetchUserRole();
+  }, [userData, userId]);
+  const constructProfileImageUrl = (imageData) => {
+    if (imageData) {
+      const imageType = imageData.imageType === 1 ? 'png' : 'jpeg';
+      return `data:image/${imageType};base64,${imageData.imageData}`;
+    }
+    return ''; 
+  }; 
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -93,7 +108,7 @@ const MainDashboardOwner = () => {
           <div className="col-md-6 col-lg-6 mb-3">
             <div className="card h-100">
               <div className="card-body text-center">
-                <img src={require('../../assets/profile_default.png')} alt="avatar" className="rounded-circle img-fluid mt-3" style={{width: '70px', marginBottom:'5px'}}/>
+                <img src={profileImageUrl ||require('../../assets/profile_default.png')} alt="avatar" className="rounded-circle img-fluid mt-3" style={{width: '70px', marginBottom:'5px'}}/>
                 <h4 style={{color:'black'}}>{`${userData.firstName} ${userData.lastName}`}</h4>
                 <p className="text-muted mb-1"><strong>Condo Owner: </strong>#1234</p>  
                 <p className="text-muted mb-4">{userData.property.companyName}</p>
