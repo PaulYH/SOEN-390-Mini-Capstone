@@ -14,7 +14,8 @@ const ViewTicket = () => {
     creationDate: '',
     createdBy: '',
     isMuted: false,  // Initialize isMuted state here
-    myStatus: 0
+    myStatus: 0,
+    assignedTo: ''
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
@@ -66,15 +67,19 @@ const ViewTicket = () => {
           category: ticketData.category,
           creationDate: formattedDate,
           createdBy: ticketData.createdBy.email,
-          isMuted: ticketData.isMuted  // Update state with fetched isMuted value
-
+          isMuted: ticketData.isMuted,
+          assignedTo: ticketData.assignedTo.email
         });
+
+        setMuteNotifications(ticketData.isMuted);//muted stays the same when u exit page
+
       } catch (error) {
         console.error('Error fetching ticket:', error);
       }
     };
     fetchTicket();
   }, [ticketId]);
+
 
   useEffect(() => { 
     const fetchUserRole = async () => {
@@ -257,6 +262,14 @@ return (
               onChange={handleMuteToggle}
             />
             Mute notifications
+          </label>
+        </div>
+      ) : null}
+
+      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
+        <div>
+          <label>
+            Contact employee {ticket.assignedTo} for further assistance on this ticket
           </label>
         </div>
       ) : null}
