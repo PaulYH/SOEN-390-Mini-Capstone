@@ -47,7 +47,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet("/condo-units/{id}")]
-        public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
+        public async Task<ActionResult<List<CondoUnitDto>>> GetAllCondoUnits(Guid id)
         {
             var condoUnits = await _propertyService.GetAllCondoUnits(id);
             if (condoUnits.Value == null) return NotFound();
