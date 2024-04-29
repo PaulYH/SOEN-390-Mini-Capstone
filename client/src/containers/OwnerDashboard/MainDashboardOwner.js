@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import styles from './MainDashboardOwner.module.css';
@@ -7,8 +7,9 @@ import 'bootstrap/dist/js/bootstrap';
 import axios from 'axios';
 import { Button } from '@nextui-org/react'
 
-
 const MainDashboardOwner = () => {
+  const [userId, setUserId] = useState('');
+  const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
 
   const fetchUserInfo = async () => {
@@ -17,8 +18,13 @@ const MainDashboardOwner = () => {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
+    setUserId(response.data.value.id);
     return response.data.value;
   };
+
+  useEffect(() => {
+    fetchUserRole();
+  }, [userId]);
 
   const { data: userData, isLoading, isError } = useQuery(['userInfo'], fetchUserInfo);
 
@@ -26,6 +32,49 @@ const MainDashboardOwner = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('expiresAt');
     navigate('/login');
+  };
+
+  const fetchUserRole = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5127/api/role/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      setUserRole(response.data.trim());
+      setUserRole("Employee");
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+    }
+  };
+
+  const renderFinancialLink = () => {
+    switch (userRole) {
+      case 'Owner':
+      case 'Renter':
+        return (<>
+        <p className="card-text text-muted">
+        <strong>Manage Your Finances: </strong>Stay updated with your latest financial statements, upcoming charges, and payment history.
+        </p>
+        <a href="./UserFinancialSystem" className="btn btn btn-outline-primary">See Details</a>
+        </>);
+      case 'Employee':
+        return (<>
+          <p className="card-text text-muted">
+          <strong>Manage Your Finances: </strong>Stay updated with your latest financial statements, upcoming charges, and payment history.
+          </p>
+          <a href="./CompanyFinancialSystem" className="btn btn btn-outline-primary">See Details</a>
+          </>);
+      case 'Public':
+        return (
+          <>
+            <p>You must be a condo owner/renter to view this page, please request a condo key through the profile page.</p>
+            <Button onClick={() => navigate('/profile')}>Go to Profile</Button>
+          </>
+        );
+      default:
+        return null;
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -59,7 +108,7 @@ const MainDashboardOwner = () => {
             <div className="card h-100">
               <div className="card-body text-center mt-5">
                 <h5 className="card-title h2">Amenities</h5>
-                <p classname="card-text h4">Check out the range of available amenities designed to enhance your living experience!</p>
+                <p className="card-text h4">Check out the range of available amenities designed to enhance your living experience!</p>
                 <a href="Amenities" className="btn btn-outline-primary" id="button-dashboard">See Details</a>
               </div>
             </div>
@@ -71,8 +120,7 @@ const MainDashboardOwner = () => {
             <div className="card h-100">
               <div className="card-body text-center">
                 <h5 className="card-title h2">Finances</h5>
-                <p classname="card-text h4"><strong style={{textAlign:'center'}}>Last payment made on: </strong> 01/01/2024</p>
-                <a href="OwnerFinance" className="btn btn btn-outline-primary">See Details</a>
+                {renderFinancialLink()}
               </div>
             </div>
           </div>
@@ -81,7 +129,9 @@ const MainDashboardOwner = () => {
             <div className="card h-100">
               <div className="card-body text-center">
                 <h5 className="card-title h2">Submitted Activity Requests</h5>
-                <p className="card-text text-muted "><strong style={{textAlign:'center'}}>Last request made on: </strong> 01/01/2024</p>
+                <p className="card-text text-muted">
+                  <strong>Activity Overview: </strong>Review your past requests and track the status of current activities submitted to condo management.
+                </p>
                 <a href="SubmittedRequests" className="btn btn-outline-primary">See Details</a>
               </div>
             </div>
@@ -92,7 +142,6 @@ const MainDashboardOwner = () => {
       <div className="d-flex justify-content-center me-3 ms-3 mb-4">
         <Button style={{backgroundColor: '#C7BFFF' }} onClick={handleSignOut}>Sign Out</Button>
       </div>
-
     </>
   );
 };
