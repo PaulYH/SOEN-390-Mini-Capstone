@@ -14,13 +14,13 @@ const ViewTicket = () => {
     creationDate: '',
     createdBy: '',
     isMuted: false,  // Initialize isMuted state here
-    myStatus: 0,
+    myStatus: '',
     assignedTo: ''
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
   const [muteNotifications, setMuteNotifications] = useState(false);
-  const [ticketStatus, setStatus] = useState(0);
+  const [ticketStatus, setStatus] = useState('');
   const [requests, setRequests] = useState([]);
 
 
@@ -68,10 +68,12 @@ const ViewTicket = () => {
           creationDate: formattedDate,
           createdBy: ticketData.createdBy.email,
           isMuted: ticketData.isMuted,
-          assignedTo: ticketData.assignedTo.email
+          assignedTo: ticketData.assignedTo.email,
+          myStatus: ticketData.status
         });
 
         setMuteNotifications(ticketData.isMuted);//muted stays the same when u exit page
+        setStatus(ticketData.status)
 
       } catch (error) {
         console.error('Error fetching ticket:', error);
@@ -126,6 +128,7 @@ const ViewTicket = () => {
             category: ticket.category,
             creationDate: formattedDate,
             createdBy: ticket.createdBy.email,
+            status: ticket.myStatus,
             isMuted: newMuteStatus
           }),
         });
@@ -168,7 +171,7 @@ const ViewTicket = () => {
                   category: ticket.category,
                   creationDate: formattedDate,
                   createdBy: ticket.createdBy.email,
-                  status: parseInt(newStatus) // Ensure the status is sent as a number if your API expects a number
+                  status: parseInt(newStatus) 
               }),
           });
   
