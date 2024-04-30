@@ -189,6 +189,12 @@ const ViewTicket = () => {
           console.error('Error in updating status:', error);
           alert('Failed to update status: ' + error.message);
       }
+
+        //storing id of updated tickets (to use in notif board)
+        const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
+        updatedTicketIds.push(ticketId);
+        console.log("updated ticket ids", updatedTicketIds)
+        localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
   };
   
 

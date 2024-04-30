@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button} from "@nextui-org/react";
 
 const NotificationBoard = () => {
@@ -7,6 +8,7 @@ const NotificationBoard = () => {
   const [lastName, setLastName] = useState('');
   const [userId, setUserId] = useState(''); 
   const [requests, setRequests] = useState([]);
+  const [updatedTickets, setUpdatedTickets] = useState([]);
   const navigate = useNavigate();  
 
   useEffect(() => {
@@ -55,26 +57,30 @@ const NotificationBoard = () => {
     }
   };
 
-  const [prevStatuses, setPrevStatuses] = useState({});
-
-  useEffect(() => { 
-    const newPrevStatuses = {};
-    requests.forEach(ticket => {
-      newPrevStatuses[ticket.id] = prevStatuses[ticket.id] || ticket.status;
-    });
-    setPrevStatuses(newPrevStatuses);
-  }, [requests]); 
-
-  const [changedTickets, setChangedTickets] = useState([]);
-
   useEffect(() => {
-    const newChangedTickets = requests.filter(ticket => ticket.status !== prevStatuses[ticket.id]);
-    setChangedTickets(newChangedTickets);
-  }, [requests]);
+    const fetchUpdatedTickets = async () => {
+      const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
 
-  console.log("prevStatuses", prevStatuses);
-console.log("requests", requests);
-console.log("changedTickets", changedTickets);
+      const updatedTicketsData = await Promise.all(
+        updatedTicketIds.map(async (ticketId) => {
+          const response = await axios.get(`http://localhost:5127/api/tickets/${ticketId}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          return response.data;
+        })
+      );
+
+      setUpdatedTickets(updatedTicketsData);
+      console.log("updated ticket ids", updatedTicketIds)
+      console.log("updated tickets", updatedTickets)
+    };
+
+    fetchUpdatedTickets();
+  }, []);
+
+
 
 
 
@@ -96,7 +102,7 @@ console.log("changedTickets", changedTickets);
                   <TableColumn>Updated Status</TableColumn>
               </TableHeader>
                 <TableBody>
-                  {changedTickets.map(ticket => (
+                  {updatedTickets.map(ticket => (
                     <TableRow key={ticket.id}>
                       <TableCell>{ticket.externalTicketId}</TableCell>
                       <TableCell>{ticket.title}</TableCell>
