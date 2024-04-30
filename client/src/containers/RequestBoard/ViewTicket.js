@@ -256,7 +256,7 @@ return (
     </form>
 
     <div className='centeredContent'>
-      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
+      {userRole === 'Owner' || userRole === 'Renter' ? (
         <div>
           <label>
             <input
@@ -269,7 +269,7 @@ return (
         </div>
       ) : null}
 
-      {userRole === 'Owner' || userRole === 'Renter' || userRole === 'Public' ? (
+      {userRole === 'Owner' || userRole === 'Renter' ? (
         <div>
           <label>
             Contact employee {ticket.assignedTo} for further assistance on this ticket
