@@ -16,6 +16,7 @@ const MainDashboardOwner = () => {
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState('')
+  const [updatedTicketsCount, setUpdatedTicketsCount] = useState(0);
 
 
   const fetchUserInfo = async () => {
@@ -72,6 +73,15 @@ const MainDashboardOwner = () => {
       console.error('Error fetching user role:', error);
     }
   };
+
+  useEffect(() => { //number of notifs
+    const fetchUpdatedTicketsCount = async () => {
+      const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
+      setUpdatedTicketsCount(updatedTicketIds.length);
+    };
+
+    fetchUpdatedTicketsCount();
+  }, []);
 
   const renderFinancialLink = () => {
     switch (userRole) {
@@ -135,12 +145,17 @@ const MainDashboardOwner = () => {
   if (isError) return <div>Error fetching user data.</div>;
 
 
-
   return (
     <>
       <div className="d-flex justify-content-end my-2 mx-3">
-        <Badge color="danger" content={5}>
-          <NotificationIcon size={30} style={{ cursor: 'pointer' }} data-tip="Request Updates" onClick={() => navigate('/NotificationBoard')}/>
+        <Badge content={updatedTicketsCount} color={updatedTicketsCount > 0 ? 'danger' : 'clear'}>
+          <NotificationIcon
+            size={30}
+            style={{ cursor: 'pointer' }}
+            data-tip="Request Updates"
+            onClick={() => navigate('/NotificationBoard')}
+            count={updatedTicketsCount}
+          />
         </Badge>
       </div>
 

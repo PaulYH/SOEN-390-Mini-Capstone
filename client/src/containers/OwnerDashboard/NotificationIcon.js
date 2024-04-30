@@ -1,5 +1,6 @@
 import React from "react";
-export const NotificationIcon = ({size, height, width, ...props}) => {
+
+export const NotificationIcon = ({ size, height, width, count, ...props }) => {
   return (
     <svg
       fill="none"
