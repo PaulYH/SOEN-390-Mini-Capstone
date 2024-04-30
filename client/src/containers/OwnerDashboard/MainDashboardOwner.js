@@ -141,13 +141,11 @@ const MainDashboardOwner = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching user data.</div>;
-
-
-  return (
-    <>
-      <div className="d-flex justify-content-end my-2 mx-3">
+  const renderNotifications = () => {
+    switch (userRole) {
+      case 'Owner':
+      case 'Renter':
+        return (<>
         <Badge content={updatedTicketsCount} color={updatedTicketsCount > 0 ? 'danger' : 'clear'}>
           <NotificationIcon
             size={30}
@@ -157,6 +155,21 @@ const MainDashboardOwner = () => {
             count={updatedTicketsCount}
           />
         </Badge>
+        </>);
+      default:
+        return null;
+    }
+
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching user data.</div>;
+
+
+  return (
+    <>
+      <div className="d-flex justify-content-end my-2 mx-3">
+        {renderNotifications()}
       </div>
 
       <div className="d-flex justify-content-center my-2 mx-3">
