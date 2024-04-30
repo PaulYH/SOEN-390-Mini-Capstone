@@ -22,6 +22,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import UserFinancialSystem from './containers/FinancialSystem/UserFinancialSystem.js'
 import CompanyFinancialSystem from './containers/FinancialSystem/CompanyFinancialSystem.js'
 import NotificationBoard from './containers/OwnerDashboard/NotificationBoard.js'
+import EmployeeNotificationBoard from './containers/OwnerDashboard/EmployeeNotificationBoard.js'
 
 const queryClient = new QueryClient()
 
@@ -51,6 +52,7 @@ function App() {
           <Route path='/UserFinancialSystem' element={<UserFinancialSystem />} />
           <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
           <Route path='/NotificationBoard' element={<NotificationBoard />} />
+          <Route path='/EmployeeNotificationBoard' element={<EmployeeNotificationBoard />} />
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />

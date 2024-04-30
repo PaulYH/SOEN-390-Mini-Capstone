@@ -10,14 +10,11 @@ import { NotificationIcon } from './NotificationIcon';
 import {Badge} from "@nextui-org/react";
 
 
-
 const MainDashboardOwner = () => {
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState('')
-  const [updatedTicketsCount, setUpdatedTicketsCount] = useState(0);
-
 
   const fetchUserInfo = async () => {
     const response = await axios.get('http://localhost:5127/api/users/authenticated', {
@@ -74,14 +71,6 @@ const MainDashboardOwner = () => {
     }
   };
 
-  useEffect(() => { //number of notifs
-    const fetchUpdatedTicketsCount = async () => {
-      const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
-      setUpdatedTicketsCount(updatedTicketIds.length);
-    };
-
-    fetchUpdatedTicketsCount();
-  }, []);
 
   const renderFinancialLink = () => {
     switch (userRole) {
@@ -146,16 +135,22 @@ const MainDashboardOwner = () => {
       case 'Owner':
       case 'Renter':
         return (<>
-        <Badge content={updatedTicketsCount} color={updatedTicketsCount > 0 ? 'danger' : 'clear'}>
           <NotificationIcon
             size={30}
             style={{ cursor: 'pointer' }}
             data-tip="Request Updates"
             onClick={() => navigate('/NotificationBoard')}
-            count={updatedTicketsCount}
           />
-        </Badge>
         </>);
+        case 'Employee':
+          return (
+            <NotificationIcon
+              size={30}
+              style={{ cursor: 'pointer' }}
+              data-tip="Request Updates"
+              onClick={() => navigate('/EmployeeNotificationBoard')}
+            />
+          );
       default:
         return null;
     }
