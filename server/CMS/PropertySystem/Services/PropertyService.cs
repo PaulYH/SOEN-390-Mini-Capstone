@@ -40,13 +40,44 @@ namespace CMS.Api.PropertySystem.Services
             return property;
         }
 
-        public async Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id)
+        public async Task<ActionResult<List<CondoUnitDto>>> GetAllCondoUnits(Guid id)
         {
             var property = await _context.Properties
                 .Include(p => p.CondoUnits)
                 .FirstOrDefaultAsync(p => p.Id == id);
             if (property == null || property.CondoUnits == null) { return null; }
-            return property.CondoUnits.ToList();
+
+            var units = property.CondoUnits.ToList();
+            var unitList = new List<CondoUnit>();
+
+            foreach (var unit in units) 
+            {
+               var unitData = await _context.CondoUnits
+                .Where(c => c.Id == unit.Id)
+                .Include(c => c.Owner)
+                .Include(c => c.Occupant)
+                .FirstAsync();
+
+                unitList.Add(unitData);
+            }
+
+            var returnList = new List<CondoUnitDto>();
+            foreach (var unit in unitList)
+            {
+                returnList.Add(
+                    new CondoUnitDto()
+                    {
+                        Id = unit.Id,
+                        ExternalUnitId = unit.ExternalUnitId,
+                        Size = unit.Size,
+                        FeePerSquareFoot = unit.FeePerSquareFoot,
+                        OwnerEmail = (unit.Owner != null) ? unit.Owner.Email : "",
+                        OccupantEmail = (unit.Occupant != null) ? unit.Occupant.Email : "",
+                    }
+                );
+            }    
+
+            return returnList;
         }
 
         public async Task<ActionResult<Property>> CreateProperty(Property property)

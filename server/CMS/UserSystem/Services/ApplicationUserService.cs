@@ -44,7 +44,6 @@ namespace CMS.Api.UserSystem.Services
                 .Where(x => x.Property != null && x.Property.Id == propertyId && (
                 x.hasRequestedOccupantKey == true ||
                 x.hasRequestedOwnerKey == true)).ToListAsync();
-
             return users;
         }
 
@@ -89,6 +88,12 @@ namespace CMS.Api.UserSystem.Services
             {
                 var userProperty = await _propertyService.GetPropertyById(updatedUser.Property.Id);
                 user.Property = userProperty.Value ?? user.Property;
+            }
+
+            if (user.Property == null && _context.Properties.Count() > 0)
+            {
+                var userProperty = _context.Properties.First();
+                user.Property = userProperty;
             }
 
             await _context.SaveChangesAsync();

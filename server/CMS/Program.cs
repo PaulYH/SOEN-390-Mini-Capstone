@@ -1,5 +1,6 @@
 using CMS.Api.Data;
 using CMS.Api.PropertySystem.Services;
+using CMS.Api.RequestSystem.Services;
 using CMS.Api.UserSystem.Entities;
 using CMS.Api.PropertySystem.Entities;
 using CMS.Api.UserSystem.Services;
@@ -7,6 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using CMS.Api;
+using CMS.Api.FinancialSystem.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +50,10 @@ builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
 builder.Services.AddScoped<IReservableRoomService, ReservableRoomService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
+builder.Services.AddScoped<ITicketPostService, TicketPostService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<ISystemTime, SystemTime>();
 
 
 builder.Services.AddAuthorization();
@@ -101,7 +109,31 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.AddToRoleAsync(user, "Public");
         }
-    }    
+    }
+    
+    var dbContext = scope.ServiceProvider.GetService<CMSDbContext>();
+
+    if (dbContext != null)
+    {
+        var properties = dbContext.Properties.ToList();
+
+        if (properties.Count > 0)
+        {
+            var firstProperty = properties.FirstOrDefault();
+
+            foreach (var user in dbContext.Users)
+            {
+                if (user.Property == null)
+                {
+                    user.Property = firstProperty;
+                }
+            }
+        }
+        dbContext.SaveChanges();
+    }
+    
 }
+
+app.Services.GetRequiredService<ISystemTime>();
 
 app.Run();

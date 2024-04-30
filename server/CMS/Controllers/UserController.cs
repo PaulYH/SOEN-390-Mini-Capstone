@@ -121,7 +121,6 @@ namespace CMS.Api.Controllers
             return Ok(user);
         }
 
-
         [HttpPut]
         public async Task<ActionResult<ApplicationUser>> UpdateUser(ApplicationUser updatedUser)
         {

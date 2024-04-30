@@ -1,0 +1,33 @@
+.table-container {
+    margin-top: 20px; /* Adds spacing below each table */
+}
+  
+.pay-now-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adds spacing above the button */
+}
+  
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20px;
+}
+
+h2{
+  margin-left: 20px;
+}
+
+.payment-container{
+    margin: auto;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Spacing between the input field and the button */
+    margin-top: 20px; /* Adds spacing above the payment area */
+}
+.back-button{
+    margin-top: 50px; /* Adds spacing above the back button */
+    margin-left: 100px;
+}

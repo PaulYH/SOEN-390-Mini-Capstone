@@ -72,6 +72,12 @@ namespace CMS.Api.PropertySystem.Services
             condoUnit.Owner = user;
             condoUnit.Occupant = user;
 
+            if (user.OwnedCondoUnits == null)
+            {
+                user.OwnedCondoUnits = new List<CondoUnit>();
+            }
+            user.OwnedCondoUnits.Add(condoUnit);
+
             await _context.SaveChangesAsync();
 
             await _userManager.RemoveFromRoleAsync(user, "Public");
@@ -91,6 +97,12 @@ namespace CMS.Api.PropertySystem.Services
 
             user.hasRequestedOccupantKey = false;
             condoUnit.Occupant = user;
+
+            if (user.RentedCondoUnits == null)
+            {
+                user.RentedCondoUnits = new List<CondoUnit>();
+            }
+            user.RentedCondoUnits.Add(condoUnit);
 
             await _context.SaveChangesAsync();
 
