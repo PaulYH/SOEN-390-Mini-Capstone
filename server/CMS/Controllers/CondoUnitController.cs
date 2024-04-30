@@ -51,22 +51,26 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CondoUnit>> CreateCondoUnit([FromBody] CreateCondoUnitRequest request)
+        public async Task<ActionResult<CondoUnitDto>> CreateCondoUnit([FromBody] CreateCondoUnitRequest request)
         {
             CondoUnit condoUnit = new CondoUnit();
             condoUnit.ExternalUnitId = request.ExternalUnitId;
             condoUnit.Size = request.Size;
             condoUnit.FeePerSquareFoot = request.FeePerSquareFoot;
 
-            var owner = await _applicationUserService.GetUserByEmail(request.CondoOwnerEmail);
-            var occupant = await _applicationUserService.GetUserByEmail(request.CondoOccupantEmail);
-
-            condoUnit.Owner = owner.Value;
-            condoUnit.Occupant = occupant.Value;
-
-
             var result = await _condoUnitService.CreateCondoUnit(condoUnit);
-            return Ok(result);
+
+            var returnUnit = new CondoUnitDto()
+            {
+                Id = result.Value.Id,
+                ExternalUnitId = result.Value.ExternalUnitId,
+                Size = result.Value.Size,
+                FeePerSquareFoot = result.Value.FeePerSquareFoot,
+                OwnerEmail = "",
+                OccupantEmail = ""
+            };
+
+            return Ok(returnUnit);
         }
 
         [HttpDelete]
@@ -107,10 +111,6 @@ namespace CMS.Api.Controllers
             public int ExternalUnitId { get; set; }
             public int Size { get; set; }
             public decimal FeePerSquareFoot { get; set; }
-            public required string CondoOwnerEmail { get; set; }
-            public required string CondoOccupantEmail { get; set; }
-
-            /* should you make the owner id and occupand id an attribute here */
 
         }
 

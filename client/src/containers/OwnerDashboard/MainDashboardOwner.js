@@ -18,6 +18,7 @@ const MainDashboardOwner = () => {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
+
     console.log(response.data.value.id)
     setUserId(response.data.value.id);
     console.log(userId)

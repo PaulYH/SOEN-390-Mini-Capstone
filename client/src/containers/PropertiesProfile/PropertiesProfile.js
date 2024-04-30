@@ -59,8 +59,9 @@ const PropertiesProfile = () => {
           companyName: propertyData.companyName || '',
           address: propertyData.address || '',
           city: propertyData.city || '',
-        })
-        setMode('view')
+        });
+        setPropertyId(propertyData.id);
+        setMode('view');
       }
     }
   }, [userProperty])

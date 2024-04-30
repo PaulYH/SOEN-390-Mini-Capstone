@@ -90,6 +90,12 @@ namespace CMS.Api.UserSystem.Services
                 user.Property = userProperty.Value ?? user.Property;
             }
 
+            if (user.Property == null && _context.Properties.Count() > 0)
+            {
+                var userProperty = _context.Properties.First();
+                user.Property = userProperty;
+            }
+
             await _context.SaveChangesAsync();
 
             return updatedUser;
