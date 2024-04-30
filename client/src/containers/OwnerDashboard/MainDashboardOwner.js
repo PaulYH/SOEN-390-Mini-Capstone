@@ -11,14 +11,17 @@ const MainDashboardOwner = () => {
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
-const [profileImageUrl, setProfileImageUrl] = useState('')
+  const [profileImageUrl, setProfileImageUrl] = useState('')
   const fetchUserInfo = async () => {
     const response = await axios.get('http://localhost:5127/api/users/authenticated', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
+
+    console.log(response.data.value.id)
     setUserId(response.data.value.id);
+    console.log(userId)
     return response.data.value;
   };
 
@@ -92,6 +95,35 @@ const [profileImageUrl, setProfileImageUrl] = useState('')
     }
   };
 
+  const renderRequestLink = () => {
+    switch (userRole) {
+      case 'Owner':
+      case 'Renter':
+        return (<>
+        <p className="card-text text-muted">
+        <strong>Manage Your Requests: </strong>Create and stay updated with your latest request tickets.
+        </p>
+        <a href="./UserRequestBoard" className="btn btn btn-outline-primary">See Details</a>
+        </>);
+      case 'Employee':
+        return (<>
+          <p className="card-text text-muted">
+          <strong>Manage Your Assigned Requests: </strong>Update the status of your latest assigned request tickets.
+          </p>
+          <a href="./EmployeeRequestBoard" className="btn btn btn-outline-primary">See Details</a>
+          </>);
+      case 'Public':
+        return (
+          <>
+            <p>You must be a condo owner/renter to view this page, please request a condo key through the profile page.</p>
+            <Button onClick={() => navigate('/profile')}>Go to Profile</Button>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching user data.</div>;
 
@@ -110,8 +142,7 @@ const [profileImageUrl, setProfileImageUrl] = useState('')
               <div className="card-body text-center">
                 <img src={profileImageUrl ||require('../../assets/profile_default.png')} alt="avatar" className="rounded-circle img-fluid mt-3" style={{width: '70px', marginBottom:'5px'}}/>
                 <h4 style={{color:'black'}}>{`${userData.firstName} ${userData.lastName}`}</h4>
-                <p className="text-muted mb-1"><strong>Condo Owner: </strong>#1234</p>  
-                <p className="text-muted mb-4">{userData.property.companyName}</p>
+                <p className="text-muted mb-1"><strong>{userRole}</strong></p>  
                 <div className="d-flex justify-content-center mb-2">
                   <a href="profile" className="btn btn btn-outline-primary">Edit Profile</a>
                 </div>
@@ -143,11 +174,8 @@ const [profileImageUrl, setProfileImageUrl] = useState('')
           <div className="col-md-6 col-lg-6 mb-3"> 
             <div className="card h-100">
               <div className="card-body text-center">
-                <h5 className="card-title h2">Submitted Activity Requests</h5>
-                <p className="card-text text-muted">
-                  <strong>Activity Overview: </strong>Review your past requests and track the status of current activities submitted to condo management.
-                </p>
-                <a href="SubmittedRequests" className="btn btn-outline-primary">See Details</a>
+                <h5 className="card-title h2">Request System</h5>
+                {renderRequestLink()}
               </div>
             </div>
           </div>
