@@ -9,6 +9,7 @@ const NotificationBoard = () => {
   const [userId, setUserId] = useState(''); 
   const [requests, setRequests] = useState([]);
   const [updatedTickets, setUpdatedTickets] = useState([]);
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
   const navigate = useNavigate();  
 
   useEffect(() => {
@@ -80,14 +81,21 @@ const NotificationBoard = () => {
     fetchUpdatedTickets();
   }, []);
 
-
-
+  const handleDeleteSelected = () => {
+    const newUpdatedTickets = updatedTickets.filter(ticket => !selectedKeys.has(ticket.id));
+    setUpdatedTickets(newUpdatedTickets);
+    const updatedTicketIds = newUpdatedTickets.map(ticket => ticket.id);//updated local storage
+    localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
+    setSelectedKeys(new Set());//update selected keys
+  };
 
 
   return (
     <div className='page_container'>
 
       <Button style={{ alignSelf:'start' }} className='back-button' onClick={() => navigate('/home')} > Back </Button >
+      <Button onClick={handleDeleteSelected}>Delete Selected</Button>
+
 
       <div className="header-container">
         <h2>{firstName} {lastName}'s Notification Board</h2>
@@ -95,21 +103,28 @@ const NotificationBoard = () => {
         
       <div className='d-flex justify-content-center'>
         <div className="table-container">
-            <Table>
+            <Table
+              aria-label="Controlled table example with dynamic content"
+              selectionMode="multiple"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
+            >
               <TableHeader>
                   <TableColumn>Ticket ID</TableColumn>
                   <TableColumn>Title</TableColumn>
                   <TableColumn>Updated Status</TableColumn>
               </TableHeader>
-                <TableBody>
-                  {updatedTickets.map(ticket => (
-                    <TableRow key={ticket.id}>
+              <TableBody>
+                {updatedTickets
+                  .filter(ticket => ticket.createdBy.id === userId)
+                  .map(ticket => (
+                    <TableRow key={ticket.id} selected={selectedKeys.has(ticket.id)}>
                       <TableCell>{ticket.externalTicketId}</TableCell>
                       <TableCell>{ticket.title}</TableCell>
                       <TableCell>{ticket.status}</TableCell>
                     </TableRow>
                   ))}
-                </TableBody>
+              </TableBody>
             </Table>
         </div>
       </div>

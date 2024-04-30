@@ -156,46 +156,46 @@ const ViewTicket = () => {
     
     const handleStatusChange = async (newStatus) => {
       const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
-  
+    
       try {
-          const statusResponse = await fetch('http://localhost:5127/api/tickets/', {
-              method: 'PUT',
-              headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-              },
-              body: JSON.stringify({
-                  id: ticketId,
-                  title: ticket.title,
-                  description: ticket.description,
-                  category: ticket.category,
-                  creationDate: formattedDate,
-                  createdBy: ticket.createdBy.email,
-                  status: parseInt(newStatus) 
-              }),
-          });
-  
-          if (!statusResponse.ok) {
-              throw new Error(`Failed to update status, status code: ${statusResponse.status}`);
-          }
-  
-          const responseBody = await statusResponse.json();
-          console.log('Response body:', responseBody);
-          console.log("Status updated successfully, response status:", responseBody);
-  
-          // Update the local state to reflect the new status
-          setStatus(parseInt(newStatus)); // Keep your local state in sync with the server
+        const statusResponse = await fetch('http://localhost:5127/api/tickets/', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify({
+            id: ticketId,
+            title: ticket.title,
+            description: ticket.description,
+            category: ticket.category,
+            creationDate: formattedDate,
+            createdBy: ticket.createdBy.email,
+            status: parseInt(newStatus) 
+          }),
+        });
+    
+        if (!statusResponse.ok) {
+          throw new Error(`Failed to update status, status code: ${statusResponse.status}`);
+        }
+    
+        const responseBody = await statusResponse.json();
+        console.log('Response body:', responseBody);
+        console.log("Status updated successfully, response status:", responseBody);
+    
+        setStatus(parseInt(newStatus)); 
+    
+        if (ticket.createdBy.id === userId) {
+          const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
+          updatedTicketIds.push(ticketId);
+          localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
+        }
       } catch (error) {
-          console.error('Error in updating status:', error);
-          alert('Failed to update status: ' + error.message);
+        console.error('Error in updating status:', error);
+        alert('Failed to update status: ' + error.message);
       }
-
-        //storing id of updated tickets (to use in notif board)
-        const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
-        updatedTicketIds.push(ticketId);
-        console.log("updated ticket ids", updatedTicketIds)
-        localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
-  };
+    };
+    
   
 
   const categoryLabel = (category) => {
