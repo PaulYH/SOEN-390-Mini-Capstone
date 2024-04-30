@@ -43,9 +43,9 @@ namespace CMS.Tests.Services.TestBases
                 Description = "Description1",
                 Category = CategoryType.Question,
                 CreatedBy = createdBy,
+                AssignedTo = createdBy
             };
-
-
+            
             _context.Users.Add(createdBy);
             _context.RequestTickets.Add(ticket);
             _context.SaveChanges();

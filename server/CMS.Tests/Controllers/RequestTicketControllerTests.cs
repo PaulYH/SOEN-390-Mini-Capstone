@@ -119,5 +119,34 @@ namespace CMS.Tests.Controllers
 
             _requestTicketService.Verify(x => x.GetAll(), Times.Never());
         }
+
+        [Fact]
+        public async Task GetRequestTicketsByCreatedBy_ShouldReturnTicketList_WhenValidId()
+        {
+            var response = _fixture.Create<List<RequestTicket>>();
+            string id = _fixture.Create<string>();
+
+            _requestTicketService.Setup(x => x.GetRequestTicketsByCreatedBy(id)).ReturnsAsync(response);
+
+            var result = await _requestTicketController.GetRequestTicketsByCreatedBy(id);
+
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<IEnumerable<RequestTicket>>>();
+        }
+
+        [Fact]
+        public async Task GetRequestTicketsByAssignedTo_ShouldReturnTicketList_WhenValidId()
+        {
+            var response = _fixture.Create<List<RequestTicket>>();
+            string id = _fixture.Create<string>();
+
+            _requestTicketService.Setup(x => x.GetRequestTicketsByAssignedTo(id)).ReturnsAsync(response);
+
+            var result = await _requestTicketController.GetRequestTicketsByAssignedTo(id);
+
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<ActionResult<IEnumerable<RequestTicket>>>();
+        }
+
     }
 }

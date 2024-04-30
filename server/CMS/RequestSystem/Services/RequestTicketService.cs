@@ -79,18 +79,6 @@ namespace CMS.Api.RequestSystem.Services
             return ticket;
         }
 
-        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreator(string createdby)
-        {
-            List<RequestTicket> tickets = await _context.RequestTickets
-                .Include(t => t.CreatedBy)
-                .Include(t => t.AssignedTo)
-                .Include(t => t.TicketPosts)
-                .Where(x => x.Id == Guid.Parse(createdby))
-                .ToListAsync();
-
-            return tickets;
-        }
-
         public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreatedBy(string createdby)
         {
             List<RequestTicket> tickets = await _context.RequestTickets
