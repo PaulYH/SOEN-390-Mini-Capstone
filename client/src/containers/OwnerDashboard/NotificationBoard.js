@@ -143,9 +143,11 @@ const NotificationBoard = () => {
         </div>
       </div>
       <div className='button_container'>
+      
         <Button color="primary" onClick={handleDeleteSelected}>
             Delete Selected
         </Button>
+                
       </div>
     </div>
   );

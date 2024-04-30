@@ -184,12 +184,12 @@ const ViewTicket = () => {
         console.log("Status updated successfully, response status:", responseBody);
     
         setStatus(parseInt(newStatus)); 
-    
-        if (ticket.createdBy.id === userId) {
-          const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
-          updatedTicketIds.push(ticketId);
-          localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
-        }
+  
+        const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
+        updatedTicketIds.push(ticketId);
+        localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
+        console.log("updated", updatedTicketIds)
+        
       } catch (error) {
         console.error('Error in updating status:', error);
         alert('Failed to update status: ' + error.message);
