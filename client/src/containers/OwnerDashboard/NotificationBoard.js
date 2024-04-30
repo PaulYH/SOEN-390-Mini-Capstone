@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button} from "@nextui-org/react";
+import {Chip, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button} from "@nextui-org/react";
 
 const NotificationBoard = () => {
   const [firstName, setFirstName] = useState('');
@@ -89,13 +89,25 @@ const NotificationBoard = () => {
     setSelectedKeys(new Set());//update selected keys
   };
 
+  const statusLabels = {
+    0: 'Pending',
+    1: 'InProgress',
+    2: 'Resolved',
+    3: 'Closed'
+  };
+
+  const statusColors = {
+      0: 'warning', 
+      1: 'primary', 
+      2: 'success', 
+      3: 'secondary' 
+  };
+
 
   return (
     <div className='page_container'>
 
       <Button style={{ alignSelf:'start' }} className='back-button' onClick={() => navigate('/home')} > Back </Button >
-      <Button onClick={handleDeleteSelected}>Delete Selected</Button>
-
 
       <div className="header-container">
         <h2>{firstName} {lastName}'s Notification Board</h2>
@@ -105,7 +117,7 @@ const NotificationBoard = () => {
         <div className="table-container">
             <Table
               aria-label="Controlled table example with dynamic content"
-              selectionMode="multiple"
+              selectionMode="single"
               selectedKeys={selectedKeys}
               onSelectionChange={setSelectedKeys}
             >
@@ -121,12 +133,19 @@ const NotificationBoard = () => {
                     <TableRow key={ticket.id} selected={selectedKeys.has(ticket.id)}>
                       <TableCell>{ticket.externalTicketId}</TableCell>
                       <TableCell>{ticket.title}</TableCell>
-                      <TableCell>{ticket.status}</TableCell>
+                      <TableCell>
+                        <Chip color={statusColors[ticket.status]}>{statusLabels[ticket.status]}</Chip>
+                      </TableCell>                    
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
         </div>
+      </div>
+      <div className='button_container'>
+        <Button color="primary" onClick={handleDeleteSelected}>
+            Delete Selected
+        </Button>
       </div>
     </div>
   );
