@@ -54,7 +54,7 @@ function App() {
           <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
         </Routes>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   )
 }
