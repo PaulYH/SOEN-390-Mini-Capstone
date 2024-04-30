@@ -13,6 +13,8 @@ import PropertiesProfile from './containers/PropertiesProfile/PropertiesProfile.
 import ParkingLocker from './containers/ParkingLocker/ParkingLocker.js'
 import KeyAssignment from './containers/KeyAssignment/KeyAssignment.jsx'
 import CondoManagement from './containers/CondoManagement/CondoManagement.js'
+import RoomReservation from './containers/OwnerDashboard/RoomReservation.js'
+import Roombooking from './containers/OwnerDashboard/Roombooking.js'
 import UserRequestBoard from './containers/RequestBoard/UserRequestBoard.js'
 import EmployeeRequestBoard from './containers/RequestBoard/EmployeeRequestBoard.js'
 import CreateTicket from './containers/RequestBoard/CreateTicket.js'
@@ -21,6 +23,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import UserFinancialSystem from './containers/FinancialSystem/UserFinancialSystem.js'
 import CompanyFinancialSystem from './containers/FinancialSystem/CompanyFinancialSystem.js'
+
 
 const queryClient = new QueryClient()
 
@@ -42,6 +45,8 @@ function App() {
           <Route path='/keyassignment' element={<KeyAssignment />} />
           <Route path='/condomanagement' element={<CondoManagement />} />
           <Route path='/home' element={<MainDashboard />} />
+          <Route path='/roomReserve' element ={<RoomReservation/>} />
+          <Route path='/roombooking' element ={<Roombooking/>} />
           <Route path='/UserRequestBoard' element={<UserRequestBoard />} />
           <Route path='/EmployeeRequestBoard' element={<EmployeeRequestBoard />} />
           <Route path='/CreateTicket' element={<CreateTicket />} />

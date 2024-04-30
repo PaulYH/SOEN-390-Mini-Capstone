@@ -8,6 +8,6 @@ namespace CMS.Api.PropertySystem.Entities
         public Guid Id { get; set; }
         public int ExternalRoomId { get; set; } = -1;
         public string Name { get; set; } = String.Empty;
-        public ICollection<ReservableRoom> Reservations { get; set; } = null!;
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
