@@ -11,51 +11,64 @@ const RoomReservation = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [timeSlot, setTimeSlot] = useState(null);
     const [reservations, setReservations] = useState([]);
+    const [userId, setUserId] = useState('');
     const navigate = useNavigate();
 
     const timeSlots = [
         { label: "10am-12pm", startTime: [10, 0], endTime: [12, 0] },
-        { label: "1pm-3pm", startTime: [13, 0], endTime: [15, 0] }
+        { label: "1pm-3pm", startTime: [13, 0], endTime: [15, 0] },
+        { label: "3pm-5pm", startTime: [15, 0], endTime: [17, 0] },
+        { label: "5pm-7pm", startTime: [17, 0], endTime: [19, 0] }
     ];
 
-    useEffect(() => {
-        const fetchRooms = async () => {
-            try {
-                const response = await axios.get('http://localhost:5127/api/room');
-                if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
-                    setRooms(response.data.value.$values);
-                }
-            } catch (error) {
-                console.error('Failed to fetch rooms:', error);
-            }
-        };
+    const fetchUserInfo = async () => {
+        const response = await axios.get('http://localhost:5127/api/users/authenticated', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+    
+        setUserId(response.data.value);
+        return response.data.value;
+      };
 
-        fetchRooms();
+      useEffect(() => {
+        fetchUserInfo().then(user => {
+            if (user) {
+                setUserId(user);
+            } else {
+                console.error("Failed to fetch user info");
+            }
+        }).catch(error => {
+            console.error("Error fetching user info:", error);
+        });
     }, []);
 
-    useEffect(() => {
-        const fetchReservations = async () => {
-            try {
-                const response = await axios.get('http://localhost:5127/api/reservations');
-                if (response.data && response.data.value && Array.isArray(response.data.value.$values)) {
-                    setReservations(response.data.value.$values);
-                } else {
-                    console.error('Expected an array of reservations, but received:', response.data);
-                }
-            } catch (error) {
-                console.error('Failed to fetch reservations:', error);
+    const fetchRoomsAndReservations = async () => {
+        try {
+            const roomResponse = await axios.get('http://localhost:5127/api/room');
+            const reservationResponse = await axios.get('http://localhost:5127/api/reservations');
+            if (roomResponse.data && roomResponse.data.value && Array.isArray(roomResponse.data.value.$values)) {
+                setRooms(roomResponse.data.value.$values);
             }
-        };
-    
-        fetchReservations();
-    }, []);    
+            if (reservationResponse.data && reservationResponse.data.value && Array.isArray(reservationResponse.data.value.$values)) {
+                setReservations(reservationResponse.data.value.$values);
+            }
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRoomsAndReservations();
+    }, []);
 
     const handleRoomSelection = (room) => {
         setSelectedRoom(room);
     };
 
-    const handleTimeSlotSelection = (slotIndex) => {
-        setTimeSlot(timeSlots[slotIndex]);
+    const handleTimeSlotSelection = (index) => {
+        setTimeSlot(timeSlots[index]);
     };
 
     const handleSubmit = async () => {
@@ -63,38 +76,29 @@ const RoomReservation = () => {
             alert("Please select a room and a time slot.");
             return;
         }
-
+    
+        const startTime = new Date(selectedDate);
+        startTime.setHours(timeSlot.startTime[0], timeSlot.startTime[1], 0, 0);
+        const endTime = new Date(selectedDate);
+        endTime.setHours(timeSlot.endTime[0], timeSlot.endTime[1], 0, 0);
+    
+        if (!userId) {
+            alert("User information is not available. Please log in again.");
+            return;
+        }
+    
         try {
-            const userResponse = await fetch('http://localhost:5127/api/users/authenticated', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                },
-            });
-
-            if (!userResponse.ok) {
-                throw new Error('Failed to fetch user details');
-            }
-
-            const userData = await userResponse.json();
-            if (!userData || !userData.value || !userData.value.id) {
-                throw new Error('User data is incomplete or missing');
-            }
-
-            const startTime = new Date(selectedDate);
-            const endTime = new Date(selectedDate);
-            startTime.setHours(timeSlot.startTime[0], timeSlot.startTime[1], 0, 0);
-            endTime.setHours(timeSlot.endTime[0], timeSlot.endTime[1], 0, 0);
-
             const reservationResponse = await axios.post('http://localhost:5127/api/reservations', {
-                room: selectedRoom,
-                startTime: startTime.toISOString(),
-                endTime: endTime.toISOString(),
-                reservedBy: userData.value,
+                room: selectedRoom.id,
+                startTime: startTime,
+                endTime: endTime,
+                reservedBy: userId,
+                name: selectedRoom.name
             });
-
+    
             if (reservationResponse.status === 200) {
                 alert("Reservation successful!");
-                navigate('/amenities');
+                fetchRoomsAndReservations();
             } else {
                 throw new Error('Failed to create reservation');
             }
@@ -104,6 +108,23 @@ const RoomReservation = () => {
         }
     };
 
+    // Helper function to adjust server time
+    const adjustTimeFromServer = (date) => {
+        return new Date(new Date(date).getTime() - (4 * 60 * 60 * 1000));
+    };
+
+    // Check if a given time slot conflicts with existing reservations
+    const isTimeSlotReserved = (room, date, startTime, endTime) => {
+        return reservations.some(reservation => {
+            const reservationStartTime = adjustTimeFromServer(reservation.startTime);
+            const reservationEndTime = adjustTimeFromServer(reservation.endTime);
+            return reservation.room === room.id &&
+                reservationStartTime.toDateString() === date.toDateString() &&
+                ((reservationStartTime <= startTime && startTime < reservationEndTime) ||
+                 (reservationStartTime < endTime && endTime <= reservationEndTime));
+        });
+    };
+
     return (
         <>
             <Button onClick={() => navigate('/amenities')} style={{ borderRadius: '20px', margin: '20px' }}>Back</Button>
@@ -111,11 +132,11 @@ const RoomReservation = () => {
                 <div className="card" style={{ width: '70%', fontSize: '20px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {rooms.map((room) => (
                         <div key={room.id} className="form-check" style={{ marginBottom: '10px' }}>
-                            <input className="form-check-input" type="radio" name="room" id={room.id} onChange={() => handleRoomSelection(room.id)} style={{ marginRight: '5px', borderColor: '#007bff' }} />
+                            <input className="form-check-input" type="radio" name="room" id={room.id} onChange={() => handleRoomSelection(room)} style={{ marginRight: '5px', borderColor: '#007bff' }} />
                             <label className="form-check-label" htmlFor={room.id} style={{ marginRight: '15px' }}>
                                 {room.name}
                             </label>
-                            {selectedRoom === room.id && (
+                            {selectedRoom.id === room.id && (
                                 <>
                                     <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} />
                                     <Select
@@ -124,9 +145,18 @@ const RoomReservation = () => {
                                         placeholder="Select a time slot"
                                         onChange={(e) => handleTimeSlotSelection(e.target.value)}
                                     >
-                                        {timeSlots.map((slot, index) => (
-                                            <SelectItem key={index} value={index}>{slot.label}</SelectItem>
-                                        ))}
+                                        {timeSlots.map((slot, index) => {
+                                            const startTime = new Date(selectedDate);
+                                            startTime.setHours(slot.startTime[0], slot.startTime[1], 0, 0);
+                                            const endTime = new Date(selectedDate);
+                                            endTime.setHours(slot.endTime[0], slot.endTime[1], 0, 0);
+                                            const reserved = isTimeSlotReserved(room, selectedDate, startTime, endTime);
+                                            return (
+                                                <SelectItem key={index} value={index} disabled={reserved}>
+                                                    {slot.label}
+                                                </SelectItem>
+                                            );
+                                        })}
                                     </Select>
                                 </>
                             )}
@@ -139,22 +169,18 @@ const RoomReservation = () => {
             </div>
             <Table>
                 <TableHeader>
-                    <TableColumn>Room ID</TableColumn>
+                    <TableColumn>Room Name</TableColumn>
                     <TableColumn>Start Time</TableColumn>
                     <TableColumn>End Time</TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {Array.isArray(reservations) ? reservations.map((reservation) => (
-                        <TableRow key={reservation.id}>
-                            <TableCell>{reservation.id}</TableCell>
-                            <TableCell>{new Date(reservation.startTime).toLocaleString()}</TableCell>
-                            <TableCell>{new Date(reservation.endTime).toLocaleString()}</TableCell>
+                    {reservations.map((reservation) => (
+                        <TableRow key={reservation.$id}>
+                            <TableCell>{reservation.name}</TableCell>
+                            <TableCell>{adjustTimeFromServer(reservation.startTime).toLocaleString()}</TableCell>
+                            <TableCell>{adjustTimeFromServer(reservation.endTime).toLocaleString()}</TableCell>
                         </TableRow>
-                    )) : (
-                        <TableRow>
-                            <TableCell colSpan="3">No reservations found</TableCell>
-                        </TableRow>
-                    )}
+                    ))}
                 </TableBody>
             </Table>
         </>

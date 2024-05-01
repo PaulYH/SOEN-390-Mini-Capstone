@@ -9,6 +9,7 @@ namespace CMS.Api.PropertySystem.Entities
         public Guid Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public string Name { get; set; } = String.Empty;
         public ApplicationUser ReservedBy { get; set; } = null!; // TODO: add role verification
     }
 }

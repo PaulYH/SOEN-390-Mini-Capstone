@@ -46,8 +46,9 @@ namespace CMS.Api.Controllers
             public async Task<ActionResult<Reservation>> CreateReservation(Reservation room)
             {
                 Reservation reservation = new Reservation();
-                room.StartTime = room.StartTime;
-                room.EndTime = room.EndTime;
+                reservation.StartTime = room.StartTime;
+                reservation.EndTime = room.EndTime;
+                reservation.Name = room.Name;
 
                 var createdReservation = await _reservationService.CreateReservation(reservation);
                 return Ok(createdReservation);
