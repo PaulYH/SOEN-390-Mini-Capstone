@@ -275,12 +275,7 @@ export default function Profile() {
     })
   }
 
-  if (
-    userLoading ||
-    userRoleLoading ||
-    ownerUnitsLoading ||
-    occupantUnitsLoading
-  ) {
+  if (userLoading || userRoleLoading || ownerUnitsLoading) {
     return (
       <div className='profile'>
         <p>Loading user profile</p>

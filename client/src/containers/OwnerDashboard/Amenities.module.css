@@ -9,6 +9,15 @@
   border-radius: 20px;
   margin: 20px ;
 }
+.buttonCreate {
+  border-radius: 20px;
+  margin: 20px ;
+  float: right;
+  width: 100px;
+  height: 50px;
+  font-size: 25px;
+  
+}
 .photoTitle {
 background-color:#7067E1;
 border-radius: 20px;
