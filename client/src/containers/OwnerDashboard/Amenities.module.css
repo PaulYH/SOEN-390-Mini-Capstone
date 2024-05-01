@@ -2,16 +2,20 @@
 
 .amenitiesContainer {
   margin: 20px 200px 50px 200px;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button {
   border-radius: 20px;
-  margin: 20px ;
+  margin: 20px;
+  font-size: 25px;
+  padding: 10px 20px;
 }
 .buttonCreate {
   border-radius: 20px;
-  margin: 20px ;
+  margin: 20px;
   float: right;
   width: 100px;
   height: 50px;
@@ -19,10 +23,7 @@
   
 }
 .photoTitle {
-background-color:#7067E1;
-border-radius: 20px;
-font-size: 25px;
-font-weight: bold;
+  color: white;
 }
 .photoDetail {
   font-size: 18px;
@@ -30,4 +31,34 @@ font-weight: bold;
   background-color: #9CCDFA;
 }
 
-  
+.fullscreenCarousel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.darkOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+}
+
+.whiteText {
+  color: white !important;
+}
+
+.container, .d-flex {
+  opacity: 0.5;
+}

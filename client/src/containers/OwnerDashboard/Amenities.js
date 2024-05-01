@@ -1,201 +1,163 @@
-/* this page is common to owners and rental users*/
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Amenities.module.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Button } from '@nextui-org/react'
+import axios from 'axios'
 
 const Amenities = () => {
   let navigate = useNavigate()
+  const [userRole, setUserRole] = useState('')
+
+  const fetchUserRole = async () => {
+    try {
+      // First, fetch the authenticated user's ID
+      const userResponse = await axios.get(
+        'http://localhost:5127/api/users/authenticated',
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
+      )
+
+      const userId = userResponse.data.value.id
+
+      // Then, use the ID to fetch the user role
+      const roleResponse = await axios.get(
+        `http://localhost:5127/api/role/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
+      )
+      setUserRole(roleResponse.data.trim())
+    } catch (error) {
+      console.error('Error fetching user role:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchUserRole()
+  }, [])
+
   const handleClick = () => {
     navigate('/home')
   }
+
   const handleClickCreate = () => {
     navigate('/roomReserve')
   }
+
   const handleClickSeeReservation = () => {
     navigate('/roombooking')
   }
-  return (
-    <>
-      <button type='button' className={styles.button} onClick={handleClick}>
-        Back
-      </button>
-      <button
-        type='button'
-        className={styles.buttonCreate}
-        onClick={handleClickCreate}
-      >
-        Create
-      </button>
 
-      <div className='d-flex justify-content-center'>
+  const handleGoToProfile = () => {
+    navigate('/profile')
+  }
+
+  return (
+    <div className={styles.fullscreenCarousel}>
+      <div
+        className='carousel slide'
+        data-bs-ride='carousel'
+        data-bs-interval='2000'
+      >
+        <div className='carousel-inner'>
+          <div className='carousel-item active'>
+            <img
+              src={require('../../assets/indoor-pool-children.jpg')}
+              alt='indoor kids pool'
+              className='d-block w-100'
+            />
+          </div>
+          <div className='carousel-item'>
+            <img
+              src={require('../../assets/indoor-pool-adult.jpg')}
+              alt='indoor adult pool'
+              className='d-block w-100'
+            />
+          </div>
+          <div className='carousel-item'>
+            <img
+              src={require('../../assets/spa.jpg')}
+              alt='spa'
+              className='d-block w-100'
+            />
+          </div>
+          <div className='carousel-item'>
+            <img
+              src={require('../../assets/outdoor-playground.jpg')}
+              alt='outdoor playground'
+              className='d-block w-100'
+            />
+          </div>
+          <div className='carousel-item'>
+            <img
+              src={require('../../assets/sky-lounge.jpg')}
+              alt='lounge'
+              className='d-block w-100'
+            />
+          </div>
+        </div>
+      </div>
+      <div className={styles.darkOverlay}></div>
+      <div
+        className='containerd'
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+        }}
+      >
         <img
           src={require('../../assets/logo.png')}
           alt='logo'
-          className='text-center'
-          style={{ margin: '10px' }}
+          className='mb-3'
+          onClick={handleClick}
         />
-      </div>
-
-      <div
-        className='container'
-        style={{
-          backgroundColor: 'white',
-          marginLeft: '200px',
-          marginRight: '200px',
-        }}
-      >
-        <h1
-          style={{
-            fontWeight: 'bold',
-            backgroundColor: 'white',
-            color: 'black',
-            textDecoration: 'none',
-          }}
-          id='amenities'
-        >
+        <h1 className={styles.whiteText} id='amenities'>
           Amenities
         </h1>
-      </div>
-      <div className={styles.amenitiesContainer}>
-        <div id='carouselExampleCaptions' className='carousel slide'>
-          <div className='carousel-indicators'>
-            <button
-              type='button'
-              data-bs-target='#carouselExampleCaptions'
-              data-bs-slide-to='0'
-              className='active'
-              aria-current='true'
-              aria-label='Slide 1'
-            ></button>
-            <button
-              type='button'
-              data-bs-target='#carouselExampleCaptions'
-              data-bs-slide-to='1'
-              aria-label='Slide 2'
-            ></button>
-            <button
-              type='button'
-              data-bs-target='#carouselExampleCaptions'
-              data-bs-slide-to='2'
-              aria-label='Slide 3'
-            ></button>
-            <button
-              type='button'
-              data-bs-target='#carouselExampleCaptions'
-              data-bs-slide-to='3'
-              aria-label='Slide 4'
-            ></button>
-            <button
-              type='button'
-              data-bs-target='#carouselExampleCaptions'
-              data-bs-slide-to='4'
-              aria-label='Slide 5'
-            ></button>
-          </div>
-          <div className='carousel-inner'>
-            <div className='carousel-item active'>
-              <img
-                src={require('../../assets/indoor-pool-children.jpg')}
-                className='d-block w-100'
-                alt='indoor kids pool'
-              />
-              <div className='carousel-caption d-none d-md-block'>
-                <h5 className={styles.photoTitle}>Indoor kids Pool</h5>
-                <h5 className={styles.photoDetail}>Open Everyday 24/7</h5>
-              </div>
-            </div>
-            <div className='carousel-item'>
-              <img
-                src={require('../../assets/indoor-pool-adult.jpg')}
-                className='d-block w-100 h-100'
-                alt='indoor adult pool'
-              />
-              <div className='carousel-caption d-none d-md-block'>
-                <h5 className={styles.photoTitle}>Indoor Adult Pool (16+) </h5>
-                <h5 className={styles.photoDetail}>Open Everyday 24/7</h5>
-              </div>
-            </div>
-            <div className='carousel-item'>
-              <img
-                src={require('../../assets/spa.jpg')}
-                className='d-block w-100 h-100'
-                alt='spa'
-              />
-              <div className='carousel-caption d-none d-md-block'>
-                <h5 className={styles.photoTitle}>Spa (16+)</h5>
-                <h5 className={styles.photoDetail}>
-                  Open Monday to Saturday: 10am to 10pm
-                </h5>
-              </div>
-            </div>
-            <div className='carousel-item'>
-              <img
-                src={require('../../assets/outdoor-playground.jpg')}
-                className='d-block w-100 h-100'
-                alt='outdoor playground'
-              />
-              <div className='carousel-caption d-none d-md-block'>
-                <h5 className={styles.photoTitle}>
-                  Outdoor Playground & Basketball Court
-                </h5>
-                <h5 className={styles.photoDetail}>Open Everyday 24/7</h5>
-              </div>
-            </div>
-            <div className='carousel-item'>
-              <img
-                src={require('../../assets/sky-lounge.jpg')}
-                className='d-block w-100 h-100'
-                alt='lounge'
-              />
-              <div className='carousel-caption d-none d-md-block'>
-                <h5 className={styles.photoTitle}>Sky Lounge</h5>
-                <h5 className={styles.photoDetail}>
-                  {' '}
-                  Restaurant: Everyday from 10am to 9pm{' '}
-                </h5>
-                <h5 className={styles.photoDetail}>
-                  {' '}
-                  Bar (18+): Everyday from 9pm to 3am{' '}
-                </h5>
-              </div>
-            </div>
-          </div>
-          <button
-            className='carousel-control-prev mb-5'
-            type='button'
-            data-bs-target='#carouselExampleCaptions'
-            data-bs-slide='prev'
+        {userRole === 'Employee' && (
+          <Button
+            color='primary'
+            style={{ margin: '10px', fontSize: '20px', padding: '10px 20px' }}
+            onClick={handleClickSeeReservation}
           >
-            <span
-              className='carousel-control-prev-icon '
-              aria-hidden='true'
-            ></span>
-            <span className='visually-hidden'>Previous</span>
-          </button>
-          <button
-            className='carousel-control-next mb-5'
-            type='button'
-            data-bs-target='#carouselExampleCaptions'
-            data-bs-slide='next'
+            Create Room
+          </Button>
+        )}
+        {(userRole === 'Renter' || userRole === 'Owner') && (
+          <Button
+            color='primary'
+            style={{
+              margin: '10px',
+              fontSize: '20px',
+              padding: '10px 20px',
+            }}
+            onClick={handleClickCreate}
           >
-            <span
-              className='carousel-control-next-icon'
-              aria-hidden='true'
-            ></span>
-            <span className='visually-hidden'>Next</span>
-          </button>
-        </div>
-        <Button
-          color='primary'
-          style={{ marginTop: '10px' }}
-          onClick={handleClickSeeReservation}
-        >
-          Check reservation
-        </Button>
+            Reserve
+          </Button>
+        )}
+        {userRole !== 'Employee' &&
+          userRole !== 'Renter' &&
+          userRole !== 'Owner' && (
+            <div>
+              <p>
+                You must be a condo owner/renter to view this page, please
+                request a condo key through the profile page.
+              </p>
+              <Button onClick={handleGoToProfile}>Go to Profile</Button>
+            </div>
+          )}
       </div>
-    </>
+    </div>
   )
 }
 
