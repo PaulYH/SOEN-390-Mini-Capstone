@@ -24,7 +24,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import UserFinancialSystem from './containers/FinancialSystem/UserFinancialSystem.js'
 import CompanyFinancialSystem from './containers/FinancialSystem/CompanyFinancialSystem.js'
 
-
 const queryClient = new QueryClient()
 
 function App() {
@@ -45,16 +44,24 @@ function App() {
           <Route path='/keyassignment' element={<KeyAssignment />} />
           <Route path='/condomanagement' element={<CondoManagement />} />
           <Route path='/home' element={<MainDashboard />} />
-          <Route path='/roomReserve' element ={<RoomReservation/>} />
-          <Route path='/roombooking' element ={<Roombooking/>} />
+          <Route path='/roomReserve' element={<RoomReservation />} />
+          <Route path='/roombooking' element={<Roombooking />} />
           <Route path='/UserRequestBoard' element={<UserRequestBoard />} />
-          <Route path='/EmployeeRequestBoard' element={<EmployeeRequestBoard />} />
+          <Route
+            path='/EmployeeRequestBoard'
+            element={<EmployeeRequestBoard />}
+          />
           <Route path='/CreateTicket' element={<CreateTicket />} />
           <Route path='/tickets/:ticketId' element={<ViewTicket />} />
-          <Route path='/EditTicket' element={<EditTicket />} />
           <Route path='/ViewTicket' element={<ViewTicket />} />
-          <Route path='/UserFinancialSystem' element={<UserFinancialSystem />} />
-          <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
+          <Route
+            path='/UserFinancialSystem'
+            element={<UserFinancialSystem />}
+          />
+          <Route
+            path='/CompanyFinancialSystem'
+            element={<CompanyFinancialSystem />}
+          />
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />

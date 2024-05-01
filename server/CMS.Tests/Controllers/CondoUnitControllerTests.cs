@@ -131,13 +131,20 @@ namespace CMS.Tests.Controllers
         public async Task CreateCondoUnit_ReturnsOkResult_WithCondoUnit()
         {
             // Arrange
-            var request = new CreateCondoUnitRequest
+            var request = new CondoUnitDto
             {
                 ExternalUnitId = 123,
                 Size = 1000,
                 FeePerSquareFoot = 1.5m,
-                CondoOwnerEmail = "owner@example.com",
-                CondoOccupantEmail = "occupant@example.com"
+                OwnerEmail = "owner@example.com",
+                OccupantEmail = "occupant@example.com"
+            };
+
+            var sameRequest = new CreateCondoUnitRequest
+            {
+                ExternalUnitId = request.ExternalUnitId,
+                Size = request.Size,
+                FeePerSquareFoot = request.FeePerSquareFoot,
             };
 
             var expectedCondoUnit = new CondoUnit
@@ -145,28 +152,20 @@ namespace CMS.Tests.Controllers
                 ExternalUnitId = request.ExternalUnitId,
                 Size = request.Size,
                 FeePerSquareFoot = request.FeePerSquareFoot,
-                Owner = new ApplicationUser { Email = request.CondoOwnerEmail }, 
-                Occupant = new ApplicationUser { Email = request.CondoOccupantEmail }
+                Owner = new ApplicationUser { Email = request.OwnerEmail }, 
+                Occupant = new ApplicationUser { Email = request.OccupantEmail }
             };
-
-            _applicationUserService.Setup(s => s.GetUserByEmail(request.CondoOwnerEmail))
-                .ReturnsAsync(new ActionResult<ApplicationUser>(new ApplicationUser { Email = request.CondoOwnerEmail }));
-
-            _applicationUserService.Setup(s => s.GetUserByEmail(request.CondoOccupantEmail))
-                .ReturnsAsync(new ActionResult<ApplicationUser>(new ApplicationUser { Email = request.CondoOccupantEmail }));
 
             _condoUnitService.Setup(s => s.CreateCondoUnit(It.IsAny<CondoUnit>()))
                 .ReturnsAsync(expectedCondoUnit);
 
             // Act
-            var result = await _condoUnitController.CreateCondoUnit(request);
+            var result = await _condoUnitController.CreateCondoUnit(sameRequest);
 
             // Assert
             var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnValue = Assert.IsType<ActionResult<CondoUnit>>(actionResult.Value);
+            var returnValue = Assert.IsType<CondoUnitDto>(actionResult.Value);
 
-            _applicationUserService.Verify(s => s.GetUserByEmail(request.CondoOwnerEmail), Times.Once);
-            _applicationUserService.Verify(s => s.GetUserByEmail(request.CondoOccupantEmail), Times.Once);
             _condoUnitService.Verify(s => s.CreateCondoUnit(It.IsAny<CondoUnit>()), Times.Once);
         }
 
