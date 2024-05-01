@@ -51,7 +51,7 @@ function App() {
           <Route path='/EmployeeRequestBoard' element={<EmployeeRequestBoard />} />
           <Route path='/CreateTicket' element={<CreateTicket />} />
           <Route path='/tickets/:ticketId' element={<ViewTicket />} />
-          <Route path='/EditTicket' element={<EditTicket />} />
+          {/* <Route path='/EditTicket' element={<EditTicket />} /> */}
           <Route path='/ViewTicket' element={<ViewTicket />} />
           <Route path='/UserFinancialSystem' element={<UserFinancialSystem />} />
           <Route path='/CompanyFinancialSystem' element={<CompanyFinancialSystem />} />
