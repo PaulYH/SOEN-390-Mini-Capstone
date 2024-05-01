@@ -142,8 +142,12 @@ const ParkingLocker = () => {
         ownerId: ownerId,
         propertyId: selectedPropertyId,
       };
-
-      updatePropertyMutation.mutate({ type: 'parkingSpot', newData: parkingSpotWithOwner });
+  
+      updatePropertyMutation.mutate({ type: 'parkingSpot', newData: parkingSpotWithOwner }, {
+        onSuccess: () => {
+          window.location.reload();
+        }
+      });
       setNewParkingSpot({ externalSpotId: '', spotFee: '', ownerId: '' });
     } catch (err) {
       setError(err.message);
@@ -160,8 +164,12 @@ const ParkingLocker = () => {
         ownerId: ownerId,
         propertyId: selectedPropertyId,
       };
-
-      updatePropertyMutation.mutate({ type: 'locker', newData: lockerWithOwner });
+  
+      updatePropertyMutation.mutate({ type: 'locker', newData: lockerWithOwner }, {
+        onSuccess: () => {
+          window.location.reload();
+        }
+      });
       setNewLocker({ externalLockerId: '', lockerFee: '', ownerId: '' });
     } catch (err) {
       setError(err.message);
