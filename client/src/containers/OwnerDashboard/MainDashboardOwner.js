@@ -6,12 +6,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 import axios from 'axios';
 import { Button } from '@nextui-org/react'
+import { NotificationIcon } from './NotificationIcon'; 
+import {Badge} from "@nextui-org/react";
+
 
 const MainDashboardOwner = () => {
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
   const [profileImageUrl, setProfileImageUrl] = useState('')
+
   const fetchUserInfo = async () => {
     const response = await axios.get('http://localhost:5127/api/users/authenticated', {
       headers: {
@@ -38,6 +42,7 @@ const MainDashboardOwner = () => {
     }
     fetchUserRole();
   }, [userData, userId]);
+
   const constructProfileImageUrl = (imageData) => {
     if (imageData) {
       const imageType = imageData.imageType === 1 ? 'png' : 'jpeg';
@@ -65,6 +70,7 @@ const MainDashboardOwner = () => {
       console.error('Error fetching user role:', error);
     }
   };
+
 
   const renderFinancialLink = () => {
     switch (userRole) {
@@ -124,11 +130,43 @@ const MainDashboardOwner = () => {
     }
   };
 
+  const renderNotifications = () => {
+    switch (userRole) {
+      case 'Owner':
+      case 'Renter':
+        return (<>
+          <NotificationIcon
+            size={30}
+            style={{ cursor: 'pointer' }}
+            data-tip="Request Updates"
+            onClick={() => navigate('/NotificationBoard')}
+          />
+        </>);
+        case 'Employee':
+          return (
+            <NotificationIcon
+              size={30}
+              style={{ cursor: 'pointer' }}
+              data-tip="Request Updates"
+              onClick={() => navigate('/EmployeeNotificationBoard')}
+            />
+          );
+      default:
+        return null;
+    }
+
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching user data.</div>;
 
+
   return (
     <>
+      <div className="d-flex justify-content-end my-2 mx-3">
+        {renderNotifications()}
+      </div>
+
       <div className="d-flex justify-content-center my-2 mx-3">
         <img src={require('../../assets/logo.png')} alt="logo"/>
       </div>

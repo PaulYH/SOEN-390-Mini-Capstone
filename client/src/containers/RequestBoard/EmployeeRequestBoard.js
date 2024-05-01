@@ -52,20 +52,33 @@ const EmployeeRequestBoard = () => {
 
       const fetchEmployeeRequests = async () => {
         try {
-          const response = await fetch(`http://localhost:5127/api/tickets/assignedto/${userId}`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          });
-          if (!response.ok) throw new Error('Failed to fetch tickets');
-          const requests = await response.json();
-          if (!requests.$values) throw new Error('Invalid tickets data format');
-          setRequests(requests.$values);
+            const response = await fetch(`http://localhost:5127/api/tickets/assignedto/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch tickets');
+            const requests = await response.json();
+            if (!requests.$values) throw new Error('Invalid tickets data format');
+            
+            // Filter out requests that are already in local storage
+            const newRequests = requests.$values.filter(request => {
+                const storedRequests = JSON.parse(localStorage.getItem('newRequests')) || [];
+                return !storedRequests.some(storedRequest => storedRequest.id === request.id);
+            });
+            
+            // Save new requests to local storage
+            const storedRequests = JSON.parse(localStorage.getItem('newRequests')) || [];
+            localStorage.setItem('newRequests', JSON.stringify([...storedRequests, ...newRequests]));
+            console.log()
+    
+            setRequests(requests.$values);
         } catch (error) {
-          console.error(error);
-          setRequests([]);
+            console.error(error);
+            setRequests([]);
         }
-      };
+    };
+    
 
 
       const formatDate = (dateString) => {

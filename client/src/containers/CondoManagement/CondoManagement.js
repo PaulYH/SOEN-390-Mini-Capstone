@@ -163,6 +163,10 @@ const CondoManagement = () => {
     console.log(units.feePerSquareFoot)
   }
 
+  if (!units) {
+    return <p>Loading</p>
+  }
+
   return (
     <div className='app-container'>
       <Button
