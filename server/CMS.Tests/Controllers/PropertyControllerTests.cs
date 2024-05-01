@@ -81,14 +81,14 @@ namespace CMS.Tests.Controllers
         public async Task GetAllCondoUnits_ShouldReturnOkResponse_WhenDataFound()
         {
             //Arrange
-            var condoUnitsMock = _propertyfixture.Create<List<CondoUnit>>();
+            var condoUnitsMock = _propertyfixture.Create<List<CondoUnitDto>>();
             _propertyService.Setup(x => x.GetAllCondoUnits(It.IsAny<Guid>())).ReturnsAsync(condoUnitsMock);
             string id = "5ebdb005-e871-44d4-8e36-b2f15d3cf067";
             //Act
             var result = await _propertyController.GetAllCondoUnits(Guid.Parse(id));
             //Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<ActionResult<List<CondoUnit>>>();
+            result.Should().BeAssignableTo<ActionResult<List<CondoUnitDto>>>();
 
             result.Result.As<OkObjectResult>().Value
                 .Should()
@@ -100,7 +100,7 @@ namespace CMS.Tests.Controllers
         public async Task GetAllCondoUnits_ShouldReturnNotFound_WhenDataNotFound()
         {
             //Arrange
-            List<CondoUnit> condoUnitsMock = null;
+            List<CondoUnitDto> condoUnitsMock = null;
             Guid id = Guid.Parse("5ebdb005-e871-44d4-8e36-b2f15d3cf057");
             _propertyService.Setup(x => x.GetAllCondoUnits(id)).ReturnsAsync(condoUnitsMock);
             

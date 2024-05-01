@@ -10,5 +10,8 @@ namespace CMS.Api.RequestSystem.Services
         Task<ActionResult<RequestTicket>> UpdateRequestTicket(RequestTicket requestTicket); // accesible only by Employee
         Task<ActionResult<IEnumerable<RequestTicket>>> GetAll(); // accessible by everyone 
         Task<ActionResult<RequestTicket>> GetRequestTicketWithPosts(string ticketId); // accessible by everyone
+        Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreatedBy(string createdBy); // accessible by everyone
+        Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByAssignedTo(string assignedTo); // accessible by everyone
+
     }
 }

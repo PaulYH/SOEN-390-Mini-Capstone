@@ -12,7 +12,7 @@ namespace CMS.Api.PropertySystem.Services
         Task<ActionResult<Property>> UpdateProperty(Property updatedProperty);
         Task<ActionResult<CondoUnit>> AssociateCondoUnitWithProperty(Guid propertyId, Guid condoId);
         Task<ActionResult<bool>> DeleteProperty(Guid id);
-        Task<ActionResult<List<CondoUnit>>> GetAllCondoUnits(Guid id);
+        Task<ActionResult<List<CondoUnitDto>>> GetAllCondoUnits(Guid id);
         Task<ActionResult<string>> WriteFile(Guid id, IFormFile file);
         Task<string> DownloadFile(Guid id, string fileName);
         Task<ActionResult<List<string>>> GetAllFileNames(Guid id);

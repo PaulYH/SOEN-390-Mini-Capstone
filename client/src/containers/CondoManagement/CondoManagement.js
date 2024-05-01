@@ -3,13 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid'
 import { Button, Spinner } from '@nextui-org/react'
 import './CondoManagement.css'
-import { useQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from '@tanstack/react-query'
+import axios from 'axios'
 
 const CondoManagement = () => {
   const navigate = useNavigate()
   const [units, setUnits] = useState([])
   const [propertyId, setPropertyId] = useState('')
-
   const [addUnits, setAddUnits] = useState({
     externalUnitID: '',
     size: '',
@@ -18,35 +23,77 @@ const CondoManagement = () => {
     CondoOccupantEmail: '',
   })
 
+  const owner = {
+    email: '',
+  }
+
+  const occupant = {
+    email: '',
+  }
+
+  const queryClient = useQueryClient()
+  const accessToken = localStorage.getItem('accessToken')
+  const expiresAt = localStorage.getItem('expiresAt')
+
+  const authorizationConfig = {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  }
+
+  const fetchAuthenticatedUser = () => {
+    const response = axios.get(
+      'http://localhost:5127/api/users/authenticated',
+      authorizationConfig
+    )
+    console.log('THIS IS THE RESPONSE YOU WANT:')
+    console.log(response)
+    return response
+  }
+
+  const {
+    isLoading: userLoading,
+    data: userData,
+    isError: isUserError,
+    error: userError,
+    isFetching: userFetching,
+    status: userStatus,
+  } = useQuery({
+    queryKey: ['get-authenticated-user'],
+    queryFn: fetchAuthenticatedUser,
+    refetchOnWindowFocus: false,
+  })
+
+  const retrievedUser = userData?.data.value
+
+  const fetchCondoUnits = () => {
+    const response = axios.get(
+      `http://localhost:5127/condo-units/${retrievedUser.property.id}`
+    )
+    console.log('THIS IS THE CONDO UNIT LIST:')
+    console.log(response)
+    return response
+  }
+
+  const {
+    isLoading: unitsLoading,
+    data: unitData,
+    isError: isUnitError,
+    error: unitError,
+    isFetching: unitFetching,
+    status: unitStatus,
+  } = useQuery({
+    queryKey: ['get-condo-units'],
+    queryFn: fetchCondoUnits,
+    refetchOnWindowFocus: false,
+    enabled: !!retrievedUser,
+  })
+
+  const retrievedUnits = unitData?.data.value.$values
+
   useEffect(() => {
-    fetchUserPropertyId()
-  }, [])
-
-  const fetchUserProfileQuery = () => {
-    const token = localStorage.getItem('accessToken');
-    return fetch('http://localhost:5127/manage/info', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    }).then(async (response) => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch user profile');
-      }
-      return response.json();
-    });
-  };
-
-  const { data: userProfile, error: userProfileError } = useQuery(['userProfile'], fetchUserProfileQuery, {
-    onSuccess: (data) => {
-      console.log(data.email);
-      fetchCondoUnitsByEmail(data.email);
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
+    console.log('These are the retrieved units:')
+    console.log(retrievedUnits)
+    setUnits(retrievedUnits)
+  }, [retrievedUser, retrievedUnits])
 
   const handleAddUnitsChange = (event) => {
     event.preventDefault()
@@ -57,53 +104,8 @@ const CondoManagement = () => {
     setAddUnits(newUnit)
   }
 
-  const fetchCondoUnitsByEmail = async (email) => {
-    //with the email fetch the condo units that correspond
-    const token = localStorage.getItem('accessToken')
-    try {
-      const response = await fetch(
-        `http://localhost:5127/api/condounits/${email}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch condo units')
-      }
-
-      const units = await response.json()
-      setUnits(Array.isArray(units) ? units : []) //to make sure we get an array
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const fetchUserPropertyId = async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:5127/api/users/authenticated',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        }
-      )
-      if (!response.ok) throw new Error('Failed to fetch user data')
-      const data = await response.json()
-      setPropertyId(data?.value.property.id || ' ')
-      return data.value.property.id || null
-    } catch (error) {
-      console.error(error)
-      return null
-    }
-  }
-
   const handleAddUnitsSubmit = async (event) => {
+    setPropertyId(retrievedUser.property.id)
     console.log(propertyId)
     event.preventDefault()
 
@@ -112,8 +114,8 @@ const CondoManagement = () => {
       externalUnitID: addUnits.externalUnitID,
       size: addUnits.size,
       feePerSquareFoot: addUnits.feePerSquareFoot,
-      CondoOwnerEmail: addUnits.CondoOwnerEmail,
-      CondoOccupantEmail: addUnits.CondoOccupantEmail,
+      CondoOwnerEmail: owner.email,
+      CondoOccupantEmail: occupant.email,
     }
 
     console.log(addedUnit.externalUnitID)
@@ -132,10 +134,15 @@ const CondoManagement = () => {
       }
 
       const result = await response.json()
-      setUnits((prevUnits) => [...prevUnits, result.value])
+      console.log('THIS IS THE NEW UNIT RESULT:')
+      console.log(result)
+      setUnits((prevUnits) => [...prevUnits, result])
+
+      console.log(`PROPERTY ID: ${retrievedUser.property.id}`)
+      console.log(`NEW UNIT ID: ${result.id}`)
 
       const response2 = await fetch(
-        `http://localhost:5127/api/properties/add-condo/${propertyId}/${result.value.id}`,
+        `http://localhost:5127/api/properties/add-condo/${retrievedUser.property.id}/${result.id}`,
         {
           method: 'PUT',
           headers: {
@@ -156,11 +163,15 @@ const CondoManagement = () => {
     console.log(units.feePerSquareFoot)
   }
 
+  if (!units) {
+    return <p>Loading</p>
+  }
+
   return (
     <div className='app-container'>
       <Button
         className='back-button'
-        style={{ alignSelf:'start' }}
+        style={{ alignSelf: 'start' }}
         onClick={() => navigate('/propertiesprofile')}
       >
         Back
@@ -188,11 +199,11 @@ const CondoManagement = () => {
                 <td>{unit.externalUnitId}</td>
                 <td>{unit.size}</td>
                 <td>{unit.feePerSquareFoot}</td>
-                <td>{unit.owner.email}</td>
+                <td>{unit.ownerEmail}</td>
                 <td>
-                  {unit.occupant && unit.occupant.email
-                    ? unit.occupant.email
-                    : unit.owner.email}
+                  {unit.ownerEmail && unit.occupantEmail == ''
+                    ? unit.ownerEmail
+                    : unit.occupantEmail}
                 </td>
               </tr>
             ))
@@ -225,20 +236,6 @@ const CondoManagement = () => {
           name='feePerSquareFoot'
           required='required'
           placeholder='Enter condo fee per square foot...'
-          onChange={handleAddUnitsChange}
-        />
-        <input
-          type='email'
-          name='CondoOwnerEmail'
-          required='required'
-          placeholder='Enter owner email...'
-          onChange={handleAddUnitsChange}
-        />
-        <input
-          type='email'
-          name='CondoOccupantEmail'
-          required='required'
-          placeholder='Enter occupant email...'
           onChange={handleAddUnitsChange}
         />
         <button className='btn_submit' type='submit'>

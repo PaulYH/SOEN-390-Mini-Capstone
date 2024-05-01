@@ -179,14 +179,9 @@ namespace CMS.Api.Migrations
                     b.Property<Guid?>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ReservableRoomId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PropertyId");
-
-                    b.HasIndex("ReservableRoomId");
 
                     b.ToTable("ReservableRooms");
                 });
@@ -200,6 +195,13 @@ namespace CMS.Api.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ReservableRoomId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ReservedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -207,6 +209,8 @@ namespace CMS.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReservableRoomId");
 
                     b.HasIndex("ReservedById");
 
@@ -605,14 +609,14 @@ namespace CMS.Api.Migrations
                     b.HasOne("CMS.Api.PropertySystem.Entities.Property", null)
                         .WithMany("ReservableRooms")
                         .HasForeignKey("PropertyId");
-
-                    b.HasOne("CMS.Api.PropertySystem.Entities.ReservableRoom", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("ReservableRoomId");
                 });
 
             modelBuilder.Entity("CMS.Api.PropertySystem.Entities.Reservation", b =>
                 {
+                    b.HasOne("CMS.Api.PropertySystem.Entities.ReservableRoom", null)
+                        .WithMany("Reservations")
+                        .HasForeignKey("ReservableRoomId");
+
                     b.HasOne("CMS.Api.UserSystem.Entities.ApplicationUser", "ReservedBy")
                         .WithMany()
                         .HasForeignKey("ReservedById");

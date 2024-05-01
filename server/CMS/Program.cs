@@ -48,6 +48,8 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<ICondoUnitService, CondoUnitService>();
 builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
 builder.Services.AddScoped<ILockerService, LockerService>();
+builder.Services.AddScoped<IReservableRoomService, ReservableRoomService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
 builder.Services.AddScoped<ITicketPostService, TicketPostService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -107,7 +109,29 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.AddToRoleAsync(user, "Public");
         }
-    }    
+    }
+    
+    var dbContext = scope.ServiceProvider.GetService<CMSDbContext>();
+
+    if (dbContext != null)
+    {
+        var properties = dbContext.Properties.ToList();
+
+        if (properties.Count > 0)
+        {
+            var firstProperty = properties.FirstOrDefault();
+
+            foreach (var user in dbContext.Users)
+            {
+                if (user.Property == null)
+                {
+                    user.Property = firstProperty;
+                }
+            }
+        }
+        dbContext.SaveChanges();
+    }
+    
 }
 
 app.Services.GetRequiredService<ISystemTime>();

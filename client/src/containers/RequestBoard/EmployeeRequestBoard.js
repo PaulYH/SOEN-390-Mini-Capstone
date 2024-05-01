@@ -9,12 +9,106 @@ import './EmployeeRequestBoard.css'; // Import CSS file
 
 const EmployeeRequestBoard = () => {
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [userId, setUserId] = useState(''); 
+    const [requests, setRequests] = useState([]);
+
+
     const navigate = useNavigate();  
 
-    const handleEditClick = () => {
-        navigate('/EditTicket');  // Navigate to the edit page
-    };
+    useEffect(() => {
+        fetchUserInfo();
+      }, []);
 
+      useEffect(() => {
+        if (userId) { // Ensure userId is set before fetching tickets
+           fetchEmployeeRequests();
+        }
+    }, [userId]); // Depend on userId
+
+    const handleEditClick = (ticketId) => {
+        navigate(`/tickets/${ticketId}`); // Use the ticketId to navigate
+    };
+    
+
+    const fetchUserInfo = async () => { //fetch employee name, id
+        try {
+          const response = await fetch('http://localhost:5127/api/users/authenticated', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          if (!response.ok) throw new Error('Failed to fetch user data');
+          const userData = await response.json();
+          setFirstName(userData.value.firstName);
+          setLastName(userData.value.lastName);
+          setUserId(userData.value.id);
+        } catch (error) {
+          console.error(error);
+        }
+
+      };
+
+      const fetchEmployeeRequests = async () => {
+        try {
+            const response = await fetch(`http://localhost:5127/api/tickets/assignedto/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch tickets');
+            const requests = await response.json();
+            if (!requests.$values) throw new Error('Invalid tickets data format');
+            
+            // Filter out requests that are already in local storage
+            const newRequests = requests.$values.filter(request => {
+                const storedRequests = JSON.parse(localStorage.getItem('newRequests')) || [];
+                return !storedRequests.some(storedRequest => storedRequest.id === request.id);
+            });
+            
+            // Save new requests to local storage
+            const storedRequests = JSON.parse(localStorage.getItem('newRequests')) || [];
+            localStorage.setItem('newRequests', JSON.stringify([...storedRequests, ...newRequests]));
+            console.log()
+    
+            setRequests(requests.$values);
+        } catch (error) {
+            console.error(error);
+            setRequests([]);
+        }
+    };
+    
+
+
+      const formatDate = (dateString) => {
+        if (!dateString) {
+          return 'N/A'; 
+        }
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-CA'); 
+      };
+  
+      const statusLabels = {
+        0: 'Pending',
+        1: 'InProgress',
+        2: 'Resolved',
+        3: 'Closed'
+    };
+  
+    const statusColors = {
+        0: 'warning', 
+        1: 'primary', 
+        2: 'success', 
+        3: 'secondary' 
+    };
+  
+    const categoryLabels = {
+      0: 'Repair',
+      1: 'Question',
+      2: 'Other'
+  };
+      
 
 
     return (
@@ -31,7 +125,7 @@ const EmployeeRequestBoard = () => {
         </Button>
 
             <div className="header-container">
-                <h2>Employee's Request Board</h2>
+                <h2>{firstName} {lastName}'s Request Board</h2>
             </div>
             <div className='d-flex justify-content-center'>
                 <div className="table-container">
@@ -41,31 +135,32 @@ const EmployeeRequestBoard = () => {
                             <TableColumn>Title</TableColumn>
                             <TableColumn>Created On</TableColumn>
                             <TableColumn>Resolved On</TableColumn>
-                            <TableColumn>Created By</TableColumn>
                             <TableColumn>Status</TableColumn>
                             <TableColumn>Category</TableColumn>
                             <TableColumn>Edit</TableColumn>
                         </TableHeader>
                         <TableBody>
-                            <TableRow >
-                                <TableCell>123</TableCell>
-                                <TableCell>Lost item</TableCell>
-                                <TableCell>04/10/2024</TableCell>
-                                <TableCell>04/11/2024</TableCell>
-                                <TableCell>email.com</TableCell>
+                        {requests.map((request) => (
+                            <TableRow key={request.id}>
+                                <TableCell>{request.externalTicketId}</TableCell>
+                                <TableCell>{request.title}</TableCell>
+                                <TableCell>{formatDate(request.creationDate)}</TableCell>
+                                <TableCell>{formatDate(request.resolutionDate)}</TableCell>
                                 <TableCell>
-                                    <Chip color="success">Success</Chip>
+                                <Chip color={statusColors[request.status]}>{statusLabels[request.status]}</Chip>
                                 </TableCell>
-                                <TableCell>Other</TableCell>
+                                <TableCell>{categoryLabels[request.category]}</TableCell>
                                 <TableCell>
                                     <Tooltip content="Edit Status">
-                                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={handleEditClick}>
-                                    <EditIcon />
-                                    </span>
+                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={() => handleEditClick(request.id)}>
+                                            <EditIcon />
+                                        </span>
                                     </Tooltip>
                                 </TableCell>
                             </TableRow>
-                        </TableBody>
+                        ))}
+                    </TableBody>
+
                     </Table>
                 </div>
             </div>

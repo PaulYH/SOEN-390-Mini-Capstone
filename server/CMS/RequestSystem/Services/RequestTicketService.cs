@@ -4,6 +4,7 @@ using CMS.Api.RequestSystem.Enums;
 using CMS.Api.RequestSystem.Entities;
 using CMS.Api.UserSystem.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace CMS.Api.RequestSystem.Services
@@ -11,12 +12,16 @@ namespace CMS.Api.RequestSystem.Services
     public class RequestTicketService : IRequestTicketService
     {
         private readonly CMSDbContext _context;
-        public RequestTicketService(CMSDbContext context)
-        { _context = context; }
+        private readonly UserManager<ApplicationUser> _userManager;
+        public RequestTicketService(CMSDbContext context, UserManager<ApplicationUser> userManager)
+        { 
+            _context = context;
+            _userManager = userManager;
+        }
 
         public async Task<ActionResult<IEnumerable<RequestTicket>>> GetAll()
         {
-            return await _context.RequestTickets.ToListAsync();
+            return await _context.RequestTickets.Include(r => r.CreatedBy).ToListAsync();
         }
 
         public async Task<ActionResult<RequestTicket>> CreateRequestTicket(RequestTicket request)
@@ -35,7 +40,10 @@ namespace CMS.Api.RequestSystem.Services
             ticket.Status = StatusType.Pending;
             ticket.Category = request.Category;
             ticket.CreatedBy = createdBy;
-            ticket.AssignedTo = await _context.Users.OrderBy(u => Guid.NewGuid()).FirstAsync();
+
+            ticket.AssignedTo = _userManager.GetUsersInRoleAsync("Employee").Result.OrderBy(u => Guid.NewGuid()).First();
+                
+            //var hh = _userManager.GetUsersInRoleAsync("Employee").Result.OrderBy(u => Guid.NewGuid()).First();
 
             _context.RequestTickets.Add(ticket);
             await _context.SaveChangesAsync();
@@ -50,6 +58,7 @@ namespace CMS.Api.RequestSystem.Services
             ticket.Title = request.Title;
             ticket.Description = request.Description;
             ticket.Category = request.Category;
+            ticket.IsMuted = request.IsMuted;
             ticket.Status = request.Status;
             if (ticket.Status == StatusType.Resolved) { ticket.ResolutionDate = DateTime.Now; }
 
@@ -68,6 +77,27 @@ namespace CMS.Api.RequestSystem.Services
 
             if (ticket is null) { return null; }
             return ticket;
+        }
+
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByCreatedBy(string createdby)
+        {
+            List<RequestTicket> tickets = await _context.RequestTickets
+                .Include(t => t.CreatedBy)
+                .Include(t => t.AssignedTo)
+                .Include(t => t.TicketPosts)
+                .Where(x => x.CreatedBy.Id == createdby)
+                .ToListAsync();
+            return tickets;
+        }
+        public async Task<ActionResult<IEnumerable<RequestTicket>>> GetRequestTicketsByAssignedTo(string assignedTo)
+        {
+            List<RequestTicket> tickets = await _context.RequestTickets
+                .Include(t => t.CreatedBy)
+                .Include(t => t.AssignedTo)
+                .Include(t => t.TicketPosts)
+                .Where(x => x.AssignedTo.Id == assignedTo)
+                .ToListAsync();
+            return tickets;
         }
     }
 }
