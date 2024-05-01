@@ -15,3 +15,6 @@
 
 # Guides
 [Writing unit tests for the back-end](https://soen390-cms.atlassian.net/wiki/x/AYBU)
+
+# Link to Drive
+https://drive.google.com/drive/folders/1KBhT2AR5xg-PMCUuz7Smxz-KwcJSFiwW
