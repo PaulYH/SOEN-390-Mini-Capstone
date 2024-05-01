@@ -8,15 +8,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using CMS.Tests.Services.TestBases;
 using CMS.Api.PropertySystem.Entities;
+using Microsoft.AspNetCore.Identity;
 namespace CMS.Tests.Services
 {
     public class RequestTicketServiceTests : RequestTicketServiceTestsBase
     {
         private readonly IRequestTicketService _requestTicketService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public RequestTicketServiceTests()
         {
-            _requestTicketService = new RequestTicketService(_context);
+            _requestTicketService = new RequestTicketService(_context, _userManager);
         }
 
         [Fact]
@@ -33,7 +35,6 @@ namespace CMS.Tests.Services
         [Fact]
         public async Task CreateRequestTicket_ShouldReturnRequestTicket_WhenValidRequest()
         {
-
             // Arrange
             var ticket = new RequestTicket()
             {
@@ -125,7 +126,6 @@ namespace CMS.Tests.Services
         [Fact]
         public async Task GetRequestTicketsWithPosts_ShouldReturnNull_WhenInvalidId()
         {
-
             // Arrange
             var id = _context.RequestTickets.First().Id.ToString();
 
@@ -134,6 +134,27 @@ namespace CMS.Tests.Services
             result.Should().BeNull();
         }
 
+        [Fact]
+        public async Task GetRequestTicketsByCreatedBy_ShouldReturnNull_WhenInvalidId()
+        {
+            // Arrange
+            var creator = _context.RequestTickets.First().CreatedBy.Id;
+            var result = await _requestTicketService.GetRequestTicketsByCreatedBy(creator);
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<IEnumerable<RequestTicket>>>();
+        }
+
+        [Fact]
+        public async Task GetRequestTicketsByAssignedTo_ShouldReturnNull_WhenInvalidId()
+        {
+            // Arrange
+            var assignee = _context.RequestTickets.First().AssignedTo.Id;
+            var result = await _requestTicketService.GetRequestTicketsByAssignedTo(assignee);
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<IEnumerable<RequestTicket>>>();
+        }
 
     }
 }
