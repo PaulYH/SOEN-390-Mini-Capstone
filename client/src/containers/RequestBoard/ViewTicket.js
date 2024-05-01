@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@nextui-org/react';
 
 const ViewTicket = () => {
 
@@ -13,13 +14,11 @@ const ViewTicket = () => {
     category: '',
     creationDate: '',
     createdBy: '',
-    isMuted: false,  // Initialize isMuted state here
     myStatus: '',
     assignedTo: ''
   });
   const [userId, setUserId] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [muteNotifications, setMuteNotifications] = useState(false);
   const [ticketStatus, setStatus] = useState('');
   const [requests, setRequests] = useState([]);
 
@@ -67,12 +66,10 @@ const ViewTicket = () => {
           category: ticketData.category,
           creationDate: formattedDate,
           createdBy: ticketData.createdBy.email,
-          isMuted: ticketData.isMuted,
           assignedTo: ticketData.assignedTo.email,
           myStatus: ticketData.status
         });
 
-        setMuteNotifications(ticketData.isMuted);//muted stays the same when u exit page
         setStatus(ticketData.status)
 
       } catch (error) {
@@ -107,20 +104,18 @@ const ViewTicket = () => {
       };
       fetchUserRole();
     },)
-
-    const handleMuteToggle = async () => {
-      const newMuteStatus = !muteNotifications;  
-      console.log('Attempting to update isMuted to:', newMuteStatus);  
+    
+    
+    const handleStatusChange = async (newStatus) => {
       const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
     
       try {
-        const muteResponse = await fetch('http://localhost:5127/api/tickets/', {
+        const statusResponse = await fetch('http://localhost:5127/api/tickets/', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
-          
           body: JSON.stringify({
             id: ticketId,
             title: ticket.title,
@@ -128,68 +123,31 @@ const ViewTicket = () => {
             category: ticket.category,
             creationDate: formattedDate,
             createdBy: ticket.createdBy.email,
-            status: ticket.myStatus,
-            isMuted: newMuteStatus
+            status: parseInt(newStatus) 
           }),
         });
     
-        if (!muteResponse.ok) {
-          throw new Error(`Failed to update mute status, status code: ${muteResponse.status}`);
+        if (!statusResponse.ok) {
+          throw new Error(`Failed to update status, status code: ${statusResponse.status}`);
         }
     
-        const responseBody = await muteResponse.json();
+        const responseBody = await statusResponse.json();
         console.log('Response body:', responseBody);
+        console.log("Status updated successfully, response status:", responseBody);
     
-        console.log("My ticket ID is:", ticketId);
-        console.log(responseBody);
-        console.log('Mute status newMuteStatus toggle thing:', newMuteStatus);
-    
-        // Update the muteNotifications state directly
-        setMuteNotifications(newMuteStatus);
-    
+        setStatus(parseInt(newStatus)); 
+  
+        const updatedTicketIds = JSON.parse(localStorage.getItem('updatedTicketIds')) || [];
+        updatedTicketIds.push(ticketId);
+        localStorage.setItem('updatedTicketIds', JSON.stringify(updatedTicketIds));
+        console.log("updated", updatedTicketIds)
+        
       } catch (error) {
-        console.error('Error in updating mute status:', error);
-        alert('Failed to update mute status: ' + error.message);
+        console.error('Error in updating status:', error);
+        alert('Failed to update status: ' + error.message);
       }
     };
     
-    
-    const handleStatusChange = async (newStatus) => {
-      const formattedDate = new Date(ticket.creationDate).toISOString().split('T')[0]; 
-  
-      try {
-          const statusResponse = await fetch('http://localhost:5127/api/tickets/', {
-              method: 'PUT',
-              headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-              },
-              body: JSON.stringify({
-                  id: ticketId,
-                  title: ticket.title,
-                  description: ticket.description,
-                  category: ticket.category,
-                  creationDate: formattedDate,
-                  createdBy: ticket.createdBy.email,
-                  status: parseInt(newStatus) 
-              }),
-          });
-  
-          if (!statusResponse.ok) {
-              throw new Error(`Failed to update status, status code: ${statusResponse.status}`);
-          }
-  
-          const responseBody = await statusResponse.json();
-          console.log('Response body:', responseBody);
-          console.log("Status updated successfully, response status:", responseBody);
-  
-          // Update the local state to reflect the new status
-          setStatus(parseInt(newStatus)); // Keep your local state in sync with the server
-      } catch (error) {
-          console.error('Error in updating status:', error);
-          alert('Failed to update status: ' + error.message);
-      }
-  };
   
 
   const categoryLabel = (category) => {
@@ -256,18 +214,6 @@ return (
     </form>
 
     <div className='centeredContent'>
-      {userRole === 'Owner' || userRole === 'Renter' ? (
-        <div>
-          <label>
-            <input
-              type='checkbox'
-              checked={muteNotifications}
-              onChange={handleMuteToggle}
-            />
-            Mute notifications
-          </label>
-        </div>
-      ) : null}
 
       {userRole === 'Owner' || userRole === 'Renter' ? (
         <div>

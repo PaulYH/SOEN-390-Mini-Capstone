@@ -57,8 +57,14 @@ const CreateTicket = () => {
         },
       });
       console.log('Ticket created with ID:', response.data.value.id);
-      const ticketId = response.data.value.id; //set the ticket id to use in next page
-      console.log(ticketId);
+      const ticketId = response.data.value.id;
+      
+      // Store the ticket ID in local storage for the notif board of employees
+      const createdTicketIds = JSON.parse(localStorage.getItem('createdTicketIds')) || [];
+      createdTicketIds.push(ticketId);
+      localStorage.setItem('createdTicketIds', JSON.stringify(createdTicketIds));
+      console.log(createdTicketIds)
+  
       navigate(`/tickets/${ticketId}`);
     } catch (error) {
       console.error('Error creating ticket:', error);
