@@ -62,7 +62,7 @@ function App() {
           <Route path='/EmployeeNotificationBoard' element={<EmployeeNotificationBoard />} />
         </Routes>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   )
 }
