@@ -45,7 +45,10 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
   border: 1px solid #ddd; 
   width: 50%; 
-  margin-bottom: 20px; 
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 80px;
+  max-width: 500px;
 }
 
 .form input, .form select {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@nextui-org/react';
 
 const ViewTicket = () => {
 
@@ -215,6 +216,13 @@ const ViewTicket = () => {
 
 return (
   <div className='pageContainer'>
+  <Button
+        style={{ alignSelf:'start' }}
+        className='back-button'
+        onClick={() => navigate('/UserRequestBoard')}
+        >
+        Back
+        </Button >
 
     <form>
       <div className='form'>
